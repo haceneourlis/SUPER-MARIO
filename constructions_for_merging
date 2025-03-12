@@ -1,0 +1,19 @@
+Recommended Workflow (for team projects):
+If merging unrelated histories feels risky, an alternative and cleaner approach is:
+
+Create a new branch off the existing repository (e.g., main branch).
+Copy and paste your local files into this new branch.
+Commit and push.
+This avoids the unrelated-history problem entirely:
+
+bash
+Copier
+Modifier
+git checkout main
+git pull origin main
+git checkout -b clean_branch
+# copy your local files manually to this branch
+git add .
+git commit -m "Your changes"
+git push -u origin clean_branch
+Then merge via Pull Request on GitHub.
