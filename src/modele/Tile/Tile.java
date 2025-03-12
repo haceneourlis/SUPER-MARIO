@@ -1,4 +1,4 @@
-package view.Tile;
+package modele.Tile;
 
 import java.awt.image.BufferedImage;
 

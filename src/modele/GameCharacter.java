@@ -1,6 +1,6 @@
-package view;
+package modele;
 
-import model.CONSTANTS;
+import modele.CONSTANTS;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -11,26 +11,25 @@ import java.util.Objects;
 
 public class GameCharacter extends Rectangle {
     // solid area of the character
-    public  Rectangle solidArea;
+    public Rectangle solidArea;
     // position of the character
-    private Point position;
+    public Point position;
     // speed of the character
-    private int speed;
+    protected int speed;
     // direction of the character
     private String direction;
     // image of the character
-    BufferedImage image;
-
-
+    protected BufferedImage image;
 
     // constructor
-    GameCharacter() {
-        // rectangle representing the solid area of the character (collision area) : tout le charcter est une zone solide
+    protected GameCharacter() {
+        // rectangle representing the solid area of the character (collision area) :
+        // tout le charcter est une zone solide
         this.solidArea = new Rectangle();
-        solidArea.x = 8 ;
-        solidArea.y = 16 ;
-        solidArea.height = 32 ;
-        solidArea.width = 32 ;
+        solidArea.x = 8;
+        solidArea.y = 16;
+        solidArea.height = 32;
+        solidArea.width = 32;
 
         this.position = new Point();
         this.speed = 0;
@@ -52,6 +51,7 @@ public class GameCharacter extends Rectangle {
     public void setPositionX(int x) {
         this.position.x = x;
     }
+
     // set the y position of the character
     public void setPositionY(int y) {
         this.position.y = y;
@@ -75,6 +75,11 @@ public class GameCharacter extends Rectangle {
     // get the direction of the character
     public String getDirection() {
         return this.direction;
+    }
+
+    // set the direction of the character
+    public void setDirection(String direction) {
+        this.direction = direction;
     }
 
     // set the image of the character

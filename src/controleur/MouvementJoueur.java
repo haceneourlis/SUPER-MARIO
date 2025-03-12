@@ -1,6 +1,6 @@
 package controleur;
 
-import modele.Joueur;
+import modele.Mario;
 import modele.Jumping;
 
 import java.awt.event.KeyEvent;
@@ -11,7 +11,8 @@ public class MouvementJoueur implements KeyListener {
     private boolean right_pressed;
     private boolean space_pressed;
 
-    public MouvementJoueur() {}
+    public MouvementJoueur() {
+    }
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -25,8 +26,6 @@ public class MouvementJoueur implements KeyListener {
             space_pressed = true;
         }
 
-
-
     }
 
     @Override
@@ -37,7 +36,7 @@ public class MouvementJoueur implements KeyListener {
             left_pressed = false;
         } else if (keyCode == KeyEvent.VK_SPACE) {
             space_pressed = false;
-        } else if (keyCode == KeyEvent.VK_RIGHT){
+        } else if (keyCode == KeyEvent.VK_RIGHT) {
             right_pressed = false;
         }
 
@@ -47,6 +46,7 @@ public class MouvementJoueur implements KeyListener {
     public void keyTyped(KeyEvent e) {
         // Rien à faire ici pour le moment
     }
+
     // getter de left_pressed
     public boolean isLeft_pressed() {
         return left_pressed;
@@ -56,7 +56,6 @@ public class MouvementJoueur implements KeyListener {
     public boolean isRight_pressed() {
         return right_pressed;
     }
-
 
     // getter de space_pressed
     public boolean isSpace_pressed() {

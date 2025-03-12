@@ -1,3 +1,4 @@
+
 // classe qui va juste lancer la fenetre de jeu depuis l'affichage
 import javax.swing.JFrame;
 // import Affichage
@@ -11,19 +12,22 @@ public class Main {
         // on crée une fenetre
         JFrame fenetre = new JFrame();
 
-        Joueur j = new Joueur();
+        Mario j = Mario.getInstance();
         Jumping jumpin = new Jumping(j);
         jumpin.start();
         MouvementJoueur mv = new MouvementJoueur();
         DeplacementListener dl = new DeplacementListener(mv, j, jumpin);
         dl.start();
         // on ajoute un affichage
-        fenetre.add(new Affichage(j));
+        Affichage GamePanel = new Affichage();
+        fenetre.add(GamePanel);
+
+        Collision col = new Collision(GamePanel, jumpin);
+        col.start();
         fenetre.addKeyListener(mv);
         // et on l'affiche
         fenetre.pack();
         fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 
         fenetre.setVisible(true);
 

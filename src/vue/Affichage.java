@@ -1,110 +1,70 @@
 package vue;
-import modele.*;
 
+import modele.*;
+import modele.Tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.geom.AffineTransform;
-import javax.imageio.ImageIO;
-import java.io.File;
-import java.io.IOException;
 
 public class Affichage extends JPanel {
-    private BufferedImage groundImage; // Store the ground image
-    private Ground ground;
-    private Joueur joueur;
-    private BufferedImage ennemiImage;
+    private Mario JoueurPrincipal;
     private Ennemi ennemi;
-    private int x_joueur;
-    private int y_joueur;
+    private int x_de_Mario_de_vue;
+    private int y_de_Mario_de_vue;
     private final int RATIO_X = 2;
     private final int RATIO_Y = 3;
 
-    public Affichage(Joueur j) {
-        setPreferredSize(new Dimension(500, 300)); // Set window size
-        ground = new Ground(getPreferredSize().height);
-        this.joueur = j;
-        try {
-            // Load the ground image from the images folder
-            groundImage = ImageIO.read(new File("images/brick.png"));
-        } catch (IOException e) {
-            System.out.println("Error loading ground image.");
-            e.printStackTrace();
-        }
+    public TileManager tm;
 
-        //
-        try {
-            ennemiImage = ImageIO.read(new File("images/turtle.png"));
-        } catch (IOException e) {
-            System.out.println("Erreur : Impossible de charger l'image de l'ennemi.");
-            e.printStackTrace();
-        }
+    public Affichage() {
+        setPreferredSize(new Dimension(CONSTANTS.ScreenWidth, CONSTANTS.screenHeight)); // Set window size
+        this.JoueurPrincipal = Mario.getInstance(); // Get the player instance : classe singleton .
+
+        tm = new TileManager(this);
+
         // Initialiser l'ennemi (au-dessus du sol)
-        ennemi = new Ennemi(400, ground.getYPosition()-50, 20, 30, 5, 0, 500, true);
-        ennemi.start();
+        ennemi = new Ennemi(0, 20, 30, 5, 0, 500, true);
+        ennemi.thread.start(); // Lancer le thread de l'ennemi
 
         // Mettre à jour l'affichage toutes les 50ms
         Timer timer = new Timer(50, e -> repaint());
         timer.start();
     }
 
-
-
-    public void transformFromModelToView(){
-        this.y_joueur = (joueur.HMAX + joueur.getPositionY())*RATIO_Y;
-        this.x_joueur = -joueur.BEFORE*RATIO_X + joueur.getPositionX()*RATIO_X;
+    public void transformFromModelToView() {
+        this.y_de_Mario_de_vue = (JoueurPrincipal.HMAX + JoueurPrincipal.getPosition().y) * RATIO_Y;
+        this.x_de_Mario_de_vue = -JoueurPrincipal.BEFORE * RATIO_X + JoueurPrincipal.getPosition().x * RATIO_X;
     }
 
+    public Ennemi getEnnemi() {
+        return ennemi;
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
+        super.paintComponent(g2);
+        this.tm.draw(g2); // ligne ajoutée pour dessiner les tiles
+        this.ennemi.draw(g2);
+
         transformFromModelToView();
+        this.JoueurPrincipal.draw(g2);
+        // g.drawRect(this.x_de_Mario_de_vue, this.y_de_Mario_de_vue, 60, 60); -- ligne
+        // à supprimer car
+        // remplacer avec la derniere ligne
 
-        g.drawRect(this.x_joueur, this.y_joueur, 60, 60);
-
-
-        // Draw the ground using the image
-        int groundY = ground.getYPosition();
-        int tileSize = ground.getTileSize();
-
-        for (int i = 0; i < getWidth(); i += tileSize) {
-            if (groundImage != null) {
-                g.drawImage(groundImage, i, groundY, tileSize, tileSize, null);
-            } else {
-                g.setColor(new Color(139, 69, 19)); // Fallback color if image fails
-                g.fillRect(i, groundY, tileSize, tileSize);
-            }
-        }
-
-
-        // Dessiner l'ennemi avec rotation
-        Graphics2D g2d = (Graphics2D) g;
-        if (ennemiImage != null) {
-            int x = ennemi.getX();
-            int y = ennemi.getY();
-            int width = ennemi.getWidth();
-            int height = ennemi.getHeight();
-
-            AffineTransform transform = new AffineTransform();
-            if (!ennemi.isMovingRight()) {
-                // Si l'ennemi va vers la gauche, on le retourne horizontalement
-                transform.translate(x + width, y);
-                transform.scale(-1, 1);
-            } else {
-                transform.translate(x, y);
-            }
-
-            g2d.drawImage(ennemiImage, transform, this);
-        } else {
-            // Si l'image ne charge pas, afficher un carré rouge
-            g.setColor(Color.RED);
-            g.fillRect(ennemi.getX(), ennemi.getY(), ennemi.getWidth(), ennemi.getHeight());
-        }
-
-        // Afficher le joueur (comme étant un rectangle pour le moment)
-
+        // plus besoin des 11 lignes suivantes :
+        // // Draw the ground using the image
+        // int groundY = ground.getYPosition();
+        // int tileSize = ground.getTileSize();
+        // for (int i = 0; i < getWidth(); i += tileSize) {
+        // if (groundImage != null) {
+        // g.drawImage(groundImage, i, groundY, tileSize, tileSize, null);
+        // } else {
+        // g.setColor(new Color(139, 69, 19)); // Fallback color if image fails
+        // g.fillRect(i, groundY, tileSize, tileSize);
+        // }
+        // }
 
     }
 }

@@ -1,5 +1,9 @@
 package modele;
 
+import java.awt.Graphics2D;
+
+import javax.imageio.ImageIO;
+
 // package caractere;
 
 // -------------------------------------------------------
@@ -14,65 +18,64 @@ package modele;
 
 // -------------------------------------------------------
 
-
-
 // une classe qui hérite de la classe Thread pour gérer les ennemis
 // l'enemi bouge de droite à gauche et ne peut pas sortir de la fenêtre
-public class Ennemi extends Thread{
-    // les coordonnees de l'ennemi
-    private int x;
-    private int y;
-    // la taille de l'ennemi
-    private int width;
-    private int height;
-    // la vitesse de l'ennemi
-    private int speed;
+public class Ennemi extends GameCharacter implements Runnable {
+
     // les frontières
     private int leftBorder;
     private int rightBorder;
 
+    public Thread thread;
     private boolean running = true;
     private boolean movingRight; // Indique si l'ennemi va à droite
 
-    public Ennemi(int x, int y, int width, int height, int speed, int leftBorder, int rightBorder, boolean movingRight) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+    public Ennemi(int x, int width, int height, int speed, int leftBorder, int rightBorder,
+            boolean movingRight) {
+        super();
+        this.position.x = x;
+        this.position.y = CONSTANTS.LE_SOL - height;
+
+        this.solidArea.x = CONSTANTS.slidAreaDefaultX;
+        this.solidArea.y = CONSTANTS.slidAreaDefaultY;
+        this.solidArea.height = CONSTANTS.TAILLE_CELLULE;
+        this.solidArea.width = CONSTANTS.TAILLE_CELLULE;
+
         this.speed = speed;
         this.leftBorder = leftBorder;
         this.rightBorder = rightBorder;
 
         this.movingRight = movingRight; // l'ennemi commence par aller à droite
+
+        try {
+            this.image = ImageIO.read(getClass().getResourceAsStream("/resources/turtle.png"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        thread = new Thread(this);
     }
 
-    // Ajouter ces méthodes dans Ennemi.java
-    public int getX() { return x; }
-    public int getY() { return y; }
-    public int getWidth() { return width; }
-    public int getHeight() { return height; }
     public boolean isMovingRight() {
         return movingRight;
     } // Indique si l'ennemi va à droite
 
-
     // faire bouger l'ennemi
     public void moveEnnemi() {
         if (movingRight) {
-            x += speed;
-            if (x + width >= rightBorder) { // si l'ennemi atteint la frontière droite
-                x = rightBorder - width; // le mettre à la frontière droite
+            this.position.x += speed;
+            if (this.position.x + width >= rightBorder) { // si l'ennemi atteint la frontière droite
+                this.position.x = rightBorder - width; // le mettre à la frontière droite
                 movingRight = false; // changer la direction
             }
-        }   else {
-            x -= speed;
-            if (x <= leftBorder) {
-                x = leftBorder;
+        } else {
+            this.position.x -= speed;
+            if (this.position.x <= leftBorder) {
+                this.position.x = leftBorder;
                 movingRight = true;
             }
         }
     }
-    
 
     // demarrer le thread
     @Override
@@ -90,5 +93,10 @@ public class Ennemi extends Thread{
     // arreter le thread
     public void stopMoving() {
         running = false;
+    }
+
+    // draw method
+    public void draw(Graphics2D g2) {
+        g2.drawImage(this.image, this.position.x, this.position.y, null);
     }
 }
