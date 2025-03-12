@@ -4,8 +4,8 @@ public class Jumping extends Thread {
     private Joueur j;
     private boolean is_jumping;
     private int impulsion;
-    public final int GRAVITY = 3;
-    public final int DELAY = 40;
+    public final int GRAVITY = 1;
+    public final int DELAY = 25;
 
 
     public Jumping(Joueur j) {
@@ -18,7 +18,7 @@ public class Jumping extends Thread {
     public void jump() {
         if (!this.is_jumping) {
             this.is_jumping = true;
-            this.impulsion = 15;
+            this.impulsion = 10;
         }
     }
 

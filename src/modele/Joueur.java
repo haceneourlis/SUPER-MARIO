@@ -11,7 +11,7 @@ public class Joueur{
     public final int HMIN = -30;
     public int vitesse = 1;
     // vitesse max constante
-    public final int VITESSE_MAX = 10;
+    public final int VITESSE_MAX = 3;
     // variable de position en y
     private int positionY;
 
