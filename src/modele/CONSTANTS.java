@@ -8,10 +8,10 @@ public class CONSTANTS {
     public static final int HMAX = 60;
     public static final int HMIN = -30;
     public static final int RATIO_X = 2;
-    public static final int RATIO_Y = 2;
+    public static final int RATIO_Y = 3;
 
     // pour la taille des cellules du jeu (les carreaux ...):
-    public static final int TAILLE_CELLULE = 16;
+    public static final int TAILLE_CELLULE = 32;
 
     // pour les collisions :
     public static final int slidAreaDefaultX = 8;
@@ -26,8 +26,8 @@ public class CONSTANTS {
     // pour l'affichage de la fenetre :
     public static int LARGEUR_MODELE = maxScreenCol * TAILLE_CELLULE;
     public static int HAUTEUR_MODELE = maxScreenRow * TAILLE_CELLULE;
-    public static final int LARGEUR_VUE = (-BEFORE + LARGEUR_MODELE) * RATIO_X;
-    public static final int HAUTEUR_VUE = (HMAX + HAUTEUR_MODELE) * RATIO_Y;
+    public static final int LARGEUR_VUE = (LARGEUR_MODELE);
+    public static final int HAUTEUR_VUE = (HAUTEUR_MODELE);
 
     public static final int LE_SOL = TAILLE_CELLULE * 11;
 }

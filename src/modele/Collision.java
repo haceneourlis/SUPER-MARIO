@@ -11,8 +11,6 @@ package modele;
 
 import vue.Affichage;
 
-import java.util.ArrayList;
-
 public class Collision extends Thread {
 
     private Mario mario;
@@ -70,7 +68,7 @@ public class Collision extends Thread {
                     // rentrer en collision avec un objet en sautant
                     case "up":
                         // on prédit ou sera notre mario aprés avoir bougé
-                        ligneTopdanslaMatrice = (posTopenY - jumpingThread.impulsion) / CONSTANTS.TAILLE_CELLULE;
+                        ligneTopdanslaMatrice = (posTopenY - jumpingThread.force) / CONSTANTS.TAILLE_CELLULE;
                         point1 = gp.tm.tilesMatrice[ligneTopdanslaMatrice][colonneLeftdanslaMatrice];
                         point2 = gp.tm.tilesMatrice[ligneTopdanslaMatrice][colonneRightdanslaMatrice];
 

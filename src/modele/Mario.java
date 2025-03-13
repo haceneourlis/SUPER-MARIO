@@ -4,11 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 // classe Joueur qui va définir le joueur (mario) avec sa position en x et en y
 public class Mario extends GameCharacter {

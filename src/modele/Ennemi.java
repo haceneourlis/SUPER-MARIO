@@ -1,7 +1,5 @@
 package modele;
 
-import java.awt.Graphics2D;
-
 import javax.imageio.ImageIO;
 
 // package caractere;

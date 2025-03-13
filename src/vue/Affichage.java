@@ -28,14 +28,18 @@ public class Affichage extends JPanel {
         timer.start();
     }
 
+    // modification : j'ai supprimé la transformation , càd : point dans vue = point
+    // dans modele ou presque
     public Point transformFromModelToView(Point point_dans_modele) {
 
-        Point point_dans_vue = new Point();
+        // Point point_dans_vue = new Point();
 
-        point_dans_vue.x = (-CONSTANTS.BEFORE + point_dans_modele.x) * CONSTANTS.RATIO_X;
-        point_dans_vue.y = (CONSTANTS.HMAX + point_dans_modele.y) * CONSTANTS.RATIO_Y;
+        // point_dans_vue.x = -CONSTANTS.BEFORE + point_dans_modele.x;
+        // point_dans_vue.y = (CONSTANTS.HAUTEUR_MODELE - CONSTANTS.TAILLE_CELLULE -
+        // point_dans_modele.y);
 
-        return point_dans_vue;
+        // return point_dans_vue;
+        return point_dans_modele;
     }
 
     public Ennemi getEnnemi() {
