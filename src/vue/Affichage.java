@@ -19,8 +19,7 @@ public class Affichage extends JPanel {
     private Ennemi ennemi;
     private int x_joueur;
     private int y_joueur;
-    private final int RATIO_X = 2;
-    private final int RATIO_Y = 2;
+
     private BufferedImage joueurImageIdl;
     private BufferedImage[] walkSprites;
     private BufferedImage current_to_draw;
@@ -75,8 +74,8 @@ public class Affichage extends JPanel {
 
     public void transformFromModelToView(){
 
-        this.y_joueur = (ground.getYPosition() - joueurImageIdl.getHeight() + joueur.getPositionY());
-        this.x_joueur = -joueur.BEFORE*RATIO_X + joueur.getPositionX()*RATIO_X;
+        this.y_joueur = (ground.getYPosition() - joueurImageIdl.getHeight() - joueur.getPositionY());
+        this.x_joueur = -joueur.BEFORE + joueur.getPositionX();
     }
     // get x joueur
     public int get_x_joueur(){
