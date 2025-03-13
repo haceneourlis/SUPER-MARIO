@@ -18,7 +18,7 @@ public class Jumping extends Thread {
     public int force;
 
     // Constante de la puissance de l'impulsion à chaque saut
-    public final int IMPULSION = 10;
+    public final int IMPULSION = 15;
 
     // Constante de la gravité
     public final int GRAVITY = 1;
@@ -37,7 +37,7 @@ public class Jumping extends Thread {
     /**
      * Méthode pour faire sauter le joueur.
      * Si le joueur n'est pas déjà en train de sauter, on met le booléen de saut à
-     * true et on initialise la force à 10 (valeur de la constante IMPULSION).
+     * true et on initialise la force à la valeur de la constante IMPULSION.
      */
     public void jump() {
         // Si le joueur n'est pas déjà en train de sauter
@@ -59,9 +59,8 @@ public class Jumping extends Thread {
             // Si le joueur est en train de sauter
             if (this.is_jumping) {
                 /*
-                 * On ne s'autorise pas à aller dans des valeurs négatives en Y, je considère
-                 * que le Y = 0 est le sol.
-                 * Je vérifie donc que le fait d'ajouter la force ne fasse pas sortir le joueur
+                 * On ne s'autorise pas à aller dans des valeurs au dela du sol.
+                 * Je vérifie donc que le fait de retirer de la force ne fasse pas sortir le joueur
                  * de la fenêtre.
                  * Si c'est le cas, on arrête le saut, on remet la force à 0 et on remet le
                  * joueur au sol.
@@ -72,7 +71,7 @@ public class Jumping extends Thread {
                     this.force = 0;
                     this.j.setPositionY(CONSTANTS.LE_SOL);
                 }
-                // Sinon, on ajoute la force à la position en Y du joueur et on décrémente la
+                // Sinon, on enlève la force à la position en Y du joueur et on décrémente la
                 // force de la gravité.
                 else {
                     this.j.setPositionY(this.j.getPosition().y - this.force);

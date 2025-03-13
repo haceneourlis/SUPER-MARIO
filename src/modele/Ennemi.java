@@ -1,5 +1,6 @@
 package modele;
 
+import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
 // package caractere;
@@ -28,11 +29,25 @@ public class Ennemi extends GameCharacter implements Runnable {
     private boolean running = true;
     private boolean movingRight; // Indique si l'ennemi va à droite
 
+    // images de l'ennemi
+    private BufferedImage[] image;
+
     public Ennemi(int x, int width, int height, int speed, int leftBorder, int rightBorder,
             boolean movingRight) {
         super();
+        this.image = new BufferedImage[3];
+        try {
+            this.image[0] = ImageIO.read(getClass().getResourceAsStream("/resources/koopa_sprites/koopa2.png"));
+            this.image[1] = ImageIO.read(getClass().getResourceAsStream("/resources/koopa_sprites/koopa1.png"));
+            this.image[2] = ImageIO.read(getClass().getResourceAsStream("/resources/koopa_sprites/koopa2.png"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         this.position.x = x;
-        this.position.y = CONSTANTS.LE_SOL - height;
+        // affiche dans la console le height de l'image 0
+        System.out.println(this.image[0].getHeight());
+        this.position.y = CONSTANTS.LE_SOL;
 
         this.solidArea.x = CONSTANTS.slidAreaDefaultX;
         this.solidArea.y = CONSTANTS.slidAreaDefaultY;
@@ -45,13 +60,15 @@ public class Ennemi extends GameCharacter implements Runnable {
 
         this.movingRight = movingRight; // l'ennemi commence par aller à droite
 
-        try {
-            this.image = ImageIO.read(getClass().getResourceAsStream("/resources/turtle.png"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        
 
         thread = new Thread(this);
+    }
+
+    @Override
+    // getter de image en fonction de l'index
+    public BufferedImage getImage(int index) {
+        return this.image[index];
     }
 
     public boolean isMovingRight() {

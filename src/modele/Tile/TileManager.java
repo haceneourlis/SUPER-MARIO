@@ -1,14 +1,13 @@
 package modele.Tile;
 
-import modele.CONSTANTS;
-import vue.Affichage;
-
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import javax.imageio.ImageIO;
+import modele.CONSTANTS;
+import vue.Affichage;
 
 public class TileManager {
 
@@ -32,7 +31,7 @@ public class TileManager {
 
             tiles[0] = new Tile();
             tiles[0].image = ImageIO.read(getClass()
-                    .getResourceAsStream("/resources/obstacle1.jpg"));
+                    .getResourceAsStream("/resources/sky.png"));
 
             tiles[1] = new Tile();
             tiles[1].image = ImageIO.read(getClass()
@@ -61,7 +60,7 @@ public class TileManager {
 
             point_dans_modele.x = x;
             point_dans_modele.y = y;
-            point_dans_vue = gp.transformFromModelToView(point_dans_modele);
+            point_dans_vue = (point_dans_modele);
             g2.drawImage(tiles[TileType].image, point_dans_vue.x, point_dans_vue.y, null);
             col++;
             x += CONSTANTS.TAILLE_CELLULE;
