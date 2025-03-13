@@ -34,8 +34,8 @@ public class Jumping extends Thread {
                     impulsion = 0;
                     this.j.setPositionY(CONSTANTS.LE_SOL);
                 } else {
-                    this.j.setPositionY(this.j.getPosition().y + impulsion);
-                    impulsion += this.GRAVITY;
+                    this.j.setPositionY(this.j.getPosition().y - impulsion);
+                    impulsion -= this.GRAVITY;
                 }
             }
 
