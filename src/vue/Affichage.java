@@ -1,14 +1,26 @@
 package vue;
 
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.*;
 import modele.*;
 import modele.Tile.TileManager;
 
-import javax.swing.*;
-import java.awt.*;
 
 public class Affichage extends JPanel {
     private Mario JoueurPrincipal;
     private Ennemi ennemi;
+    private BufferedImage joueurImageIdl;
+    private BufferedImage[] walkSprites;
+    private BufferedImage current_to_draw;
+    private int walkIndex = 0;
+
+
 
     public TileManager tm;
 
@@ -17,6 +29,20 @@ public class Affichage extends JPanel {
 
         this.JoueurPrincipal = Mario.getInstance(); // Get the player instance : classe singleton .
 
+        try {
+            joueurImageIdl = ImageIO.read(new File("src/resources/mario_sprites/mario_idl.png"));
+            // faire un tableau pour les sprites de walk
+            current_to_draw = joueurImageIdl;
+            walkSprites = new BufferedImage[3]; // Exemple : 3 images d’animations
+            walkSprites[0] = ImageIO.read(new File("src/resources/mario_sprites/mario_walk1.png"));
+            walkSprites[1] = ImageIO.read(new File("src/resources/mario_sprites/mario_walk2.png"));
+            walkSprites[2] = ImageIO.read(new File("src/resources/mario_sprites/mario_walk3.png"));
+
+        } catch (IOException e) {
+            System.out.println("Erreur : Impossible de charger l'image du joueur.");
+            e.printStackTrace();
+        }
+
         tm = new TileManager(this);
 
         // Initialiser l'ennemi (au-dessus du sol)
@@ -24,27 +50,53 @@ public class Affichage extends JPanel {
         ennemi.thread.start(); // Lancer le thread de l'ennemi
 
         // Mettre à jour l'affichage toutes les 50ms
-        Timer timer = new Timer(50, e -> repaint());
-        timer.start();
+        (new Redessine(this)).start();
+        (new AnimationJoueur(this)).start();
     }
 
     // modification : j'ai supprimé la transformation , càd : point dans vue = point
     // dans modele ou presque
     public Point transformFromModelToView(Point point_dans_modele) {
 
-        // Point point_dans_vue = new Point();
-
-        // point_dans_vue.x = -CONSTANTS.BEFORE + point_dans_modele.x;
-        // point_dans_vue.y = (CONSTANTS.HAUTEUR_MODELE - CONSTANTS.TAILLE_CELLULE -
-        // point_dans_modele.y);
-
-        // return point_dans_vue;
         return point_dans_modele;
     }
 
     public Ennemi getEnnemi() {
         return ennemi;
     }
+
+    public int get_x_joueur() {
+        return JoueurPrincipal.getPosition().x;
+    }
+
+    public void incrementWalkIndex(boolean right) {
+        this.walkIndex = (walkIndex + 1) % 3;
+        if (!right) {
+            setCurrentToDraw(flipImage(walkSprites[walkIndex]));
+        } else {
+            setCurrentToDraw(walkSprites[walkIndex]);
+        }
+    }
+
+    // setter current to draw
+    public void setCurrentToDraw(BufferedImage current_to_draw) {
+        this.current_to_draw = current_to_draw;
+    }
+
+    // getter de image idl
+    public void reset_to_idl() {
+        setCurrentToDraw(joueurImageIdl);
+        this.walkIndex = 0;
+    }
+
+    public static BufferedImage flipImage(BufferedImage image) {
+        AffineTransform tx = AffineTransform.getScaleInstance(-1, 1); // Miroir horizontal
+        tx.translate(-image.getWidth(), 0); // Déplacer l'image pour qu'elle reste visible
+
+        AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+        return op.filter(image, null);
+    }
+
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -56,12 +108,12 @@ public class Affichage extends JPanel {
         // le seul ennemi du jeu :
         this.ennemi.draw(g2, transformFromModelToView(ennemi.getPosition()));
         // affichons mario en dernier ( pour qu'il soit au-dessus de touttt ) :
-        this.JoueurPrincipal.draw(g2, transformFromModelToView(JoueurPrincipal.getPosition()));
+        g.drawImage(current_to_draw, transformFromModelToView(JoueurPrincipal.getPosition()).x,transformFromModelToView(JoueurPrincipal.getPosition()).y, null);
 
         // Dessiner un rectangle pour tester :
-        g2.setColor(Color.RED);
-        g2.drawRect(60, 632, 30, 30);
-
+     
         g2.dispose();
     }
+
+    
 }

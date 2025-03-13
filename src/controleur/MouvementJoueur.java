@@ -1,23 +1,33 @@
 package controleur;
 
-import modele.Mario;
-import modele.Jumping;
-
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+
+/**
+ * Cette classe implémente l'interface KeyListener qui va surveiller quelles touches sont pressées
+ * Il utilise 3 booléens :
+ * - left_pressed : true si la touche gauche est pressée
+ * - right_pressed : true si la touche droite est pressée
+ * - space_pressed : true si la touche espace est pressée
+ * Ces informations (booléens) seront utilisées par la classe DeplacementListener pour déplacer le joueur en conséquence
+ */
 public class MouvementJoueur implements KeyListener {
+
+    // Les 3 booléens qui vont être utilisés par DeplacementListener
     private boolean left_pressed;
     private boolean right_pressed;
     private boolean space_pressed;
 
-    public MouvementJoueur() {
-    }
+    public MouvementJoueur() {}
 
+    // Méthode qui va être appelée quand une touche est pressée
     @Override
     public void keyPressed(KeyEvent e) {
+        // On récupère le code de la touche pressée
         int keyCode = e.getKeyCode();
 
+        // On vérifie quelle touche a été pressée et on met le booléen correspondant à true
         if (keyCode == KeyEvent.VK_RIGHT) { // Flèche droite
             right_pressed = true;
         } else if (keyCode == KeyEvent.VK_LEFT) { // Flèche gauche
@@ -26,17 +36,22 @@ public class MouvementJoueur implements KeyListener {
             space_pressed = true;
         }
 
+
+
     }
 
+    // Méthode qui va être appelée quand une touche est relâchée
     @Override
     public void keyReleased(KeyEvent e) {
+        // On récupère le code de la touche relâchée
         int keyCode = e.getKeyCode();
 
-        if (keyCode == KeyEvent.VK_LEFT) {
+        // On vérifie quelle touche a été relâchée et on met le booléen correspondant à false
+        if (keyCode == KeyEvent.VK_LEFT) { // Flèche gauche
             left_pressed = false;
-        } else if (keyCode == KeyEvent.VK_SPACE) {
+        } else if (keyCode == KeyEvent.VK_SPACE) { // Touche espace
             space_pressed = false;
-        } else if (keyCode == KeyEvent.VK_RIGHT) {
+        } else if (keyCode == KeyEvent.VK_RIGHT){ // Flèche droite
             right_pressed = false;
         }
 
@@ -46,7 +61,6 @@ public class MouvementJoueur implements KeyListener {
     public void keyTyped(KeyEvent e) {
         // Rien à faire ici pour le moment
     }
-
     // getter de left_pressed
     public boolean isLeft_pressed() {
         return left_pressed;
@@ -56,6 +70,7 @@ public class MouvementJoueur implements KeyListener {
     public boolean isRight_pressed() {
         return right_pressed;
     }
+
 
     // getter de space_pressed
     public boolean isSpace_pressed() {

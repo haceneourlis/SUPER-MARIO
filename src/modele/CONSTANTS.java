@@ -7,8 +7,9 @@ public class CONSTANTS {
     public static final int AFTER = 240;
     public static final int HMAX = 60;
     public static final int HMIN = -30;
-    public static final int RATIO_X = 2;
-    public static final int RATIO_Y = 3;
+    public static final int RATIO_X = 1;
+    public static final int RATIO_Y = 1;
+    public static final int DECELERATION = 1;
 
     // pour la taille des cellules du jeu (les carreaux ...):
     public static final int TAILLE_CELLULE = 32;

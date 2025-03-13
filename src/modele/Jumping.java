@@ -67,7 +67,7 @@ public class Jumping extends Thread {
                  * joueur au sol.
                  * (Cette force peut être négative si le joueur est en train de tomber).
                  */
-                if (this.j.getPosition().y + this.force <= CONSTANTS.LE_SOL) {
+                if (this.j.getPosition().y - this.force >= CONSTANTS.LE_SOL) {
                     this.is_jumping = false;
                     this.force = 0;
                     this.j.setPositionY(CONSTANTS.LE_SOL);
@@ -75,7 +75,7 @@ public class Jumping extends Thread {
                 // Sinon, on ajoute la force à la position en Y du joueur et on décrémente la
                 // force de la gravité.
                 else {
-                    this.j.setPositionY(this.j.getPosition().y + this.force);
+                    this.j.setPositionY(this.j.getPosition().y - this.force);
                     this.force -= this.GRAVITY;
                 }
 
