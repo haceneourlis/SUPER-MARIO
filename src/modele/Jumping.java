@@ -4,7 +4,6 @@ public class Jumping extends Thread {
     private Mario j;
     private boolean is_jumping;
     public int impulsion;
-    public final int GRAVITY = 3;
     public final int DELAY = 40;
 
     public Jumping(Mario j) {
@@ -33,9 +32,11 @@ public class Jumping extends Thread {
                     this.is_jumping = false;
                     impulsion = 0;
                     this.j.setPositionY(CONSTANTS.LE_SOL);
+                    System.out.println("we re not jumping");
                 } else {
+                    System.out.println("we re jumping");
                     this.j.setPositionY(this.j.getPosition().y - impulsion);
-                    impulsion -= this.GRAVITY;
+                    impulsion -= CONSTANTS.GRAVITY;
                 }
             }
 

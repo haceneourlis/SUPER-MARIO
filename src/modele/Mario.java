@@ -19,10 +19,6 @@ public class Mario extends GameCharacter {
     // constante de coordonnées d'origine du joueur
     public final int X_ORIGINE = 0;
 
-    public final int BEFORE = -30;
-    public final int AFTER = 240;
-    public final int HMAX = 60;
-    public final int HMIN = -30;
     public int vitesse = 1;
     // vitesse max constante
     public final int VITESSE_MAX = 10;
@@ -67,10 +63,6 @@ public class Mario extends GameCharacter {
     public void reinitialiserVitesse() {
 
         this.vitesse = 0;
-    }
-
-    public void draw(Graphics2D g2) {
-        g2.drawImage(image, this.getPosition().x, this.getPosition().y, null);
     }
 
 }

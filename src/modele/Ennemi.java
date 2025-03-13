@@ -94,9 +94,4 @@ public class Ennemi extends GameCharacter implements Runnable {
     public void stopMoving() {
         running = false;
     }
-
-    // draw method
-    public void draw(Graphics2D g2) {
-        g2.drawImage(this.image, this.position.x, this.position.y, null);
-    }
 }

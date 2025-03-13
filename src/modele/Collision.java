@@ -1,3 +1,12 @@
+
+/* 
+ * cette classe est un thread qui va vérifier les collisions entre les différents objets du jeu
+ * elle n'est pas encore complète
+ * elle interagit avec la classe Mario et Ennemi
+ * elle interagit avec la classe Affichage
+ * elle interagit que AVEC LES VALEURS DU MODELE (pas de la vue) - C'EST IMPORTANT à SAVOIR car c'est que le prof nous a demandé la derniere fois- 
+ */
+
 package modele;
 
 import vue.Affichage;
@@ -75,7 +84,7 @@ public class Collision extends Thread {
                         // same as for up , but we check the bottom of mario , not the top
                         // because mario can fall down a river or a hole , in which case he dies
 
-                        ligneBottomdanslaMatrice = (posBottomenY + CONSTANTS.GRAVITEEE) / CONSTANTS.TAILLE_CELLULE;
+                        ligneBottomdanslaMatrice = (posBottomenY + CONSTANTS.GRAVITY) / CONSTANTS.TAILLE_CELLULE;
                         point1 = gp.tm.tilesMatrice[ligneBottomdanslaMatrice][colonneLeftdanslaMatrice];
                         point2 = gp.tm.tilesMatrice[ligneBottomdanslaMatrice][colonneRightdanslaMatrice];
 

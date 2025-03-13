@@ -6,14 +6,15 @@ Copy and paste your local files into this new branch.
 Commit and push.
 This avoids the unrelated-history problem entirely:
 
-bash
-Copier
-Modifier
-git checkout main
-git pull origin main
-git checkout -b clean_branch
+
+>git checkout main
+>git pull origin main
+>git checkout -b clean_branch
 # copy your local files manually to this branch
-git add .
-git commit -m "Your changes"
-git push -u origin clean_branch
-Then merge via Pull Request on GitHub.
+>git add .
+>git commit -m "Your changes"
+>git push -u origin clean_branch
+>Then merge via Pull Request on GitHub.
+
+
+recommended by CHAT GPT .

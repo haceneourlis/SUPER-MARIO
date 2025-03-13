@@ -53,12 +53,16 @@ public class TileManager {
         int row = 0;
         int x = 0;
         int y = 0;
-
+        Point point_dans_vue;
+        Point point_dans_modele = new Point(x, y);
         while (col < modele.CONSTANTS.maxScreenCol && row < modele.CONSTANTS.maxScreenRow) {
 
             int TileType = tilesMatrice[row][col];
 
-            g2.drawImage(tiles[TileType].image, x, y, null);
+            point_dans_modele.x = x;
+            point_dans_modele.y = y;
+            point_dans_vue = gp.transformFromModelToView(point_dans_modele);
+            g2.drawImage(tiles[TileType].image, point_dans_vue.x, point_dans_vue.y, null);
             col++;
             x += CONSTANTS.TAILLE_CELLULE;
             if (col == CONSTANTS.maxScreenCol) {
