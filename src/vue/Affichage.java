@@ -44,7 +44,7 @@ public class Affichage extends JPanel {
         tm = new TileManager(this);
 
         // Initialiser l'ennemi (au-dessus du sol)
-        ennemi = new Ennemi(0, 20, 20, 5, 0, 500, true);
+        ennemi = new Ennemi(300, 20, 20, 5, true, tm);
         ennemi.thread.start(); // Lancer le thread de l'ennemi
 
         // Mettre à jour l'affichage toutes les 50ms
