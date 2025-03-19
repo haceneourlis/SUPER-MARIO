@@ -23,10 +23,10 @@ public class GameCharacter extends Rectangle {
         // rectangle representing the solid area of the character (collision area) :
         // tout le charcter est une zone solide
         this.solidArea = new Rectangle();
-        solidArea.x = 8;
-        solidArea.y = 16;
-        solidArea.height = 32;
-        solidArea.width = 32;
+        solidArea.x = CONSTANTS.slidAreaDefaultX;
+        solidArea.y = CONSTANTS.slidAreaDefaultY;
+        solidArea.height = 8;
+        solidArea.width = 8;
 
         this.position = new Point();
         this.speed = 0;

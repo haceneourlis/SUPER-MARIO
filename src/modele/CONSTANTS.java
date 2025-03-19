@@ -18,7 +18,7 @@ public class CONSTANTS {
     public static final int slidAreaDefaultX = 8;
     public static final int slidAreaDefaultY = 16;
 
-    public static final int GRAVITY = 3;
+    public static final int GRAVITY = 1;
 
     // pour la taille de la fenetre & matrice de jeu :
     public static final int maxScreenRow = 16;

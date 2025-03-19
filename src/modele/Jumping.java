@@ -18,13 +18,10 @@ public class Jumping extends Thread {
     public int force;
 
     // Constante de la puissance de l'impulsion à chaque saut
-    public final int IMPULSION = 10;
-
-    // Constante de la gravité
-    public final int GRAVITY = 1;
+    public final int IMPULSION = 15;
 
     // Constante du délai entre chaque vérification du saut
-    public final int DELAY = 25;
+    public final int DELAY = 32;
 
     // Constructeur qui initialise l'instance de Joueur, la force et le booléen de
     // saut.
@@ -69,6 +66,7 @@ public class Jumping extends Thread {
                  */
                 if (this.j.getPosition().y - this.force >= CONSTANTS.LE_SOL) {
                     this.is_jumping = false;
+                    // System.out.println("are we alive here ( jumoing ?)");
                     this.force = 0;
                     this.j.setPositionY(CONSTANTS.LE_SOL);
                 }
@@ -76,7 +74,13 @@ public class Jumping extends Thread {
                 // force de la gravité.
                 else {
                     this.j.setPositionY(this.j.getPosition().y - this.force);
-                    this.force -= this.GRAVITY;
+                    this.force -= CONSTANTS.GRAVITY;
+                    // System.out.println("yes we are alive");
+                    // si force < 0 alors descente
+                    if (this.force < 0) {
+                        j.setDirection("down");
+                    }
+
                 }
 
             }
@@ -84,4 +88,9 @@ public class Jumping extends Thread {
         }
 
     }
+
+    public void notjumping() {
+        this.is_jumping = false;
+    }
+
 }
