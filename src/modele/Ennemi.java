@@ -41,8 +41,11 @@ public class Ennemi extends GameCharacter implements Runnable {
     private int fallSpeed = 0;
     private final int maxFallSpeed = 10;
 
-    public Ennemi(int x, int width, int height, int speed, boolean movingRight, TileManager tileManager) {
+    private String type;
+
+    public Ennemi(int x, int width, int height, int speed, boolean movingRight, TileManager tileManager, String type) {
         super();
+        this.type = type;
         this.image = new BufferedImage[3];
         try {
             this.image[0] = ImageIO.read(getClass().getResourceAsStream("/resources/koopa_sprites/koopa2.png"));
@@ -56,7 +59,6 @@ public class Ennemi extends GameCharacter implements Runnable {
         this.position.x = x;
         // affiche dans la console le height de l'image 0
         System.out.println(this.image[0].getHeight()); // 48
-//        this.position.y = CONSTANTS.LE_SOL;
         this.position.y = findGroundY(this.position.x, this.position.y);
         System.out.println("Koopa initial position: x=" + this.position.x + ", y=" + this.position.y);
 
@@ -73,6 +75,10 @@ public class Ennemi extends GameCharacter implements Runnable {
 
 
         thread = new Thread(this);
+    }
+
+    public String getType() {
+        return type;
     }
 
     @Override
@@ -93,10 +99,14 @@ public class Ennemi extends GameCharacter implements Runnable {
         int col = (nextX + (movingRight ? this.solidArea.width - 1 : 0)) / CONSTANTS.TAILLE_CELLULE;
         int row = (this.position.y + this.solidArea.height - 1) / CONSTANTS.TAILLE_CELLULE;
 
-        // Si Koopa touche le bord gauche, il tourne
+        // Si Koopa touche les bords, il tourne
         if (nextX <= 0) {
             this.position.x = 0;
             movingRight = true;
+            return;
+        } else if (nextX + this.solidArea.width >= CONSTANTS.LARGEUR_VUE) {
+            this.position.x = CONSTANTS.LARGEUR_VUE - this.solidArea.width;
+            movingRight = false;
             return;
         }
 

@@ -4,6 +4,9 @@ import java.awt.*;
 import javax.swing.*;
 import modele.*;
 import modele.Tile.TileManager;
+import java.util.List;
+import java.util.ArrayList;
+import java.awt.image.BufferedImage;
 
 
 
@@ -17,13 +20,14 @@ public class Affichage extends JPanel {
 
     // Variables pour les instances de Mario et de l'ennemi
     private Mario JoueurPrincipal;
-    private Ennemi ennemi;
+    private List<Ennemi> listeEnnemis;
 
     // Variable pour l'animation du joueur (Mario)
     private AnimationJoueur animationJoueur;
 
     // Variable pour l'animation du (des) koopa 
-    private AnimationKoopa animationKoopa;
+    private List<AnimationKoopa> animationKoopa;
+    private List<AnimationGoomba> animationGoomba;
 
     // Variable pour le gestionnaire de tuiles
     public TileManager tm;
@@ -44,8 +48,19 @@ public class Affichage extends JPanel {
         tm = new TileManager(this);
 
         // Initialiser l'ennemi (au-dessus du sol)
-        ennemi = new Ennemi(300, 20, 20, 5, true, tm);
-        ennemi.thread.start(); // Lancer le thread de l'ennemi
+//        ennemi = new Ennemi(630, 20, 20, 5, true, tm);
+//        ennemi.thread.start(); // Lancer le thread de l'ennemi
+
+
+        listeEnnemis = new ArrayList<>();
+        animationKoopa = new ArrayList<>();
+        animationGoomba = new ArrayList<>();
+
+        // Ajouter plusieurs ennemis
+        Ennemi koopa = new Ennemi(600, 20, 20, 5, true, tm, "koopa");
+        // Ennemi goomba = new Ennemi(500, 20, 20, 5, false, tm);
+        listeEnnemis.add(koopa);
+        // listeEnnemis.add(goomba);
 
         // Mettre à jour l'affichage toutes les 50ms
         (new Redessine(this)).start();
@@ -54,9 +69,19 @@ public class Affichage extends JPanel {
         animationJoueur = new AnimationJoueur(JoueurPrincipal);
         animationJoueur.start();
 
-        // lnacer l'animation du koopa
-        animationKoopa = new AnimationKoopa(ennemi);
-        animationKoopa.start();
+        // 🔹 Démarrer les threads des ennemis et de leurs animations
+        animationKoopa.add(new AnimationKoopa(koopa));
+        // animationGoomba.add(new AnimationGoomba(goomba));
+
+        for (Ennemi ennemi : listeEnnemis) {
+            ennemi.thread.start();
+        }
+        for (AnimationKoopa Koopa : animationKoopa) {
+            Koopa.start();
+        }
+//        for (AnimationGoomba Goomba : animationGoomba) {
+//            Goomba.start();
+//        }
     }
 
 
@@ -64,8 +89,11 @@ public class Affichage extends JPanel {
      * Getter de l'objet Ennemi.
      * @return l'ennemi du jeu.
      */
-    public Ennemi getEnnemi() {
-        return ennemi;
+//    public Ennemi getEnnemi() {
+//        return ennemi;
+//    }
+    public List<Ennemi> getEnnemis() {
+        return listeEnnemis;
     }
     
     
@@ -82,8 +110,24 @@ public class Affichage extends JPanel {
         // affichons la matrice du jeu : (le terrain)
         this.tm.draw(g2);
 
-        // le seul ennemi du jeu : (pour le moment)
-        g2.drawImage(this.animationKoopa.getCurrentToDraw(), ennemi.getPosition().x, ennemi.getPosition().y, null);
+        // Dessiner tous les ennemis avec leur animation respective
+        for (int i = 0; i < listeEnnemis.size(); i++) {
+            Ennemi ennemi = listeEnnemis.get(i);
+            BufferedImage imageEnnemi = null;
+
+            // Sélectionner l'animation correcte en fonction du type d'ennemi
+            if (ennemi.getType().equals("koopa") && i < animationKoopa.size()) {
+                imageEnnemi = animationKoopa.get(i).getCurrentToDraw();
+            }
+            // TODO: GOOMBA
+
+
+            // Dessiner l'ennemi
+            if (imageEnnemi != null) {
+                g2.drawImage(imageEnnemi, ennemi.getPosition().x, ennemi.getPosition().y, null);
+            }
+        }
+
 
         // affichons mario en dernier (pour qu'il soit au-dessus de tout) :
         g2.drawImage(this.animationJoueur.getCurrentToDraw(), JoueurPrincipal.getPositionX() ,JoueurPrincipal.getPositionY(), null);

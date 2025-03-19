@@ -29,8 +29,12 @@ public class Main {
         Affichage GamePanel = new Affichage();
         fenetre.add(GamePanel);
 
+        // on ajoute un thread pour la gravité
+        Descente des = new Descente(GamePanel, jumpin);
+        des.start();
+
         // on ajoute un thread pour la collision
-        Collision col = new Collision(GamePanel, jumpin);
+        Collision col = new Collision(GamePanel, jumpin, des);
         col.start();
         fenetre.addKeyListener(mv);
         fenetre.pack();
