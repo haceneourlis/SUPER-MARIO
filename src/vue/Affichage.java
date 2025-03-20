@@ -59,6 +59,8 @@ public class Affichage extends JPanel {
         // lnacer l'animation du koopa
         animationKoopa = new AnimationKoopa(ennemi);
         animationKoopa.start();
+
+        tm.start();
     }
     
     // getter de tileManager
@@ -72,6 +74,26 @@ public class Affichage extends JPanel {
      */
     public Ennemi getEnnemi() {
         return ennemi;
+    }
+
+    /**
+     * Méthode qui dessine la matrice du jeu en prenant compte le start et end
+     * de la matrice de jeu (c'est le before after de la matrice de jeu).
+     * @param g2
+     */
+
+    public void draw_tm(Graphics2D g2) {
+        int row = 0;
+        int col = this.tm.getStart();
+        while (row < CONSTANTS.maxRow_affichage_gameMatrix){
+            while (col < this.tm.getEnd()){
+                int TileType = this.tm.tilesMatrice[row][col];
+                g2.drawImage(this.tm.tiles[TileType].image, col * CONSTANTS.TAILLE_CELLULE, row * CONSTANTS.TAILLE_CELLULE, null);
+                col++;
+            }
+            col = this.tm.getStart();
+            row++;
+        }
     }
     
     
@@ -100,7 +122,7 @@ public class Affichage extends JPanel {
         g2.translate(-this.decalage, 0);
 
         // affichons la matrice du jeu : (le terrain)
-        this.tm.draw(g2);
+        this.draw_tm(g2);
 
         // le seul ennemi du jeu : (pour le moment)
         g2.drawImage(this.animationKoopa.getCurrentToDraw(), ennemi.getPosition().x, ennemi.getPosition().y, null);
