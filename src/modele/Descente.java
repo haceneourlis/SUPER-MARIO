@@ -47,7 +47,6 @@ public class Descente extends Thread {
                     }
                     if (mario.getPosition().y >= leSol) {
                         mario.position.y = leSol; // on remet le mario sur le sol
-
                     }
                 }
 
