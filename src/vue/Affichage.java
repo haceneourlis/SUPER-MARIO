@@ -95,9 +95,10 @@ public class Affichage extends JPanel {
     public List<Ennemi> getEnnemis() {
         return listeEnnemis;
     }
-    
-    
-    
+
+    public void removeEnnemi(Ennemi ennemi) {
+        this.listeEnnemis.remove(ennemi);
+    }
     /**
      * Méthode qui dessiner les différents éléments sur la fenetre.
      */

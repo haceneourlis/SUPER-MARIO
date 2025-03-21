@@ -10,6 +10,8 @@
 package modele;
 
 import vue.Affichage;
+
+import java.util.Iterator;
 import java.util.List;
 import java.awt.Rectangle;
 
@@ -135,9 +137,11 @@ public class Collision extends Thread {
 
                 mario.solidArea.x = CONSTANTS.slidAreaDefaultX;
                 mario.solidArea.y = CONSTANTS.slidAreaDefaultY;
-                // TODO : + collision avec les ennemeies ,
 
-                for (Ennemi ennemi : gp.getEnnemis()) {
+                Iterator<Ennemi> iterator = gp.getEnnemis().iterator();
+                while(iterator.hasNext()) {
+                    Ennemi ennemi = iterator.next();
+
                     // Mario's collision area
                     Rectangle marioHitbox = new Rectangle(
                             mario.getPosition().x + mario.getSolidArea().x,
@@ -154,14 +158,24 @@ public class Collision extends Thread {
                             ennemi.getSolidArea().height
                     );
 
-                    // collision avec les ennemeies
+                    // collision avec les ennemis
                     if(marioHitbox.intersects(ennemiHitbox)) {
-                        System.out.println("Mario est en collision avec un ennemi");
+                        // mario's feet position
+                        int marioFeetY = mario.getPosition().y + mario.getSolidArea().y + mario.getSolidArea().height;
+                        // ennemi's head position
+                        int ennemiHeadY = ennemi.getPosition().y + ennemi.getSolidArea().y;
+
+                        if(marioFeetY <= ennemiHeadY+5) { // add 5 as tolerance
+                            // mario jumps on the ennemi and kills it
+                            System.out.println("Mario kills the ennemi");
+                            iterator.remove();
+                            jumpingThread.force = jumpingThread.IMPULSION/2; // mario jumps higher
+                        } else {
+                            // TODO : mario dies
+                            System.out.println("Mario dies or loses a life");
+                        }
                     }
 
-
-                    Rectangle r1 = new Rectangle(58, 368, 32, 32);
-                    Rectangle r2 = new Rectangle(613, 368, 32, 48);
                 }
 
 
