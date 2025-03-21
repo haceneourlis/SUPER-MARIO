@@ -51,21 +51,21 @@ public class Collision extends Thread {
                 // on trouve les 4 points du rectangle qui vont check la collision
                 int posLeftenX = mario.getPosition().x + mario.getSolidArea().x;
                 int posRightenX = mario.getPosition().x + mario.getSolidArea().x + mario.getSolidArea().width;
-                int posTopenY = mario.getPosition().y + mario.getSolidArea().y;
+                int posTopenY = mario.getPosition().y - mario.getSolidArea().y * 2;
 
                 // Je modifie cette ligne : CAR effectivement y avait un probleme lors de
                 // l'atterissage de mario
                 // sur une brique , il se teleportait d'un niveau i à un niveau i + 1
                 // donc pour regler ça j'ai multiplié par 2 la hauteur de la solid area de mario
                 // pour que mario aie jusqu'au niveau i+1 ensuite s'arrette , je corige
-                // l'affichage en l'affichant au niveau i . GG à moi .
+                // l'affichage en l'affichant au niveau i . GG .
                 int posBottomenY = mario.getPosition().y + mario.getSolidArea().y + mario.getSolidArea().height * 2;
 
                 // // on trouve maintenant les lignes & colonnes ou se trouve les derniers
                 // coordonnées dans la MAtrice du jeu
                 // // car c'est avec ça qu'on saura que l'objet (arbre , terre , ... ) est
                 // solide ou pas
-                int ligneTopdanslaMatrice = posTopenY / CONSTANTS.TAILLE_CELLULE;
+                int ligneTopdanslaMatrice = (posTopenY) / CONSTANTS.TAILLE_CELLULE;
                 int ligneBottomdanslaMatrice = posBottomenY / CONSTANTS.TAILLE_CELLULE;
                 int colonneLeftdanslaMatrice = posLeftenX / CONSTANTS.TAILLE_CELLULE;
                 int colonneRightdanslaMatrice = posRightenX / CONSTANTS.TAILLE_CELLULE;
@@ -80,17 +80,18 @@ public class Collision extends Thread {
                 point2 = gp.tm.tilesMatrice[ligneBottomdanslaMatrice][colonneRightdanslaMatrice];
 
                 if (gp.tm.tiles[point1].collision || gp.tm.tiles[point2].collision) {
-                    System.out.println("point1 = " + point1 + " point2 = " + point2);
+                    // System.out.println("point1 = " + point1 + " point2 = " + point2);
                     // si c'est une brique de type 3 ( puit , riviere , ... ) alors mario meurt
-                    if (point1 == 3 || point2 == 3) {
-                        // TODO : mario meurt
-                        threadDescente.setSol(CONSTANTS.LE_SOL * 2);
-                        jumpingThread.notjumping();
-                        mario.noMoving();
+                    // if (point1 == 3 || point2 == 3) {
+                    // // TODO : mario meurt
+                    // threadDescente.setSol(CONSTANTS.LE_SOL * 2);
+                    // jumpingThread.notjumping();
+                    // mario.noMoving();
 
-                        System.out.println("waaaaaaaaaaaa333333");
+                    // System.out.println("waaaaaaaaaaaa333333");
 
-                    } else if (!sur_brick) {
+                    // } else
+                    if (!sur_brick) {
                         // TODO : mario dies , game stops if he falls down a hole or a river
 
                         // let's assume it is just a brick that is solid , so mario walks on it .
@@ -133,21 +134,21 @@ public class Collision extends Thread {
                     // ici le "up" c'est en vrai le saut de mario , donc on check si mario est
                     // rentrer en collision avec un objet en sautant
                     case "up":
+                        System.out.println("at least we are in this case <up>");
                         // on prédit ou sera notre mario aprés avoir bougé
-                        ligneTopdanslaMatrice = (posTopenY - jumpingThread.force) /
-                                CONSTANTS.TAILLE_CELLULE;
+                        ligneTopdanslaMatrice = (posTopenY - jumpingThread.force) / CONSTANTS.TAILLE_CELLULE;
                         point1 = gp.tm.tilesMatrice[ligneTopdanslaMatrice][colonneLeftdanslaMatrice];
                         point2 = gp.tm.tilesMatrice[ligneTopdanslaMatrice][colonneRightdanslaMatrice];
 
+                        System.out.println("point1 = " + point1 + " point2 = " + point2);
                         if (gp.tm.tiles[point1].collision == true
                                 || gp.tm.tiles[point2].collision == true) {
                             // TODO : si le mur donne des rcompenses , mario les récupérera , sinon il
                             // s'arrête et avec l'effet de grivité redescend !
-                            System.out.println(
-                                    "collision going up ---> because of tile of type = " + point1 +
-                                            " or maybe "
-                                            + point2);
-                            mario.position.y = (ligneTopdanslaMatrice) * CONSTANTS.TAILLE_CELLULE;
+                            System.out.println("collision up");
+                            mario.position.y = 10 * CONSTANTS.TAILLE_CELLULE;
+                            jumpingThread.notjumping();
+                            threadDescente.allowedToFallDown = true;
 
                         }
                         break;
@@ -164,11 +165,6 @@ public class Collision extends Thread {
 
                         if (gp.tm.tiles[point1].collision == true
                                 || gp.tm.tiles[point2].collision == true) {
-                            // TODO : mario stops moving
-                            System.out.println(
-                                    "collision going left <--- because of tile of type = " + point1 +
-                                            " or maybe "
-                                            + point2);
                             mario.noMoving();
                         } else {
                             mario.yesMoving();
@@ -182,7 +178,7 @@ public class Collision extends Thread {
                         point2 = gp.tm.tilesMatrice[ligneBottomdanslaMatrice][colonneRightdanslaMatrice];
 
                         if (gp.tm.tiles[point1].collision == true || gp.tm.tiles[point2].collision == true) {
-                            // TODO : mario stops moving
+
                             mario.noMoving();
                         } else {
                             mario.yesMoving();

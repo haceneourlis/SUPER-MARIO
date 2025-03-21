@@ -1,117 +1,114 @@
 package vue;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import modele.*;
 import modele.Tile.TileManager;
 
 
+
+/**
+ * Classe qui affiche le jeu
+ * Elle utilise la classe Redessine pour actualiser l'affichage
+ * Elle utilisera également divers classes d'animations.
+ */
+
 public class Affichage extends JPanel {
+
+    // Variables pour les instances de Mario et de l'ennemi
     private Mario JoueurPrincipal;
     private Ennemi ennemi;
-    private BufferedImage joueurImageIdl;
-    private BufferedImage[] walkSprites;
-    private BufferedImage current_to_draw;
-    private int walkIndex = 0;
 
+    // Variable pour l'animation du joueur (Mario)
+    private AnimationJoueur animationJoueur;
 
+    // Variable pour l'animation du (des) koopa 
+    private AnimationKoopa animationKoopa;
 
+    // Variable pour le gestionnaire de tuiles
     public TileManager tm;
 
+    private int decalage = 0;
+
+    /**
+     * Constructeur de la classe Affichage.
+     * On initialise la taille de la fenêtre et on crée les instances de Mario et de l'ennemi.
+     * On lance également les threads de l'ennemi, de l'animation du joueur et de l'actualisation de la fenetre (redessine).
+     */
     public Affichage() {
+        // Initialiser la fenêtre avec les dimensions prévues.
         setPreferredSize(new Dimension(CONSTANTS.LARGEUR_VUE, CONSTANTS.HAUTEUR_VUE)); // Set window size
 
+        // Initialiser le joueur (classe singleton)
         this.JoueurPrincipal = Mario.getInstance(); // Get the player instance : classe singleton .
-
-        try {
-            joueurImageIdl = ImageIO.read(new File("src/resources/mario_sprites/mario_idl.png"));
-            // faire un tableau pour les sprites de walk
-            current_to_draw = joueurImageIdl;
-            walkSprites = new BufferedImage[3]; // Exemple : 3 images d’animations
-            walkSprites[0] = ImageIO.read(new File("src/resources/mario_sprites/mario_walk1.png"));
-            walkSprites[1] = ImageIO.read(new File("src/resources/mario_sprites/mario_walk2.png"));
-            walkSprites[2] = ImageIO.read(new File("src/resources/mario_sprites/mario_walk3.png"));
-
-        } catch (IOException e) {
-            System.out.println("Erreur : Impossible de charger l'image du joueur.");
-            e.printStackTrace();
-        }
-
-        tm = new TileManager(this);
+        
+        // Initialiser le gestionnaire de tuiles
+        tm = new TileManager();
 
         // Initialiser l'ennemi (au-dessus du sol)
-        ennemi = new Ennemi(0, 20, 30, 5, 0, 500, true);
+        ennemi = new Ennemi(300, 20, 20, 5, true, tm);
         ennemi.thread.start(); // Lancer le thread de l'ennemi
 
         // Mettre à jour l'affichage toutes les 50ms
         (new Redessine(this)).start();
-        (new AnimationJoueur(this)).start();
+
+        // Lancer l'animation du joueur (Mario).
+        animationJoueur = new AnimationJoueur(JoueurPrincipal);
+        animationJoueur.start();
+
+        // lnacer l'animation du koopa
+        animationKoopa = new AnimationKoopa(ennemi);
+        animationKoopa.start();
+    }
+    
+    // getter de tileManager
+    public TileManager getTileManager() {
+        return this.tm;
     }
 
-    // modification : j'ai supprimé la transformation , càd : point dans vue = point
-    // dans modele ou presque
-    public Point transformFromModelToView(Point point_dans_modele) {
-
-        return point_dans_modele;
-    }
-
+    /**
+     * Getter de l'objet Ennemi.
+     * @return l'ennemi du jeu.
+     */
     public Ennemi getEnnemi() {
         return ennemi;
     }
-
-    public int get_x_joueur() {
-        return JoueurPrincipal.getPosition().x;
-    }
-
-    public void incrementWalkIndex(boolean right) {
-        this.walkIndex = (walkIndex + 1) % 3;
-        if (!right) {
-            setCurrentToDraw(flipImage(walkSprites[walkIndex]));
-        } else {
-            setCurrentToDraw(walkSprites[walkIndex]);
-        }
-    }
-
-    // setter current to draw
-    public void setCurrentToDraw(BufferedImage current_to_draw) {
-        this.current_to_draw = current_to_draw;
-    }
-
-    // getter de image idl
-    public void reset_to_idl() {
-        setCurrentToDraw(joueurImageIdl);
-        this.walkIndex = 0;
-    }
-
-    public static BufferedImage flipImage(BufferedImage image) {
-        AffineTransform tx = AffineTransform.getScaleInstance(-1, 1); // Miroir horizontal
-        tx.translate(-image.getWidth(), 0); // Déplacer l'image pour qu'elle reste visible
-
-        AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-        return op.filter(image, null);
-    }
-
-
+    
+    
+    
+    /**
+     * Méthode qui dessiner les différents éléments sur la fenetre.
+     */
     @Override
     protected void paintComponent(Graphics g) {
+        // On crée un objet Graphics2D pour dessiner les éléments
         Graphics2D g2 = (Graphics2D) g;
         super.paintComponent(g2);
-
-        // affichons la matrice du jeu :
-        this.tm.draw(g2);
-        // le seul ennemi du jeu :
-        this.ennemi.draw(g2, transformFromModelToView(ennemi.getPosition()));
-        // affichons mario en dernier ( pour qu'il soit au-dessus de touttt ) :
-        g.drawImage(current_to_draw, transformFromModelToView(JoueurPrincipal.getPosition()).x,transformFromModelToView(JoueurPrincipal.getPosition()).y, null);
-
-        // Dessiner un rectangle pour tester :
      
+
+        // je récupère la case de mario actuelle, relative au décalage
+        int case_actuelle = ((this.JoueurPrincipal.getPositionX() - decalage)/ CONSTANTS.TAILLE_CELLULE);
+        
+        // Si la case de mario dépasse la case de scrolling, on décale la fenêtre
+        if (case_actuelle >= CONSTANTS.CELLULE_SCROLLING){
+            // Le décalage correspond à la distance entre mario et la case de scrolling
+            this.decalage = JoueurPrincipal.getPositionX() - CONSTANTS.CELLULE_SCROLLING*CONSTANTS.TAILLE_CELLULE;
+        }
+        
+        // On applique le décalage du plan de jeu 
+        // (note que comme l'objet Graphics2D est rechargé à chaque appel, les transformations ne s'aditionnent pas)
+        g2.translate(-this.decalage, 0);
+
+        // affichons la matrice du jeu : (le terrain)
+        this.tm.draw(g2);
+
+        // le seul ennemi du jeu : (pour le moment)
+        g2.drawImage(this.animationKoopa.getCurrentToDraw(), ennemi.getPosition().x, ennemi.getPosition().y, null);
+
+        // affichons mario en dernier (pour qu'il soit au-dessus de tout) :
+        g2.drawImage(this.animationJoueur.getCurrentToDraw(), JoueurPrincipal.getPositionX() ,JoueurPrincipal.getPositionY(), null);
+        
+        
         g2.dispose();
     }
 

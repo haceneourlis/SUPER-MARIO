@@ -1,6 +1,7 @@
 package modele;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -11,12 +12,18 @@ public class Mario extends GameCharacter {
     // instance unique de la classe Mario
     private static Mario instance = null;
 
-    // constante de coordonnées d'origine du joueur
+    // constante de coordonnées d'origine du joueur.
     public final int X_ORIGINE = 50;
+
+    // constante du facteur de décélération.
+    public static final int DECELERATION = 1;
 
     public int vitesse = 1;
     // vitesse max constante
     public final int VITESSE_MAX = 6;
+
+    // Images de Mario (avec animation de walk)
+    private BufferedImage[] image = new BufferedImage[4];
 
     // bouger ou pas
     private boolean canMove = true;
@@ -25,17 +32,21 @@ public class Mario extends GameCharacter {
     private Mario() {
         super();
         this.position = new Point(X_ORIGINE, CONSTANTS.LE_SOL);
+        try {
+            this.image[0] = ImageIO.read(new File("src/resources/mario_sprites/mario_idl.png"));
+            this.image[1] = ImageIO.read(new File("src/resources/mario_sprites/mario_walk1.png"));
+            this.image[2] = ImageIO.read(new File("src/resources/mario_sprites/mario_walk2.png"));
+            this.image[3] = ImageIO.read(new File("src/resources/mario_sprites/mario_walk3.png"));
+        } catch (IOException e) {
+            System.out.println("Erreur : Impossible de charger l'image du joueur.");
+            e.printStackTrace();
+        }
     }
 
+    // permet de créer une instance unique de la classe Mario (classe singleton)
     public static Mario getInstance() {
         if (instance == null) {
             instance = new Mario();
-            try {
-                instance.image = ImageIO
-                        .read(new File("src/resources/mario_sprites/mario_idl.png"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
         return instance;
     }
@@ -67,7 +78,6 @@ public class Mario extends GameCharacter {
 
     /**
      * Méthode pour déplacer le joueur à droite.
-     * Si la vitesse est inférieure à la vitesse maximale, on l'incrémente de 1.
      * On incrémente la position en x de la vitesse.
      */
     public void deplacer_droite() {
@@ -78,11 +88,10 @@ public class Mario extends GameCharacter {
 
     /**
      * Méthode pour déplacer le joueur à gauche.
-     * Si la vitesse est inférieure à la vitesse maximale, on l'incrémente de 1.
      * On décrémente la position en x de la vitesse.
      */
     public void deplacer_gauche() {
-        this.setDirection("left");
+        setDirection("left");
         if (canMove)
             this.position.x -= this.vitesse;
     }
@@ -93,11 +102,20 @@ public class Mario extends GameCharacter {
      * décélaration.
      */
     public void decelerer() {
-        if (this.vitesse - CONSTANTS.DECELERATION > 0) {
-            this.vitesse -= CONSTANTS.DECELERATION;
+        if (this.vitesse - DECELERATION > 0) {
+            this.vitesse -= DECELERATION;
         } else {
             this.vitesse = 0;
         }
+    }
+
+    /**
+     * Methode pour obtenir l'image du joueur
+     * 
+     * @return l'image du joueur
+     */
+    public BufferedImage getImage(int index) {
+        return this.image[index];
     }
 
     public void noMoving() {
