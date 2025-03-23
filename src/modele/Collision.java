@@ -191,52 +191,33 @@ public class Collision extends Thread {
 
                 }
 
+                // TODO : + collision avec les ennemeies ,
+
+                // prendre le solid area de cet ennemi
+                ennemi.solidArea.x = ennemi.getPosition().x + ennemi.solidArea.x;
+                ennemi.solidArea.y = ennemi.getPosition().y + ennemi.solidArea.y;
+
+                // prendre le solid area de mario
+                mario.solidArea.x = mario.getPosition().x + mario.solidArea.x;
+                mario.solidArea.y = mario.getPosition().y + mario.solidArea.y;
+
+                if (mario.solidArea.intersects(ennemi.solidArea)) {
+                    // mario meurt :
+
+                    // show a message in the screen that mario died
+                    // and stop the game
+
+                    System.out.println("mario died");
+                    threadDescente.setSol(CONSTANTS.LE_SOL * 2);
+                }
+                // reset the solid area of mario to its original value and the solid area of
+                // ennemi to its original value
+
+                ennemi.solidArea.x = CONSTANTS.slidAreaDefaultX;
+                ennemi.solidArea.y = CONSTANTS.slidAreaDefaultY;
                 mario.solidArea.x = CONSTANTS.slidAreaDefaultX;
                 mario.solidArea.y = CONSTANTS.slidAreaDefaultY;
 
-                // TODO : + collision avec les ennemeies ,
-                // for (int i = 0; i < GamePanel.monsters.length; i++) {
-                // if (GamePanel.monsters[i] != null) {
-                // // prendre le solid area de cet ennemi
-                // GamePanel.monsters[i].solidArea.x = GamePanel.monsters[i].getPosition().x
-                // + GamePanel.monsters[i].solidArea.x;
-                // GamePanel.monsters[i].solidArea.y = GamePanel.monsters[i].getPosition().y
-                // + GamePanel.monsters[i].solidArea.y;
-
-                // // prendre le solid area de mario
-                // mario.solidArea.x = mario.getPosition().x + mario.solidArea.x;
-                // mario.solidArea.y = mario.getPosition().y + mario.solidArea.y;
-
-                // // check si les 2 solid areas se touchent
-                // switch (mario.getDirection()) {
-                // // il ne peut rentre en collison que en : down , left et right
-
-                // case "down":
-                // mario.solidArea.y += CONSTANTS.GRAVITEEE;
-                // if (mario.solidArea.intersects(GamePanel.monsters[i].solidArea)) {
-                // // TODO : l'ennemi meurt : creer une methode qui tue l'ennemi
-                // }
-                // break;
-                // case "left":
-                // mario.solidArea.x -= mario.getSpeed();
-                // if (mario.solidArea.intersects(GamePanel.monsters[i].solidArea)) {
-                // // TODO : mario meurt : creer une méthode qui tue mario et arrete le jeu
-                // }
-                // break;
-                // case "right":
-                // mario.solidArea.x += mario.getSpeed();
-                // if (mario.solidArea.intersects(GamePanel.monsters[i].solidArea)) {
-                // // TODO : mario meurt
-                // }
-                // break;
-                // }
-                // // reset the solid area of mario to its original value and the solid area of
-                // // ennemi to its original value
-
-                // // GamePanel.monsters[i].solidArea.x = CONSTANTS.slidAreaDefaultX;
-                // // GamePanel.monsters[i].solidArea.y = CONSTANTS.slidAreaDefaultY;
-
-                // // }
             } catch (Exception e) {
                 e.printStackTrace();
             }
