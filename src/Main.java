@@ -1,8 +1,7 @@
 
 // classe qui va juste lancer la fenetre de jeu depuis l'affichage
-import javax.swing.JFrame;
-// import Affichage
 import controleur.*;
+import javax.swing.JFrame;
 import modele.*;
 import vue.*;
 
@@ -25,16 +24,19 @@ public class Main {
         DeplacementListener dl = new DeplacementListener(mv, j, jumpin);
         dl.start();
 
+        Score score = new Score();
+        Coin coin = new Coin(score);
         // on ajoute un panel à la fenetre
-        Affichage GamePanel = new Affichage();
+        Affichage GamePanel = new Affichage(score, coin);
         fenetre.add(GamePanel);
 
         // on ajoute un thread pour la gravité
         Descente des = new Descente(GamePanel, jumpin);
         des.start();
+        
 
         // on ajoute un thread pour la collision
-        Collision col = new Collision(GamePanel, jumpin, des);
+        Collision col = new Collision(GamePanel, jumpin, des, coin);
         col.start();
         fenetre.addKeyListener(mv);
         fenetre.pack();

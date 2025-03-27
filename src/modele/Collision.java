@@ -20,14 +20,17 @@ public class Collision extends Thread {
     private Jumping jumpingThread;
     private Descente threadDescente;
 
+    private Coin coin;
+
     protected boolean sur_brick = false;
 
-    public Collision(Affichage affichage, Jumping jumpingThread, Descente threadDescente) {
+    public Collision(Affichage affichage, Jumping jumpingThread, Descente threadDescente, Coin coin) {
         gp = affichage;
         this.mario = Mario.getInstance();
         this.ennemi = gp.getEnnemi();
         this.jumpingThread = jumpingThread;
         this.threadDescente = threadDescente;
+        this.coin = coin;
     }
 
     @Override
@@ -89,7 +92,7 @@ public class Collision extends Thread {
                     // mario.noMoving();
 
                     // System.out.println("waaaaaaaaaaaa333333");
-
+                    
                     // } else
                     if (!sur_brick) {
                         // TODO : mario dies , game stops if he falls down a hole or a river
@@ -134,11 +137,24 @@ public class Collision extends Thread {
                     // ici le "up" c'est en vrai le saut de mario , donc on check si mario est
                     // rentrer en collision avec un objet en sautant
                     case "up":
+
+
                         System.out.println("at least we are in this case <up>");
                         // on prédit ou sera notre mario aprés avoir bougé
                         ligneTopdanslaMatrice = (posTopenY - jumpingThread.force) / CONSTANTS.TAILLE_CELLULE;
                         point1 = gp.tm.tilesMatrice[ligneTopdanslaMatrice][colonneLeftdanslaMatrice];
                         point2 = gp.tm.tilesMatrice[ligneTopdanslaMatrice][colonneRightdanslaMatrice];
+                        
+                        // verification si point1 ou point2 est une pièce
+                        if ((point1 == 30)){
+                            System.out.println("Coin collected !");
+                            this.coin.IncrementNombreDePieces();
+                            gp.tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 0);
+                        } else if (point2 == 30){
+                            System.out.println("Coin collected !");
+                            this.coin.IncrementNombreDePieces();
+                            gp.tm.modifyMatrice(ligneTopdanslaMatrice, colonneRightdanslaMatrice, 0);
+                        }
 
                         System.out.println("point1 = " + point1 + " point2 = " + point2);
                         if (gp.tm.tiles[point1].collision == true
@@ -162,6 +178,17 @@ public class Collision extends Thread {
                                 CONSTANTS.TAILLE_CELLULE;
                         point1 = gp.tm.tilesMatrice[ligneTopdanslaMatrice][colonneLeftdanslaMatrice];
                         point2 = gp.tm.tilesMatrice[ligneBottomdanslaMatrice][colonneLeftdanslaMatrice];
+                        
+                        // verification si point1 ou point2 est une pièce
+                        if ((point1 == 30)){
+                            System.out.println("Coin collected !");
+                            this.coin.IncrementNombreDePieces();
+                            gp.tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 0);
+                        } else if (point2 == 30){
+                            System.out.println("Coin collected !");
+                            this.coin.IncrementNombreDePieces();
+                            gp.tm.modifyMatrice(ligneBottomdanslaMatrice, colonneLeftdanslaMatrice, 0);
+                        }
 
                         if (gp.tm.tiles[point1].collision == true
                                 || gp.tm.tiles[point2].collision == true) {
@@ -176,6 +203,17 @@ public class Collision extends Thread {
                                 CONSTANTS.TAILLE_CELLULE;
                         point1 = gp.tm.tilesMatrice[ligneTopdanslaMatrice][colonneRightdanslaMatrice];
                         point2 = gp.tm.tilesMatrice[ligneBottomdanslaMatrice][colonneRightdanslaMatrice];
+
+                        // verification si point1 ou point2 est une pièce
+                        if ((point1 == 30)){
+                            System.out.println("Coin collected !");
+                            this.coin.IncrementNombreDePieces();
+                            gp.tm.modifyMatrice(ligneTopdanslaMatrice, colonneRightdanslaMatrice, 0);
+                        } else if (point2 == 30){
+                            System.out.println("Coin collected !");
+                            this.coin.IncrementNombreDePieces();
+                            gp.tm.modifyMatrice(ligneBottomdanslaMatrice, colonneRightdanslaMatrice, 0);
+                        }
 
                         if (gp.tm.tiles[point1].collision == true || gp.tm.tiles[point2].collision == true) {
 
