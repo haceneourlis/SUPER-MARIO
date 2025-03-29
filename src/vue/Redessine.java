@@ -2,7 +2,7 @@ package vue;
 
 public class Redessine extends Thread {
 
-    public static final int DELAY = 10;
+    public static final int DELAY = 1;
     private boolean ok = true;
     private Affichage monAffichage;
 

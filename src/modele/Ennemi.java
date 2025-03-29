@@ -1,9 +1,8 @@
 package modele;
 
-import modele.Tile.TileManager;
-
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+import modele.Tile.TileManager;
 
 // package caractere;
 

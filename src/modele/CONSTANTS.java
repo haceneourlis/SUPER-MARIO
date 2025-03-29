@@ -22,7 +22,15 @@ public class CONSTANTS {
 
     // pour la taille de la fenetre & matrice de jeu :
     public static final int maxScreenRow = 16;
-    public static final int maxScreenCol = 32;
+    public static final int maxScreenCol = 25;
+
+    // pour la taille de la matrice de jeu :
+    public static final int maxRow_gameMatrix = 16;
+    public static final int maxCol_gameMatrix = 32;
+
+     // Pour gérer le scrolling de la caméra:
+    // ça represente la cellule à partir de laquelle on commence à scroller
+    public static final int CELLULE_SCROLLING = 10;
 
     // pour l'affichage de la fenetre :
     public static int LARGEUR_MODELE = maxScreenCol * TAILLE_CELLULE;

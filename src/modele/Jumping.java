@@ -8,7 +8,7 @@ package modele;
  */
 public class Jumping extends Thread {
     // Instance de Joueur pour pouvoir le déplacer en Y.
-    private Mario j;
+    private Mario mario;
 
     // Booléen qui indique si le joueur est en train de sauter.
     private boolean is_jumping;
@@ -26,7 +26,7 @@ public class Jumping extends Thread {
     // Constructeur qui initialise l'instance de Joueur, la force et le booléen de
     // saut.
     public Jumping(Mario j) {
-        this.j = j;
+        this.mario = j;
         this.force = 0;
         this.is_jumping = false;
     }
@@ -41,6 +41,7 @@ public class Jumping extends Thread {
         if (!this.is_jumping) {
             this.is_jumping = true;
             this.force = IMPULSION;
+            mario.setDirection("up");
         }
     }
 
@@ -56,29 +57,30 @@ public class Jumping extends Thread {
             // Si le joueur est en train de sauter
             if (this.is_jumping) {
                 /*
-                 * On ne s'autorise pas à aller dans des valeurs négatives en Y, je considère
-                 * que le Y = 0 est le sol.
-                 * Je vérifie donc que le fait d'ajouter la force ne fasse pas sortir le joueur
+
+                 * On ne s'autorise pas à aller dans des valeurs au dela du sol.
+                 * Je vérifie donc que le fait de retirer de la force ne fasse pas sortir le
+                 * joueur
                  * de la fenêtre.
                  * Si c'est le cas, on arrête le saut, on remet la force à 0 et on remet le
                  * joueur au sol.
                  * (Cette force peut être négative si le joueur est en train de tomber).
                  */
-                if (this.j.getPosition().y - this.force >= CONSTANTS.LE_SOL) {
+                if (this.mario.getPosition().y - this.force >= CONSTANTS.LE_SOL) {
                     this.is_jumping = false;
                     // System.out.println("are we alive here ( jumoing ?)");
                     this.force = 0;
-                    this.j.setPositionY(CONSTANTS.LE_SOL);
+                    this.mario.setPositionY(CONSTANTS.LE_SOL);
                 }
                 // Sinon, on ajoute la force à la position en Y du joueur et on décrémente la
                 // force de la gravité.
                 else {
-                    this.j.setPositionY(this.j.getPosition().y - this.force);
+                    this.mario.setPositionY(this.mario.getPosition().y - this.force);
                     this.force -= CONSTANTS.GRAVITY;
                     // System.out.println("yes we are alive");
                     // si force < 0 alors descente
                     if (this.force < 0) {
-                        j.setDirection("down");
+                        mario.setDirection("down");
                     }
 
                 }

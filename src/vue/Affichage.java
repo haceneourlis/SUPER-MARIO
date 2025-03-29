@@ -32,6 +32,8 @@ public class Affichage extends JPanel {
     // Variable pour le gestionnaire de tuiles
     public TileManager tm;
 
+    private int decalage = 0;
+
     /**
      * Constructeur de la classe Affichage.
      * On initialise la taille de la fenêtre et on crée les instances de Mario et de l'ennemi.
@@ -45,7 +47,7 @@ public class Affichage extends JPanel {
         this.JoueurPrincipal = Mario.getInstance(); // Get the player instance : classe singleton .
         
         // Initialiser le gestionnaire de tuiles
-        tm = new TileManager(this);
+        tm = new TileManager();
 
         // Initialiser l'ennemi (au-dessus du sol)
 //        ennemi = new Ennemi(630, 20, 20, 5, true, tm);
@@ -83,7 +85,11 @@ public class Affichage extends JPanel {
 //            Goomba.start();
 //        }
     }
-
+    
+    // getter de tileManager
+    public TileManager getTileManager() {
+        return this.tm;
+    }
 
     /**
      * Getter de l'objet Ennemi.
@@ -107,6 +113,20 @@ public class Affichage extends JPanel {
         // On crée un objet Graphics2D pour dessiner les éléments
         Graphics2D g2 = (Graphics2D) g;
         super.paintComponent(g2);
+     
+
+        // je récupère la case de mario actuelle, relative au décalage
+        int case_actuelle = ((this.JoueurPrincipal.getPositionX() - decalage)/ CONSTANTS.TAILLE_CELLULE);
+        
+        // Si la case de mario dépasse la case de scrolling, on décale la fenêtre
+        if (case_actuelle >= CONSTANTS.CELLULE_SCROLLING){
+            // Le décalage correspond à la distance entre mario et la case de scrolling
+            this.decalage = JoueurPrincipal.getPositionX() - CONSTANTS.CELLULE_SCROLLING*CONSTANTS.TAILLE_CELLULE;
+        }
+        
+        // On applique le décalage du plan de jeu 
+        // (note que comme l'objet Graphics2D est rechargé à chaque appel, les transformations ne s'aditionnent pas)
+        g2.translate(-this.decalage, 0);
 
         // affichons la matrice du jeu : (le terrain)
         this.tm.draw(g2);
@@ -136,7 +156,7 @@ public class Affichage extends JPanel {
 
         // affichons mario en dernier (pour qu'il soit au-dessus de tout) :
         g2.drawImage(this.animationJoueur.getCurrentToDraw(), JoueurPrincipal.getPositionX() ,JoueurPrincipal.getPositionY(), null);
-
+        
         
         g2.dispose();
     }
