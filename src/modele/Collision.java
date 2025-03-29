@@ -255,8 +255,8 @@ public class Collision extends Thread {
                         } else {
                             // 如果不是从上方撞击，只有当Mario不是无敌状态时，才会扣血
                             if(!mario.isInvincible()){
-                                mario.loseLife();
-                                if(mario.getLives() == 0) {
+                                mario.perdreVie();
+                                if(mario.getVies() == 0) {
                                     // TODO : restart the game or show game over screen
                                     System.out.println("Game over");
                                 }

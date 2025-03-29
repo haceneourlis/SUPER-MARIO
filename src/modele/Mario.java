@@ -26,7 +26,7 @@ public class Mario extends GameCharacter {
     private boolean canMove = true;
 
     // Mario's remaining number of lives
-    private int lives = 3; //  Début avec 3 vies
+    private int vies = 3; //  Début avec 3 vies
     // Mario's invincibility
     private boolean invincible = false;
     private long invincibleStartTime = 0; //
@@ -143,16 +143,31 @@ public class Mario extends GameCharacter {
         }
     }
 
-    // getter de la vie
-    public int getLives() {return lives;}
+    // Obtenir le nombre de vies restantes
+    public int getVies() {return this.vies;}
 
-    // lose a life
-    public void loseLife() {
+    // Perdre une vie, et gérer le reset ou Game Over
+    public void perdreVie() {
         if (!invincible) {
-            lives--;
+            vies--;
             invincible = true;
             invincibleStartTime = System.currentTimeMillis();
-            System.out.println("Mario loses a life. Remaining lives: " + lives);
+            System.out.println("Mario a perdu une vie ! Vies restantes : " + this.vies);
+            if (this.vies <= 0) {
+                // Game Over
+                System.out.println("GAME OVER !");
+                // Tu peux ajouter ici une logique pour arrêter le jeu ou relancer tout
+                // Exemple : System.exit(0);
+            } else {
+                resetPosition();
+            }
         }
+    }
+
+    // Remettre Mario à sa position de départ
+    public void resetPosition() {
+        this.position = new Point(X_ORIGINE, CONSTANTS.LE_SOL);
+        this.vitesse = 1; // Reset de la vitesse si tu veux
+        System.out.println("Mario revient au début !");
     }
 }
