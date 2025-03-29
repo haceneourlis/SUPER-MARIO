@@ -129,6 +129,10 @@ public class Affichage extends JPanel {
             }
         }
 
+        // Si Mario est invincible, il clignote à l'écran : on saute une frame sur deux
+        if (JoueurPrincipal.isInvincible()) {
+            if ((System.currentTimeMillis() / 100) % 2 == 0) return; // skip draw every other frame
+        }
 
         // affichons mario en dernier (pour qu'il soit au-dessus de tout) :
         g2.drawImage(this.animationJoueur.getCurrentToDraw(), JoueurPrincipal.getPositionX() ,JoueurPrincipal.getPositionY(), null);

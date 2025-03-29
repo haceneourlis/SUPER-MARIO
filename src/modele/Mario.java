@@ -21,6 +21,13 @@ public class Mario extends GameCharacter {
     // bouger ou pas
     private boolean canMove = true;
 
+    // Mario's remaining number of lives
+    private int lives = 3; //  Début avec 3 vies
+    // Mario's invincibility
+    private boolean invincible = false;
+    private long invincibleStartTime = 0; //
+    private int invincibleDuration = 2000; // 2 secondes
+
     // constructeur privé
     private Mario() {
         super();
@@ -106,6 +113,30 @@ public class Mario extends GameCharacter {
 
     public void yesMoving() {
         this.canMove = true;
+    }
+
+    public boolean isInvincible() {
+        return invincible;
+    }
+
+    public void updateInvincibility() {
+        if (invincible && (System.currentTimeMillis() - invincibleStartTime > invincibleDuration)) {
+            invincible = false;
+            System.out.println("Mario is no longer invincible.");
+        }
+    }
+
+    // getter de la vie
+    public int getLives() {return lives;}
+
+    // lose a life
+    public void loseLife() {
+        if (!invincible) {
+            lives--;
+            invincible = true;
+            invincibleStartTime = System.currentTimeMillis();
+            System.out.println("Mario loses a life. Remaining lives: " + lives);
+        }
     }
 
 }

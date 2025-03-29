@@ -50,6 +50,8 @@ public class Collision extends Thread {
             try {
                 Thread.sleep(16);
 
+                mario.updateInvincibility();
+
                 // collision avec la map ou matrice de jeu
 
                 // on trouve les 4 points du rectangle qui vont check la collision
@@ -113,9 +115,9 @@ public class Collision extends Thread {
                         if (gp.tm.tiles[point1].collision == true
                                 || gp.tm.tiles[point2].collision == true) {
                             // TODO : mario stops moving
-                            System.out.println(
-                                    "collision going left <-  because of tile of type = " + point1 + " or maybe "
-                                            + point2);
+//                            System.out.println(
+//                                    "collision going left <-  because of tile of type = " + point1 + " or maybe "
+//                                            + point2);
 
                         }
                         break;
@@ -127,9 +129,9 @@ public class Collision extends Thread {
 
                         if (gp.tm.tiles[point1].collision == true || gp.tm.tiles[point2].collision == true) {
                             // TODO : mario stops moving
-                            System.out.println(
-                                    "collision going right -> because of tile of type = " + point1 + " or maybe "
-                                            + point2);
+//                            System.out.println(
+//                                    "collision going right -> because of tile of type = " + point1 + " or maybe "
+//                                            + point2);
 
                         }
                         break;
@@ -171,8 +173,16 @@ public class Collision extends Thread {
                             iterator.remove();
                             jumpingThread.force = jumpingThread.IMPULSION/2; // mario jumps higher
                         } else {
-                            // TODO : mario dies
-                            System.out.println("Mario dies or loses a life");
+                            if(!mario.isInvincible()) {
+                                mario.loseLife();
+
+                                if(mario.getLives() == 0) {
+                                    // TODO : restart the game
+                                    System.out.println("Game over");
+                                }
+                            } else {
+                                System.out.println("Mario loses a life, invincible time");
+                            }
                         }
                     }
 

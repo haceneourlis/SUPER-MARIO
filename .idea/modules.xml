@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/SUPER-MARIO.iml" filepath="$PROJECT_DIR$/SUPER-MARIO.iml" />
-=======
-      <module fileurl="file://$PROJECT_DIR$/super_mario_PCII.iml" filepath="$PROJECT_DIR$/super_mario_PCII.iml" />
->>>>>>> hacene_branch
     </modules>
   </component>
 </project>

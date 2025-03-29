@@ -36,7 +36,7 @@ public class TileManager {
             tiles[1] = new Tile();
             tiles[1].image = ImageIO.read(getClass()
                     .getResourceAsStream("/resources/brick.png"));
-            // tiles[1].collision = true;
+             tiles[1].collision = true;
 
             tiles[2] = new Tile();
             tiles[2].image = ImageIO.read(getClass()
