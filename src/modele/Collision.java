@@ -199,31 +199,6 @@ public class Collision extends Thread {
 
                 // TODO : + collision avec les ennemeies ,
 
-                // prendre le solid area de cet ennemi
-                ennemi.solidArea.x = ennemi.getPosition().x + ennemi.solidArea.x;
-                ennemi.solidArea.y = ennemi.getPosition().y + ennemi.solidArea.y;
-
-                // prendre le solid area de mario
-                mario.solidArea.x = mario.getPosition().x + mario.solidArea.x;
-                mario.solidArea.y = mario.getPosition().y + mario.solidArea.y;
-
-                if (mario.solidArea.intersects(ennemi.solidArea)) {
-                    // mario meurt :
-
-                    // show a message in the screen that mario died
-                    // and stop the game
-
-                    System.out.println("mario died");
-                    threadDescente.setSol(CONSTANTS.LE_SOL * 2);
-                }
-                // reset the solid area of mario to its original value and the solid area of
-                // ennemi to its original value
-
-                ennemi.solidArea.x = CONSTANTS.slidAreaDefaultX;
-                ennemi.solidArea.y = CONSTANTS.slidAreaDefaultY;
-                mario.solidArea.x = CONSTANTS.slidAreaDefaultX;
-                mario.solidArea.y = CONSTANTS.slidAreaDefaultY;
-
                 Iterator<Ennemi> iterator = gp.getEnnemis().iterator();
                 while(iterator.hasNext()) {
                     Ennemi ennemi = iterator.next();
@@ -251,20 +226,42 @@ public class Collision extends Thread {
                         // ennemi's head position
                         int ennemiHeadY = ennemi.getPosition().y + ennemi.getSolidArea().y;
 
-                        if(marioFeetY <= ennemiHeadY+5) { // add 5 as tolerance
-                            // mario jumps on the ennemi and kills it
-                            System.out.println("Mario kills the ennemi");
-                            iterator.remove();
-                            jumpingThread.force = jumpingThread.IMPULSION/2; // mario jumps higher
-                        } else {
-                            if(!mario.isInvincible()) {
-                                mario.loseLife();
+                        // check if mario jumps exactement on the ennemi
+                        boolean fromAbove = marioFeetY <= ennemiHeadY + 10 && marioFeetY >= ennemiHeadY;
+                        boolean isFalling = jumpingThread.force < 0;
 
+//                        if(fromAbove && isFalling) { // add 5 as tolerance
+//                            // mario jumps on the ennemi and kills it
+//                            System.out.println("Mario kills enemy");
+//                            iterator.remove();
+//                            jumpingThread.force = jumpingThread.IMPULSION/2; // mario jumps higher
+//                        } else {
+//                            if(!mario.isInvincible()) {
+//                                mario.loseLife();
+//
+//                                if(mario.getLives() == 0) {
+//                                    // TODO : restart the game
+//                                    System.out.println("Game over");
+//                                }
+//                            } else {
+//                                System.out.println("Mario loses a life, invincible time");
+//                            }
+//                        }
+                        // 无论是否无敌，都要求从上方并且Mario的方向为"down"才能消灭敌人
+                        if(fromAbove && mario.getDirection().equals("down")) {
+                            System.out.println("Mario kills enemy");
+                            iterator.remove();
+                            jumpingThread.force = jumpingThread.IMPULSION / 2;
+                        } else {
+                            // 如果不是从上方撞击，只有当Mario不是无敌状态时，才会扣血
+                            if(!mario.isInvincible()){
+                                mario.loseLife();
                                 if(mario.getLives() == 0) {
-                                    // TODO : restart the game
+                                    // TODO : restart the game or show game over screen
                                     System.out.println("Game over");
                                 }
                             } else {
+                                // 无敌状态下，如果不是从上方，则不做任何处理
                                 System.out.println("Mario loses a life, invincible time");
                             }
                         }

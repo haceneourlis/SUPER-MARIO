@@ -19,6 +19,9 @@ public class Mario extends GameCharacter {
     // vitesse max constante
     public final int VITESSE_MAX = 6;
 
+    // Images de Mario (avec animation de walk)
+    private BufferedImage[] image = new BufferedImage[4];
+
     // bouger ou pas
     private boolean canMove = true;
 
@@ -48,12 +51,6 @@ public class Mario extends GameCharacter {
     public static Mario getInstance() {
         if (instance == null) {
             instance = new Mario();
-            try {
-                instance.image = ImageIO
-                        .read(new File("src/resources/mario_sprites/mario_idl.png"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
         return instance;
     }
@@ -118,6 +115,15 @@ public class Mario extends GameCharacter {
         }
     }
 
+    /**
+     * Methode pour obtenir l'image du joueur
+     *
+     * @return l'image du joueur
+     */
+    public BufferedImage getImage(int index) {
+        return this.image[index];
+    }
+
     public void noMoving() {
         this.canMove = false;
     }
@@ -148,12 +154,5 @@ public class Mario extends GameCharacter {
             invincibleStartTime = System.currentTimeMillis();
             System.out.println("Mario loses a life. Remaining lives: " + lives);
         }
-    /**
-     * Methode pour obtenir l'image du joueur
-     * 
-     * @return l'image du joueur
-     */
-    public BufferedImage getImage(int index) {
-        return this.image[index];
     }
 }
