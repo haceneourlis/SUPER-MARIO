@@ -281,9 +281,9 @@ public class Collision extends Thread {
                         // check if mario is falling
                         boolean falling = marioFeetY > previousMarioFeetY;
 
-                        // 无论是否无敌，都要求从上方并且Mario的方向为"down"才能消灭敌人
+                        // i've added 3 conditions to check if mario is above the ennemi and if he is falling
                         // whether mario is invincible or not, he has to jump FROM ABOVE and his direction has to be DOWN to kill the ennemi
-                        if(fromAbove && falling) {
+                        if(fromAbove && falling && mario.getDirection().equals("down")) {
                             System.out.println("Mario kills enemy");
                             iterator.remove();
                             threadDescente.force = -jumpingThread.IMPULSION / 2;
@@ -305,7 +305,7 @@ public class Collision extends Thread {
                             }
                         }
                     }
-
+                    previousMarioFeetY = mario.getPosition().y + mario.getSolidArea().y + mario.getSolidArea().height;
 
                 }
 
