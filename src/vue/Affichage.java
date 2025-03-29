@@ -7,6 +7,7 @@ import modele.Tile.TileManager;
 import java.util.List;
 import java.util.ArrayList;
 import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 
 
 
@@ -33,6 +34,8 @@ public class Affichage extends JPanel {
     public TileManager tm;
 
     private int decalage = 0;
+
+    private BufferedImage coeurImage;
 
     /**
      * Constructeur de la classe Affichage.
@@ -71,7 +74,14 @@ public class Affichage extends JPanel {
         animationJoueur = new AnimationJoueur(JoueurPrincipal);
         animationJoueur.start();
 
-        // 🔹 Démarrer les threads des ennemis et de leurs animations
+        //télecharger l'image du coeur
+        try {
+            coeurImage = ImageIO.read(getClass().getResourceAsStream("/resources/coeur.png"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Démarrer les threads des ennemis et de leurs animations
         animationKoopa.add(new AnimationKoopa(koopa));
         // animationGoomba.add(new AnimationGoomba(goomba));
 
@@ -156,7 +166,32 @@ public class Affichage extends JPanel {
 
         // affichons mario en dernier (pour qu'il soit au-dessus de tout) :
         g2.drawImage(this.animationJoueur.getCurrentToDraw(), JoueurPrincipal.getPositionX() ,JoueurPrincipal.getPositionY(), null);
-        
+
+        // Dessiner les vies (cœurs) CENTRÉS en haut
+        int vies = JoueurPrincipal.getVies();
+        int coeurWidth = 30;
+        int coeurHeight = 30;
+        int espaceEntreCoeurs = 10;
+
+        // Calcul de la largeur totale des cœurs à dessiner
+        int largeurTotale = vies * coeurWidth + (vies - 1) * espaceEntreCoeurs;
+
+        // Calcul du point de départ X pour centrer
+        int startX = (getWidth() - largeurTotale) / 2;
+
+        // Dessiner les cœurs
+        for (int i = 0; i < vies; i++) {
+            int x = startX + i * (coeurWidth + espaceEntreCoeurs);
+            g.drawImage(coeurImage, x, 10, coeurWidth, coeurHeight, null);
+
+        }
+
+        // Optionnel : Afficher "Game Over" au centre si plus de vies
+        if (vies <= 0) {
+            g.setFont(new Font("Arial", Font.BOLD, 50));
+            g.setColor(Color.RED);
+            g.drawString("GAME OVER", getWidth() / 2 - 150, getHeight() / 2);
+        }
         
         g2.dispose();
     }

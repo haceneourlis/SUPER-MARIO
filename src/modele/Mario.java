@@ -147,6 +147,7 @@ public class Mario extends GameCharacter {
     public int getVies() {return this.vies;}
 
     // Perdre une vie, et gérer le reset ou Game Over
+    // TODO: Need to distinguish between different types of death (falling, enemy, etc.)
     public void perdreVie() {
         if (!invincible) {
             vies--;
@@ -158,8 +159,6 @@ public class Mario extends GameCharacter {
                 System.out.println("GAME OVER !");
                 // Tu peux ajouter ici une logique pour arrêter le jeu ou relancer tout
                 // Exemple : System.exit(0);
-            } else {
-                resetPosition();
             }
         }
     }
