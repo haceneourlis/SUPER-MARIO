@@ -8,21 +8,16 @@ import vue.*;
 public class Main {
     // on lance ça dans la méthode main
     public static void main(String[] args) {
+
+        // On crée l'objet de loggingconfig qui va gérer le fichier de log
+        LoggingConfig logs_manager = new LoggingConfig();
         // on crée une fenetre
         JFrame fenetre = new JFrame();
 
         // Get the player instance : classe singleton .
         Mario j = Mario.getInstance();
 
-        // on crée un thread pour le saut
-        Jumping jumpin = new Jumping(j);
-        jumpin.start();
-
-        // on crée un thread pour le mouvement : qui detecte les touches (<- et -> et
-        // ESPACE)
-        MouvementJoueur mv = new MouvementJoueur();
-        DeplacementListener dl = new DeplacementListener(mv, j, jumpin);
-        dl.start();
+  
 
         Score score = new Score();
         Coin coin = new Coin(score);
@@ -31,8 +26,18 @@ public class Main {
         fenetre.add(GamePanel);
 
         // on ajoute un thread pour la gravité
-        Descente des = new Descente(GamePanel, jumpin);
+        Descente des = new Descente(GamePanel);
         des.start();
+
+         // on crée un thread pour le saut
+        Jumping jumpin = new Jumping(des);
+
+      
+        // on crée un thread pour le mouvement : qui detecte les touches (<- et -> et
+        // ESPACE)
+        MouvementJoueur mv = new MouvementJoueur();
+        DeplacementListener dl = new DeplacementListener(mv, j, jumpin);
+        dl.start();
         
 
         // on ajoute un thread pour la collision

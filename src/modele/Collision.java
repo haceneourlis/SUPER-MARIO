@@ -9,6 +9,7 @@
 
 package modele;
 
+import java.util.logging.*;
 import vue.Affichage;
 
 public class Collision extends Thread {
@@ -23,6 +24,8 @@ public class Collision extends Thread {
     private Coin coin;
 
     protected boolean sur_brick = false;
+
+    private static final Logger logger = Logger.getLogger(Collision.class.getName());
 
     public Collision(Affichage affichage, Jumping jumpingThread, Descente threadDescente, Coin coin) {
         gp = affichage;
@@ -47,14 +50,16 @@ public class Collision extends Thread {
             // }
 
             try {
-                Thread.sleep(16);
+                Thread.sleep(5);
 
                 // collision avec la map ou matrice de jeu
 
                 // on trouve les 4 points du rectangle qui vont check la collision
                 int posLeftenX = mario.getPosition().x + mario.getSolidArea().x;
                 int posRightenX = mario.getPosition().x + mario.getSolidArea().x + mario.getSolidArea().width;
-                int posTopenY = mario.getPosition().y - mario.getSolidArea().y * 2;
+
+                // Ici j'ai modifié la variable y, il y'avait un - quelque chose.. et il ne y'en a pas besoin
+                int posTopenY = mario.getPosition().y;
 
                 // Je modifie cette ligne : CAR effectivement y avait un probleme lors de
                 // l'atterissage de mario
@@ -94,6 +99,9 @@ public class Collision extends Thread {
                     // System.out.println("waaaaaaaaaaaa333333");
                     
                     // } else
+
+
+
                     if (!sur_brick) {
                         // TODO : mario dies , game stops if he falls down a hole or a river
 
@@ -137,35 +145,35 @@ public class Collision extends Thread {
                     // ici le "up" c'est en vrai le saut de mario , donc on check si mario est
                     // rentrer en collision avec un objet en sautant
                     case "up":
-
-
-                        System.out.println("at least we are in this case <up>");
+                        logger.log(Level.INFO, "at least we are in this case <up>");
                         // on prédit ou sera notre mario aprés avoir bougé
-                        ligneTopdanslaMatrice = (posTopenY - jumpingThread.force) / CONSTANTS.TAILLE_CELLULE;
+                        ligneTopdanslaMatrice = (posTopenY + threadDescente.force) / CONSTANTS.TAILLE_CELLULE;
                         point1 = gp.tm.tilesMatrice[ligneTopdanslaMatrice][colonneLeftdanslaMatrice];
                         point2 = gp.tm.tilesMatrice[ligneTopdanslaMatrice][colonneRightdanslaMatrice];
                         
-                        // verification si point1 ou point2 est une pièce
+                        if (gp.tm.tiles[point1].collision == true
+                                || gp.tm.tiles[point2].collision == true) {
+                            // On remet le joueur à l'emplacement juste en dessous de la brique. (pour éviter tout petit bug visuel)
+                            mario.setPositionY((ligneTopdanslaMatrice+1)*CONSTANTS.TAILLE_CELLULE);
+                            
+                            logger.log(Level.INFO ,"collision up");
+
+                            // Je remets sa force à 0.
+                            threadDescente.force = 0;
+
+                            // Je lui permet de descendre.
+                            threadDescente.allowedToFallDown = true;
+                        }
+                        // Verification si point1 ou point2 est une pièce, si oui on incrémente le nombre de pièces
+                        // Et on demande à la matrice (locale) d'être modifiée.
                         if ((point1 == 30)){
-                            System.out.println("Coin collected !");
+                            logger.log(Level.INFO, "Coin collected from up with point1 !");
                             this.coin.IncrementNombreDePieces();
                             gp.tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 0);
                         } else if (point2 == 30){
-                            System.out.println("Coin collected !");
+                            logger.log(Level.INFO, "Coin collected from up with point2 !");
                             this.coin.IncrementNombreDePieces();
                             gp.tm.modifyMatrice(ligneTopdanslaMatrice, colonneRightdanslaMatrice, 0);
-                        }
-
-                        System.out.println("point1 = " + point1 + " point2 = " + point2);
-                        if (gp.tm.tiles[point1].collision == true
-                                || gp.tm.tiles[point2].collision == true) {
-                            // TODO : si le mur donne des rcompenses , mario les récupérera , sinon il
-                            // s'arrête et avec l'effet de grivité redescend !
-                            System.out.println("collision up");
-                            mario.position.y = 10 * CONSTANTS.TAILLE_CELLULE;
-                            jumpingThread.notjumping();
-                            threadDescente.allowedToFallDown = true;
-
                         }
                         break;
 
@@ -181,11 +189,11 @@ public class Collision extends Thread {
                         
                         // verification si point1 ou point2 est une pièce
                         if ((point1 == 30)){
-                            System.out.println("Coin collected !");
+                            logger.log(Level.INFO, "Coin collected from left with point1 !");
                             this.coin.IncrementNombreDePieces();
                             gp.tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 0);
                         } else if (point2 == 30){
-                            System.out.println("Coin collected !");
+                            logger.log(Level.INFO, "Coin collected from left with point2 !");
                             this.coin.IncrementNombreDePieces();
                             gp.tm.modifyMatrice(ligneBottomdanslaMatrice, colonneLeftdanslaMatrice, 0);
                         }
@@ -206,11 +214,11 @@ public class Collision extends Thread {
 
                         // verification si point1 ou point2 est une pièce
                         if ((point1 == 30)){
-                            System.out.println("Coin collected !");
+                            logger.log(Level.INFO, "Coin collected from right with point1 !");
                             this.coin.IncrementNombreDePieces();
                             gp.tm.modifyMatrice(ligneTopdanslaMatrice, colonneRightdanslaMatrice, 0);
                         } else if (point2 == 30){
-                            System.out.println("Coin collected !");
+                            logger.log(Level.INFO, "Coin collected from right with point2 !");
                             this.coin.IncrementNombreDePieces();
                             gp.tm.modifyMatrice(ligneBottomdanslaMatrice, colonneRightdanslaMatrice, 0);
                         }
@@ -244,8 +252,7 @@ public class Collision extends Thread {
 
                     // show a message in the screen that mario died
                     // and stop the game
-
-                    System.out.println("mario died");
+                    logger.log(Level.INFO, "mario died");
                     threadDescente.setSol(CONSTANTS.LE_SOL * 2);
                 }
                 // reset the solid area of mario to its original value and the solid area of
