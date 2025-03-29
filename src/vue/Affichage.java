@@ -1,6 +1,8 @@
 package vue;
 
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import javax.swing.*;
 import modele.*;
 import modele.Tile.TileManager;
@@ -33,19 +35,48 @@ public class Affichage extends JPanel {
     // Variable pour le gestionnaire de tuiles
     public TileManager tm;
 
+    private Font marioFont;
+
+    // Un score et les coins
+    private Score score;
+    private Coin coin;
+
     private int decalage = 0;
 
     private BufferedImage coeurImage;
+
+    // Constantes pour l'affichage du score 
+    private final int SCORE_X = 10;
+    private final int SCORE_Y = 30;
+
+    // Constante pour l'affichage du nombre de coins
+    private final int COINS_X = 200;
+    private final int COINS_Y = 30;
+
 
     /**
      * Constructeur de la classe Affichage.
      * On initialise la taille de la fenêtre et on crée les instances de Mario et de l'ennemi.
      * On lance également les threads de l'ennemi, de l'animation du joueur et de l'actualisation de la fenetre (redessine).
+     * @throws IOException 
+     * @throws FontFormatException 
      */
-    public Affichage() {
+    public Affichage(Score score, Coin coin){
         // Initialiser la fenêtre avec les dimensions prévues.
         setPreferredSize(new Dimension(CONSTANTS.LARGEUR_VUE, CONSTANTS.HAUTEUR_VUE)); // Set window size
+        this.score = score;
 
+        this.coin = coin;
+
+        try{
+            this.marioFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/resources/PressStart2P-Regular.ttf")).deriveFont(16f);
+            System.out.println("Police Mario chargée !");
+        }
+        catch (IOException | FontFormatException e) {
+            e.printStackTrace();
+            System.out.println("Police Mario pas chargée !");
+            
+        }
         // Initialiser le joueur (classe singleton)
         this.JoueurPrincipal = Mario.getInstance(); // Get the player instance : classe singleton .
         
@@ -133,7 +164,7 @@ public class Affichage extends JPanel {
             // Le décalage correspond à la distance entre mario et la case de scrolling
             this.decalage = JoueurPrincipal.getPositionX() - CONSTANTS.CELLULE_SCROLLING*CONSTANTS.TAILLE_CELLULE;
         }
-        
+
         // On applique le décalage du plan de jeu 
         // (note que comme l'objet Graphics2D est rechargé à chaque appel, les transformations ne s'aditionnent pas)
         g2.translate(-this.decalage, 0);
@@ -167,6 +198,7 @@ public class Affichage extends JPanel {
         // affichons mario en dernier (pour qu'il soit au-dessus de tout) :
         g2.drawImage(this.animationJoueur.getCurrentToDraw(), JoueurPrincipal.getPositionX() ,JoueurPrincipal.getPositionY(), null);
 
+
         // Dessiner les vies (cœurs) CENTRÉS en haut
         int vies = JoueurPrincipal.getVies();
         int coeurWidth = 30;
@@ -193,7 +225,12 @@ public class Affichage extends JPanel {
             g.drawString("GAME OVER", getWidth() / 2 - 150, getHeight() / 2);
         }
         
-        g2.dispose();
+//        g2.dispose();
+                        
+        g2.setFont(marioFont);
+        g2.setColor(Color.WHITE);
+        g2.drawString("Score : " + score.getCurrentScore(), SCORE_X + decalage, SCORE_Y);
+        g2.drawString("Coins : " + coin.getNombreDePieces(), COINS_X + decalage, COINS_Y);
     }
 
     

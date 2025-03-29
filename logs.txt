@@ -1,0 +1,2 @@
+mars 29, 2025 6:11:13 PM modele.Descente <init>
+WARNING: Hacene supprime la méthode getCanFallDown si tu vois que tu n'en as pas besoin s'il te plait

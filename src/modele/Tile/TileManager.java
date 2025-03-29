@@ -182,6 +182,10 @@ public class TileManager {
                         tiles[29].image = ImageIO.read(getClass()
                                         .getResourceAsStream("/resources/nuage/cloud10.png"));
 
+                        tiles[30] = new Tile();
+                        tiles[30].image = ImageIO.read(getClass()
+                                        .getResourceAsStream("/resources/coin.png"));
+                        tiles[30].collision = false;
                         // TODO : la suite
                 } catch (Exception e) {
                         System.err.println("Erreur");
@@ -309,5 +313,9 @@ public class TileManager {
                 } catch (IOException e) {
                         throw new RuntimeException(e);
                 }
+        }
+
+        public void modifyMatrice(int row, int col, int value) {
+                tilesMatrice[row][col] = value;
         }
 }

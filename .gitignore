@@ -54,3 +54,4 @@ bin/
 ### Mac OS ###
 .DS_Store
 >>>>>>> hacene_branch
+logs.txt
