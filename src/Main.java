@@ -17,8 +17,6 @@ public class Main {
         // Get the player instance : classe singleton .
         Mario j = Mario.getInstance();
 
-  
-
         Score score = new Score();
         Coin coin = new Coin(score);
         // on ajoute un panel à la fenetre
@@ -26,19 +24,17 @@ public class Main {
         fenetre.add(GamePanel);
 
         // on ajoute un thread pour la gravité
-        Descente des = new Descente(GamePanel);
+        Descente des = new Descente();
         des.start();
 
-         // on crée un thread pour le saut
+        // on crée un thread pour le saut
         Jumping jumpin = new Jumping(des);
 
-      
         // on crée un thread pour le mouvement : qui detecte les touches (<- et -> et
         // ESPACE)
         MouvementJoueur mv = new MouvementJoueur();
         DeplacementListener dl = new DeplacementListener(mv, j, jumpin);
         dl.start();
-        
 
         // on ajoute un thread pour la collision
         Collision col = new Collision(GamePanel, jumpin, des, coin);

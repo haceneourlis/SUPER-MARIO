@@ -17,7 +17,7 @@ public class LoggingConfig {
                     System.err.println("Impossible de supprimer logs.txt.");
                 }
             }
-        
+
             // Crée un handler pour écrire dans le fichier "logs.txt"
             FileHandler fileHandler = new FileHandler("logs.txt", true); // 'true' pour append
             fileHandler.setFormatter(new SimpleFormatter()); // Format simple des logs

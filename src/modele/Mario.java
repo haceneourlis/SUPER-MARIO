@@ -15,7 +15,6 @@ public class Mario extends GameCharacter {
     // constante de coordonnées d'origine du joueur
     public final int X_ORIGINE = 50;
 
-    public int vitesse = 1;
     // vitesse max constante
     public final int VITESSE_MAX = 6;
 
@@ -26,7 +25,7 @@ public class Mario extends GameCharacter {
     private boolean canMove = true;
 
     // Mario's remaining number of lives
-    private int vies = 3; //  Début avec 3 vies
+    private int vies = 3; // Début avec 3 vies
     // Mario's invincibility
     private boolean invincible = false;
     private long invincibleStartTime = 0; //
@@ -75,8 +74,8 @@ public class Mario extends GameCharacter {
      * Elle vérifie si la vitesse ne dépasse pas la constante vitesse_max.
      */
     public void increment_speed() {
-        if (this.vitesse < this.VITESSE_MAX) {
-            this.vitesse += 1;
+        if (this.speed < this.VITESSE_MAX) {
+            this.speed += 1;
         }
     }
 
@@ -88,7 +87,7 @@ public class Mario extends GameCharacter {
     public void deplacer_droite() {
         this.setDirection("right");
         if (canMove)
-            this.position.x += this.vitesse;
+            this.position.x += this.speed;
     }
 
     /**
@@ -99,7 +98,7 @@ public class Mario extends GameCharacter {
     public void deplacer_gauche() {
         this.setDirection("left");
         if (canMove)
-            this.position.x -= this.vitesse;
+            this.position.x -= this.speed;
     }
 
     /**
@@ -108,10 +107,10 @@ public class Mario extends GameCharacter {
      * décélaration.
      */
     public void decelerer() {
-        if (this.vitesse - CONSTANTS.DECELERATION > 0) {
-            this.vitesse -= CONSTANTS.DECELERATION;
+        if (this.speed - CONSTANTS.DECELERATION > 0) {
+            this.speed -= CONSTANTS.DECELERATION;
         } else {
-            this.vitesse = 0;
+            this.speed = 0;
         }
     }
 
@@ -144,10 +143,13 @@ public class Mario extends GameCharacter {
     }
 
     // Obtenir le nombre de vies restantes
-    public int getVies() {return this.vies;}
+    public int getVies() {
+        return this.vies;
+    }
 
     // Perdre une vie, et gérer le reset ou Game Over
-    // TODO: Need to distinguish between different types of death (falling, enemy, etc.)
+    // TODO: Need to distinguish between different types of death (falling, enemy,
+    // etc.)
     public void perdreVie() {
         if (!invincible) {
             vies--;
@@ -166,7 +168,7 @@ public class Mario extends GameCharacter {
     // Remettre Mario à sa position de départ
     public void resetPosition() {
         this.position = new Point(X_ORIGINE, CONSTANTS.LE_SOL);
-        this.vitesse = 1; // Reset de la vitesse si tu veux
+        this.speed = 1; // Reset de la vitesse si tu veux
         System.out.println("Mario revient au début !");
     }
 }

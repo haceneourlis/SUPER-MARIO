@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
-
 public class GameCharacter extends Rectangle {
     // solid area of the character
     public Rectangle solidArea;
