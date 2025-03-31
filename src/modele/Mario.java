@@ -150,23 +150,18 @@ public class Mario extends GameCharacter {
     // TODO: Need to distinguish between different types of death (falling, enemy, etc.)
     public void perdreVie() {
         if (!invincible) {
-            vies--;
+            
             invincible = true;
             invincibleStartTime = System.currentTimeMillis();
             System.out.println("Mario a perdu une vie ! Vies restantes : " + this.vies);
             if (this.vies <= 0) {
                 // Game Over
                 System.out.println("GAME OVER !");
-                // Tu peux ajouter ici une logique pour arrêter le jeu ou relancer tout
-                // Exemple : System.exit(0);
+                //TODO: Game Over screen
             }
+            vies--;
         }
     }
 
-    // Remettre Mario à sa position de départ
-    public void resetPosition() {
-        this.position = new Point(X_ORIGINE, CONSTANTS.LE_SOL);
-        this.vitesse = 1; // Reset de la vitesse si tu veux
-        System.out.println("Mario revient au début !");
-    }
+    
 }

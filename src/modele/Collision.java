@@ -284,9 +284,13 @@ public class Collision extends Thread {
                         // i've added 3 conditions to check if mario is above the ennemi and if he is falling
                         // whether mario is invincible or not, he has to jump FROM ABOVE and his direction has to be DOWN to kill the ennemi
                         if(fromAbove && falling && mario.getDirection().equals("down")) {
+                            //mario peut tuer que si il n'est pas invincible
+                            if (!mario.isInvincible()) {
+
                             System.out.println("Mario kills enemy");
                             iterator.remove();
                             threadDescente.force = -jumpingThread.IMPULSION / 2;
+                            }
                         } else {
                             // if mario is not jumping on the ennemi, only when mario is not invincible, he will lose a life
                             if(!mario.isInvincible()){

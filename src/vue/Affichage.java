@@ -190,14 +190,10 @@ public class Affichage extends JPanel {
             }
         }
 
-        // Si Mario est invincible, il clignote à l'écran : on saute une frame sur deux
-        if (JoueurPrincipal.isInvincible()) {
-            if ((System.currentTimeMillis() / 100) % 2 == 0) return; // skip draw every other frame
-        }
-
-        // affichons mario en dernier (pour qu'il soit au-dessus de tout) :
-        g2.drawImage(this.animationJoueur.getCurrentToDraw(), JoueurPrincipal.getPositionX() ,JoueurPrincipal.getPositionY(), null);
-
+        // ✅ Mario clignote uniquement s'il est invincible, sans affecter le reste du dessin
+if (!JoueurPrincipal.isInvincible() || (System.currentTimeMillis() / 200) % 2 == 0) {
+    g2.drawImage(this.animationJoueur.getCurrentToDraw(), JoueurPrincipal.getPositionX(), JoueurPrincipal.getPositionY(), null);
+}
 
         // Dessiner les vies (cœurs) CENTRÉS en haut
         int vies = JoueurPrincipal.getVies();
@@ -210,6 +206,8 @@ public class Affichage extends JPanel {
 
         // Calcul du point de départ X pour centrer
         int startX = (getWidth() - largeurTotale) / 2;
+        // 2. ANNULER le décalage AVANT de dessiner les cœurs
+        g2.translate(this.decalage, 0);  // Remet le contexte à 0 (sans décalage)
 
         // Dessiner les cœurs
         for (int i = 0; i < vies; i++) {
@@ -229,8 +227,8 @@ public class Affichage extends JPanel {
                         
         g2.setFont(marioFont);
         g2.setColor(Color.WHITE);
-        g2.drawString("Score : " + score.getCurrentScore(), SCORE_X + decalage, SCORE_Y);
-        g2.drawString("Coins : " + coin.getNombreDePieces(), COINS_X + decalage, COINS_Y);
+        g2.drawString("Score : " + score.getCurrentScore(), SCORE_X , SCORE_Y);
+        g2.drawString("Coins : " + coin.getNombreDePieces(), COINS_X , COINS_Y);
     }
 
     
