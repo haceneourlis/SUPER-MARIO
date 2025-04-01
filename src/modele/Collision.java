@@ -193,7 +193,7 @@ public class Collision extends Thread {
                         // because mario can hit a wall or a tree , in which case he stops moving
                         // or even get in collision with an ennemy , in which case he dies !
 
-                        colonneLeftdanslaMatrice = (posLeftenX - mario.getSpeed() * 2) /
+                        colonneLeftdanslaMatrice = (posLeftenX - CONSTANTS.INTERVALE_COLLISION) /
                                 CONSTANTS.TAILLE_CELLULE;
                         point1 = gp.tm.tilesMatrice[ligneTopdanslaMatrice][colonneLeftdanslaMatrice];
                         point2 = gp.tm.tilesMatrice[ligneBottomdanslaMatrice][colonneLeftdanslaMatrice];
@@ -218,8 +218,9 @@ public class Collision extends Thread {
                         break;
                     case "right":
 
-                        colonneRightdanslaMatrice = (posRightenX + mario.getSpeed() * 2) /
+                        colonneRightdanslaMatrice = (posRightenX + CONSTANTS.INTERVALE_COLLISION) /
                                 CONSTANTS.TAILLE_CELLULE;
+
                         point1 = gp.tm.tilesMatrice[ligneTopdanslaMatrice][colonneRightdanslaMatrice];
                         point2 = gp.tm.tilesMatrice[ligneBottomdanslaMatrice][colonneRightdanslaMatrice];
 
@@ -236,9 +237,11 @@ public class Collision extends Thread {
 
                         if (gp.tm.tiles[point1].collision == true || gp.tm.tiles[point2].collision == true) {
 
+                            System.out.println("collision right");
                             mario.noMoving();
                         } else {
                             mario.yesMoving();
+                            System.out.println("no collision right");
                         }
                         break;
 
