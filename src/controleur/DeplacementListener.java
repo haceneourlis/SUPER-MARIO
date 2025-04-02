@@ -43,9 +43,6 @@ public class DeplacementListener extends Thread{
     @Override
     public void run(){
         while(true){
-            if (player.getVies() <= 0) {
-                return; // Stoppe le thread proprement
-            }
             try{Thread.sleep(DELAY);}
             catch (Exception e) { e.printStackTrace(); }
             if (mj.isLeft_pressed()){

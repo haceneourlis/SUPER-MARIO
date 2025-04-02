@@ -51,4 +51,8 @@ public class Coin extends Bonus{
         this.score.incrementCurrentScore(this.increment_factor);
     }
 
+    public void reset() {
+        this.nombre_de_pieces = 0;
+    }
+    
 }

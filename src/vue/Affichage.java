@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
-
-
 /**
  * Classe qui affiche le jeu
  * Elle utilise la classe Redessine pour actualiser l'affichage
@@ -53,7 +51,8 @@ public class Affichage extends JPanel {
     private final int COINS_X = 200;
     private final int COINS_Y = 30;
 
-
+    private boolean gameOverAlreadyShown = false;
+    
     /**
      * Constructeur de la classe Affichage.
      * On initialise la taille de la fenêtre et on crée les instances de Mario et de l'ennemi.
@@ -146,6 +145,41 @@ public class Affichage extends JPanel {
     public void removeEnnemi(Ennemi ennemi) {
         this.listeEnnemis.remove(ennemi);
     }
+    // reset le jeu
+    public void resetGame() {
+        // Réinitialiser Mario
+        JoueurPrincipal.reset();
+    
+        // Réinitialiser le décalage
+        this.decalage = 0;
+    
+        // Réinitialiser le score et les pièces
+        this.score.reset();  // Assure-toi que la classe Score a bien une méthode reset()
+        this.coin.reset();   // Pareil pour Coin
+    
+        // Recharger la matrice (le terrain)
+        this.tm = new TileManager();
+    
+        // Réinitialiser les ennemis
+        this.listeEnnemis.clear();
+        this.animationKoopa.clear();
+    
+        Ennemi koopa = new Ennemi(600, 20, 20, 5, true, tm, "koopa");
+        listeEnnemis.add(koopa);
+        AnimationKoopa animKoopa = new AnimationKoopa(koopa);
+        animationKoopa.add(animKoopa);
+    
+        koopa.thread.start();
+        animKoopa.start();
+    
+        // Tu peux faire pareil pour d'autres types d'ennemis plus tard (goomba, etc.)
+        gameOverAlreadyShown = false;
+    }
+    
+    private JFrame getParentFrame() {
+        return (JFrame) SwingUtilities.getWindowAncestor(this);
+    }
+    
     /**
      * Méthode qui dessiner les différents éléments sur la fenetre.
      */
@@ -190,10 +224,10 @@ public class Affichage extends JPanel {
             }
         }
 
-        // ✅ Mario clignote uniquement s'il est invincible, sans affecter le reste du dessin
-if (!JoueurPrincipal.isInvincible() || (System.currentTimeMillis() / 200) % 2 == 0) {
-    g2.drawImage(this.animationJoueur.getCurrentToDraw(), JoueurPrincipal.getPositionX(), JoueurPrincipal.getPositionY(), null);
-}
+            // ✅ Mario clignote uniquement s'il est invincible, sans affecter le reste du dessin
+    if (!JoueurPrincipal.isInvincible() || (System.currentTimeMillis() / 200) % 2 == 0) {
+        g2.drawImage(this.animationJoueur.getCurrentToDraw(), JoueurPrincipal.getPositionX(), JoueurPrincipal.getPositionY(), null);
+    }
 
         // Dessiner les vies (cœurs) CENTRÉS en haut
         int vies = JoueurPrincipal.getVies();
@@ -217,10 +251,12 @@ if (!JoueurPrincipal.isInvincible() || (System.currentTimeMillis() / 200) % 2 ==
         }
 
         // Optionnel : Afficher "Game Over" au centre si plus de vies
-        if (vies <= 0) {
+        if (vies <= 0 && !gameOverAlreadyShown) {
             g.setFont(new Font("Arial", Font.BOLD, 50));
             g.setColor(Color.RED);
             g.drawString("GAME OVER", getWidth() / 2 - 150, getHeight() / 2);
+            gameOverAlreadyShown = true;
+            SwingUtilities.invokeLater(() -> new GameOverDialog(getParentFrame(), this::resetGame));
         }
         
 //        g2.dispose();

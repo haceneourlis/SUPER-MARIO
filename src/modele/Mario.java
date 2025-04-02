@@ -162,6 +162,16 @@ public class Mario extends GameCharacter {
             vies--;
         }
     }
-
+    // Reset Mario's position, speed, lives, and invincibility
+    public void reset() {
+        this.position.x= X_ORIGINE;
+        this.position.y= CONSTANTS.LE_SOL;
+        this.vitesse = 1;
+        this.vies = 3;
+        this.invincible = false;
+        this.invincibleStartTime = 0;
+        this.canMove = true;
+    }
+    
     
 }
