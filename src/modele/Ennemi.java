@@ -158,7 +158,7 @@ public class Ennemi extends GameCharacter implements Runnable {
      * @param startY Position y de départ
      * @return La position y où l'ennemi doit se poser
      */
-    private int findGroundY(int startX, int startY) {
+    protected int findGroundY(int startX, int startY) {
         int col = startX / CONSTANTS.TAILLE_CELLULE; // Colonne actuelle
         int row = startY / CONSTANTS.TAILLE_CELLULE; // Ligne actuelle
 

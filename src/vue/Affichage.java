@@ -94,9 +94,9 @@ public class Affichage extends JPanel {
 
         // Ajouter plusieurs ennemis
         Ennemi koopa = new Ennemi(600, 20, 20, 5, true, tm, "koopa");
-        // Ennemi goomba = new Ennemi(500, 20, 20, 5, false, tm);
+        Goomba goomba = new Goomba(300, 4, true, tm);
         listeEnnemis.add(koopa);
-        // listeEnnemis.add(goomba);
+        listeEnnemis.add(goomba);
 
         // Mettre à jour l'affichage toutes les 50ms
         (new Redessine(this)).start();
@@ -114,7 +114,7 @@ public class Affichage extends JPanel {
 
         // Démarrer les threads des ennemis et de leurs animations
         animationKoopa.add(new AnimationKoopa(koopa));
-        // animationGoomba.add(new AnimationGoomba(goomba));
+        animationGoomba.add(new AnimationGoomba(goomba));
 
         for (Ennemi ennemi : listeEnnemis) {
             ennemi.thread.start();
@@ -122,9 +122,9 @@ public class Affichage extends JPanel {
         for (AnimationKoopa Koopa : animationKoopa) {
             Koopa.start();
         }
-//        for (AnimationGoomba Goomba : animationGoomba) {
-//            Goomba.start();
-//        }
+        for (AnimationGoomba Goomba : animationGoomba) {
+            Goomba.start();
+        }
     }
     
     // getter de tileManager
@@ -154,41 +154,88 @@ public class Affichage extends JPanel {
         // On crée un objet Graphics2D pour dessiner les éléments
         Graphics2D g2 = (Graphics2D) g;
         super.paintComponent(g2);
-     
+
 
         // je récupère la case de mario actuelle, relative au décalage
         int case_actuelle = ((this.JoueurPrincipal.getPositionX() - decalage)/ CONSTANTS.TAILLE_CELLULE);
-        
+
         // Si la case de mario dépasse la case de scrolling, on décale la fenêtre
         if (case_actuelle >= CONSTANTS.CELLULE_SCROLLING){
             // Le décalage correspond à la distance entre mario et la case de scrolling
             this.decalage = JoueurPrincipal.getPositionX() - CONSTANTS.CELLULE_SCROLLING*CONSTANTS.TAILLE_CELLULE;
         }
 
-        // On applique le décalage du plan de jeu 
+        // On applique le décalage du plan de jeu
         // (note que comme l'objet Graphics2D est rechargé à chaque appel, les transformations ne s'aditionnent pas)
         g2.translate(-this.decalage, 0);
 
         // affichons la matrice du jeu : (le terrain)
         this.tm.draw(g2);
 
-        // Dessiner tous les ennemis avec leur animation respective
-        for (int i = 0; i < listeEnnemis.size(); i++) {
-            Ennemi ennemi = listeEnnemis.get(i);
+//        // Dessiner tous les ennemis avec leur animation respective
+//        for (int i = 0; i < listeEnnemis.size(); i++) {
+//            Ennemi ennemi = listeEnnemis.get(i);
+//            BufferedImage imageEnnemi = null;
+//
+//            // Sélectionner l'animation correcte en fonction du type d'ennemi
+//            if (ennemi.getType().equals("koopa") && i < animationKoopa.size()) {
+//                imageEnnemi = animationKoopa.get(i).getCurrentToDraw();
+//            }
+////            if (ennemi.getType().equals("goomba") && i < animationGoomba.size()) {
+////                imageEnnemi = animationGoomba.get(i).getCurrentToDraw();
+////            }
+//
+//            // Debug：画一个红框，看看 Goomba 是不是存在于逻辑中
+////            if (ennemi.getType().equals("goomba")) {
+////                g2.setColor(Color.RED);
+////                g2.drawRect(ennemi.getPosition().x, ennemi.getPosition().y, ennemi.getSolidArea().width, ennemi.getSolidArea().height);
+////            }
+//
+//            if (ennemi.getType().equals("goomba") && i < animationGoomba.size()) {
+//                BufferedImage frame = animationGoomba.get(i).getCurrentToDraw();
+//
+//                if (frame == null) {
+//                    System.out.println("❌ Goomba 第 " + i + " 帧为 null！");
+//                } else {
+//                    System.out.println("✅ Goomba 第 " + i + " 帧正常绘图！");
+//                }
+//
+//                imageEnnemi = frame;
+//            }
+//
+//
+//
+//
+//            // Dessiner l'ennemi
+//            if (imageEnnemi != null) {
+//                g2.drawImage(imageEnnemi, ennemi.getPosition().x, ennemi.getPosition().y, null);
+//            }
+//        }
+
+
+        int goombaIndex = 0; // 为 Goomba 单独维护计数器
+        for (Ennemi ennemi : listeEnnemis) {
             BufferedImage imageEnnemi = null;
-
-            // Sélectionner l'animation correcte en fonction du type d'ennemi
-            if (ennemi.getType().equals("koopa") && i < animationKoopa.size()) {
-                imageEnnemi = animationKoopa.get(i).getCurrentToDraw();
+            if (ennemi.getType().equals("koopa") && animationKoopa.size() > 0) {
+                imageEnnemi = animationKoopa.get(0).getCurrentToDraw();
             }
-            // TODO: GOOMBA
-
-
-            // Dessiner l'ennemi
+            if (ennemi.getType().equals("goomba") && goombaIndex < animationGoomba.size()) {
+                BufferedImage frame = animationGoomba.get(goombaIndex).getCurrentToDraw();
+//                if (frame == null) {
+//                    System.out.println("Goomba 第 " + goombaIndex + " 帧为 null");
+//                } else {
+//                    System.out.println("Goomba 第 " + goombaIndex + " 帧正常绘图");
+//                }
+                imageEnnemi = frame;
+                goombaIndex++;
+            }
             if (imageEnnemi != null) {
                 g2.drawImage(imageEnnemi, ennemi.getPosition().x, ennemi.getPosition().y, null);
             }
         }
+
+
+
 
         // ✅ Mario clignote uniquement s'il est invincible, sans affecter le reste du dessin
 if (!JoueurPrincipal.isInvincible() || (System.currentTimeMillis() / 200) % 2 == 0) {
