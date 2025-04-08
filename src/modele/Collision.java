@@ -186,6 +186,8 @@ public class Collision extends Thread {
                             this.coin.IncrementNombreDePieces();
                             gp.tm.modifyMatrice(ligneTopdanslaMatrice, colonneRightdanslaMatrice, 0);
                         }
+
+                        
                         break;
 
                     case "left":
