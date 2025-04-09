@@ -83,17 +83,12 @@ public class Affichage extends JPanel {
         // Initialiser le gestionnaire de tuiles
         tm = new TileManager();
 
-        // Initialiser l'ennemi (au-dessus du sol)
-//        ennemi = new Ennemi(630, 20, 20, 5, true, tm);
-//        ennemi.thread.start(); // Lancer le thread de l'ennemi
-
-
         listeEnnemis = new ArrayList<>();
         animationKoopa = new ArrayList<>();
         animationGoomba = new ArrayList<>();
 
         // Ajouter plusieurs ennemis
-        Ennemi koopa = new Ennemi(600, 20, 20, 5, true, tm, "koopa");
+        Koopa koopa = new Koopa(600, 5, true, tm);
         Goomba goomba = new Goomba(300, 4, true, tm);
         listeEnnemis.add(koopa);
         listeEnnemis.add(goomba);
@@ -136,9 +131,6 @@ public class Affichage extends JPanel {
      * Getter de l'objet Ennemi.
      * @return l'ennemi du jeu.
      */
-//    public Ennemi getEnnemi() {
-//        return ennemi;
-//    }
     public List<Ennemi> getEnnemis() {
         return listeEnnemis;
     }
@@ -172,19 +164,20 @@ public class Affichage extends JPanel {
         // affichons la matrice du jeu : (le terrain)
         this.tm.draw(g2);
 
-        // Dessiner tous les ennemis avec leur animation respective
-        // To solve the Goomba animation problem, we need to make a separate counter for the Goomba
-        int goombaIndex = 0; // Goomba animation counter
+
+        int goombaIndex = 0;
         for (Ennemi ennemi : listeEnnemis) {
             BufferedImage imageEnnemi = null;
-            if (ennemi.getType().equals("koopa") && animationKoopa.size() > 0) {
-                imageEnnemi = animationKoopa.get(0).getCurrentToDraw();
-            }
-            if (ennemi.getType().equals("goomba") && goombaIndex < animationGoomba.size()) {
-                BufferedImage frame = animationGoomba.get(goombaIndex).getCurrentToDraw();
-
-                imageEnnemi = frame;
-                goombaIndex++;
+            if (ennemi instanceof Koopa) {
+                // 对Koopa使用 AnimationKoopa 绘制（内部已判断状态，SHELL状态下直接返回静态图）
+                if (!animationKoopa.isEmpty()) {
+                    imageEnnemi = animationKoopa.get(0).getCurrentToDraw();
+                }
+            } else if (ennemi instanceof Goomba) {
+                if (goombaIndex < animationGoomba.size()) {
+                    imageEnnemi = animationGoomba.get(goombaIndex).getCurrentToDraw();
+                    goombaIndex++;
+                }
             }
             if (imageEnnemi != null) {
                 g2.drawImage(imageEnnemi, ennemi.getPosition().x, ennemi.getPosition().y, null);
@@ -194,13 +187,10 @@ public class Affichage extends JPanel {
 
 
 
-        // Si Mario est invincible, il clignote à l'écran : on saute une frame sur deux
-        if (JoueurPrincipal.isInvincible()) {
-            if ((System.currentTimeMillis() / 100) % 2 == 0) return; // skip draw every other frame
-        }
-
-        // affichons mario en dernier (pour qu'il soit au-dessus de tout) :
-        g2.drawImage(this.animationJoueur.getCurrentToDraw(), JoueurPrincipal.getPositionX() ,JoueurPrincipal.getPositionY(), null);
+        // Mario clignote uniquement s'il est invincible, sans affecter le reste du dessin
+if (!JoueurPrincipal.isInvincible() || (System.currentTimeMillis() / 200) % 2 == 0) {
+    g2.drawImage(this.animationJoueur.getCurrentToDraw(), JoueurPrincipal.getPositionX(), JoueurPrincipal.getPositionY(), null);
+}
 
         // Dessiner les vies (cœurs) CENTRÉS en haut
         int vies = JoueurPrincipal.getVies();
@@ -229,8 +219,7 @@ public class Affichage extends JPanel {
             g.setColor(Color.RED);
             g.drawString("GAME OVER", getWidth() / 2 - 150, getHeight() / 2);
         }
-        
-//        g2.dispose();
+
                         
         g2.setFont(marioFont);
         g2.setColor(Color.WHITE);
