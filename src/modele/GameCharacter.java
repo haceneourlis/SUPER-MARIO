@@ -1,10 +1,10 @@
 package modele;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
+import javax.imageio.ImageIO;
 
 public class GameCharacter extends Rectangle {
     // solid area of the character
@@ -17,6 +17,8 @@ public class GameCharacter extends Rectangle {
     private String direction;
     // image of the character
     public BufferedImage image;
+
+    public boolean allowedToFallDown;
 
     // constructor
     protected GameCharacter() {

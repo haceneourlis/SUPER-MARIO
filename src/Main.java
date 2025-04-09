@@ -23,7 +23,7 @@ public class Main {
         fenetre.add(GamePanel);
 
         // on ajoute un thread pour la gravité
-        Descente des = new Descente();
+        Descente des = new Descente(j);
         des.start();
 
         // on crée un thread pour le saut
