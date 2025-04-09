@@ -25,10 +25,6 @@ public class Collision extends Thread {
     private Jumping jumpingThread;
     private Descente threadDescente;
 
-    private int previousMarioFeetY = Mario.getInstance().getPosition().y
-            + Mario.getInstance().getSolidArea().y
-            + Mario.getInstance().getSolidArea().height;
-
     private Coin coin;
 
     protected boolean sur_brick = false;
@@ -271,48 +267,42 @@ public class Collision extends Thread {
 
                     // collision avec les ennemis
                     if(marioHitbox.intersects(ennemiHitbox)) {
-                        // mario's feet position
                         int marioFeetY = mario.getPosition().y + mario.getSolidArea().y + mario.getSolidArea().height;
-                        // ennemi's head position
                         int ennemiHeadY = ennemi.getPosition().y + ennemi.getSolidArea().y;
 
-                        // check if mario jumps exactement on the ennemi
-                        boolean fromAbove = marioFeetY <= ennemiHeadY + 10 && marioFeetY >= ennemiHeadY;
-                        // check if mario is falling
+                        boolean fromAbove = marioFeetY <= ennemiHeadY + 15 && marioFeetY >= ennemiHeadY;
                         boolean falling = (threadDescente.force > 0);
 
+                        boolean collisionHandled = false;
 
-                        if(fromAbove && falling && mario.getDirection().equals("down")) {
-                            // 只要满足踩敌条件，就执行踩敌逻辑
-                            if(!mario.isInvincible()){
-                                if(ennemi instanceof Koopa) {
-                                    Koopa koopa = (Koopa) ennemi;
-                                    if(koopa.getState() == Koopa.State.WALKING) {
-                                        // koopa become a shell
-                                        koopa.setState(Koopa.State.SHELL);
+                        if(fromAbove && falling && !mario.isInvincible()) {
+                            if(ennemi instanceof Koopa) {
+                                Koopa koopa = (Koopa) ennemi;
+                                if(koopa.getState() == Koopa.State.WALKING) {
+                                    // koopa becomes a shell
+                                    koopa.setState(Koopa.State.SHELL);
 
-                                        koopa.position.y += 10;
+                                    koopa.position.y += 10;
+                                    mario.setPositionY(mario.getPosition().y - 15);
 
-                                        mario.setPositionY(mario.getPosition().y - 15);
-
-                                        threadDescente.force = -jumpingThread.IMPULSION / 2;
-                                    } else if(koopa.getState() == Koopa.State.SHELL) {
-                                        // koopa is already a shell, so we can kill it
-                                        iterator.remove();
-                                        threadDescente.force = -jumpingThread.IMPULSION / 2;
-                                    }
-                                } else {
-                                    // Goomba
+                                    threadDescente.force = -jumpingThread.IMPULSION / 2;
+                                } else if(koopa.getState() == Koopa.State.SHELL) {
+                                    // koopa is already a shell, once mario jumps on it, it will be removed
                                     iterator.remove();
                                     threadDescente.force = -jumpingThread.IMPULSION / 2;
                                 }
+                            } else {
+                                // Goomba
+                                iterator.remove();
+                                threadDescente.force = -jumpingThread.IMPULSION / 2;
                             }
+                            collisionHandled = true;
+                        }
 
-                        } else {
-                            if (!mario.isInvincible()) {
+                        if(!collisionHandled) {
+                            if(!mario.isInvincible()){
                                 mario.perdreVie();
-                                if (mario.getVies() == 0) {
-                                    // 处理 Game Over 状态
+                                if(mario.getVies() == 0) {
                                     threadDescente.setSol(CONSTANTS.LE_SOL * 2);
                                     System.out.println("Game over");
                                 }

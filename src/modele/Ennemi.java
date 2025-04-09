@@ -66,13 +66,7 @@ public class Ennemi extends GameCharacter implements Runnable {
         this.position.y = findGroundY(this.position.x, this.position.y);
         // System.out.println("Koopa initial position: x=" + this.position.x + ", y=" + this.position.y);
 
-//        this.solidArea.x = CONSTANTS.slidAreaDefaultX;
-//        this.solidArea.y = CONSTANTS.slidAreaDefaultY;
-//        this.solidArea.height = this.image[0].getHeight(); // koopa image height
-//        this.solidArea.width = this.image[0].getWidth(); // koopa image width
         if (image != null && image.length > 0) {
-//            this.solidArea.x = CONSTANTS.slidAreaDefaultX;
-//            this.solidArea.y = CONSTANTS.slidAreaDefaultY;
             this.solidArea.x = 0;
             this.solidArea.y = 0;
             this.solidArea.height = image[0].getHeight();

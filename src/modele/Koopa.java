@@ -5,10 +5,10 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
 public class Koopa extends Ennemi {
-    // defines the states of Koopa
+    // defines 2 states of Koopa
     public enum State {
-        WALKING,  // walking
-        SHELL     // after being hit, it becomes a shell
+        WALKING,
+        SHELL
     }
 
     private State state;
