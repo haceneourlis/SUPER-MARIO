@@ -20,10 +20,11 @@ public class Deplacement_entite extends Thread {
         while (true) {
             try {
                 Thread.sleep(DELAY);
-                if (this.the_entity_to_move.getDirection() == "left"){
-                    this.the_entity_to_move.position.x -= this.the_entity_to_move.getSpeed();
+                if (this.the_entity_to_move.getDirection() == "right"){
+                    this.the_entity_to_move.deplacer_droite();
                 } else {
-                    this.the_entity_to_move.position.x += this.the_entity_to_move.getSpeed();
+         
+                    this.the_entity_to_move.deplacer_gauche();
                 }
                 
 

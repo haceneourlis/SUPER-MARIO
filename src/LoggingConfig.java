@@ -28,6 +28,9 @@ public class LoggingConfig {
 
             // Définit le niveau de log global (mettre à OFF, si on ne veut plus de msg)
             rootLogger.setLevel(Level.WARNING);
+
+            fileHandler.setLevel(Level.WARNING);
+
         } catch (IOException e) {
             System.err.println("Erreur lors de la configuration des logs : " + e.getMessage());
         }

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import modele.CONSTANTS;
 import modele.Ennemi;
+import modele.GameCharacter;
 import modele.Mario;
 
 /**
@@ -46,6 +47,8 @@ public class TileManager {
         private ArrayList<Ennemi> listeEnnemis;
         private Ennemi Koopa;
 
+        private ArrayList<GameCharacter> listeGameCharacters;
+
         private TileManager() {
                 // On récupère l'instance du Joueur
                 this.mario = Mario.getInstance();
@@ -54,6 +57,8 @@ public class TileManager {
                 tiles = new Tile[64];
 
                 listeEnnemis = new ArrayList<>();
+
+                listeGameCharacters = new ArrayList<>();
                 // Ajouter plusieurs ennemis
                 Koopa = new Ennemi(600, 20, 20, 5, true, this, "koopa");
                 this.listeEnnemis.add(Koopa);
@@ -86,6 +91,21 @@ public class TileManager {
                 return Koopa;
         }
 
+        public GameCharacter getListeGameCharacters(int i) {
+                return this.listeGameCharacters.get(i);
+        }
+
+        public void addGameCharacter(GameCharacter gc) {
+                this.listeGameCharacters.add(gc);
+        }
+
+        public void supprimerGameCharacter(int index){
+                this.listeGameCharacters.remove(index);
+        }
+
+        public int sizeGameCharacterList(){
+                return this.listeGameCharacters.size();
+        }
         /**
          * Cette méthode ne fait que charger les tiles dans le tableau de tuiles
          * Elle est appelée dans le constructeur de la classe

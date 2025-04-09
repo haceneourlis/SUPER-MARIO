@@ -9,14 +9,12 @@
 
 package modele;
 
-import java.util.logging.*;
-
-import modele.Tile.TileManager;
-
-import java.util.Iterator;
-import java.util.List;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.*;
+import modele.Tile.TileManager;
 
 public class Collision extends Thread {
 
@@ -118,9 +116,9 @@ public class Collision extends Thread {
                         mario.position.y = (ligneBottomdanslaMatrice - 1) * CONSTANTS.TAILLE_CELLULE;
                         sur_brick = true;
                         // bloquer la descente !
-                        threadDescente.force_mario = 0;
+                        threadDescente.force = 0;
 
-                        threadDescente.marioAllowedToFallDown = false;
+                        this.mario.allowedToFallDown = false;
                     } else {
                         // System.out.println("je suis sur une brick ---------------#####");
                     }
@@ -128,7 +126,7 @@ public class Collision extends Thread {
                     // // debloquer la descente
                     // threadDescente.setSol(CONSTANTS.LE_SOL * );
 
-                    threadDescente.marioAllowedToFallDown = true;
+                    this.mario.allowedToFallDown = true;
                     // System.out.println("je ne suis plus sur un brick ---------------#####");
                     sur_brick = false;
                 }
@@ -148,7 +146,7 @@ public class Collision extends Thread {
                     case "up":
                         logger.log(Level.INFO, "at least we are in this case <up>");
                         // on prédit ou sera notre mario aprés avoir bougé
-                        ligneTopdanslaMatrice = (posTopenY + threadDescente.force_mario) / CONSTANTS.TAILLE_CELLULE;
+                        ligneTopdanslaMatrice = (posTopenY + threadDescente.force) / CONSTANTS.TAILLE_CELLULE;
                         point1 = tm.tilesMatrice[ligneTopdanslaMatrice][colonneLeftdanslaMatrice];
                         point2 = tm.tilesMatrice[ligneTopdanslaMatrice][colonneRightdanslaMatrice];
 
@@ -164,10 +162,10 @@ public class Collision extends Thread {
                             sur_brick = false;
 
                             // Je remets sa force à 0.
-                            threadDescente.force_mario = 0;
+                            threadDescente.force = 0;
 
                             // Je lui permet de descendre.
-                            threadDescente.marioAllowedToFallDown = true;
+                            this.mario.allowedToFallDown = true;
                         }
                         // Verification si point1 ou point2 est une pièce, si oui on incrémente le
                         // nombre de pièces
@@ -194,6 +192,9 @@ public class Collision extends Thread {
                             jumpingThread.setThreadDecenteCoins(coinThread);
                             jumpingThread.jumpLaCoin();
                             coinThread.start();
+                            System.out.println("Position mario avant champi : " + this.mario.getPosition().x);
+                            Champignon champignon = new Champignon(null, new Point(colonneLeftdanslaMatrice*CONSTANTS.TAILLE_CELLULE, (ligneTopdanslaMatrice - 1)*CONSTANTS.TAILLE_CELLULE));
+                            this.tm.addGameCharacter(champignon);
 
                             // this.coin.IncrementNombreDePieces();
                             logger.log(Level.WARNING, "la coin a été crée en position x = {0} et y = {1}",
@@ -305,7 +306,7 @@ public class Collision extends Thread {
                         if (fromAbove && falling && mario.getDirection().equals("down")) {
                             System.out.println("Mario kills enemy");
                             iterator.remove();
-                            threadDescente.force_mario = -jumpingThread.IMPULSION / 2;
+                            threadDescente.force = -jumpingThread.IMPULSION / 2;
                         } else {
                             // if mario is not jumping on the ennemi, only when mario is not invincible, he
                             // will lose a life

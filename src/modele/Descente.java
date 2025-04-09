@@ -9,9 +9,7 @@ import java.util.logging.*;
  */
 public class Descente extends Thread {
 
-    private Mario mario;
     // La force ici peut être positive (descente) comme négative (saut).
-    public int force_mario = 0;
     public int force = 0;
 
     private static final int DELAY = 17;

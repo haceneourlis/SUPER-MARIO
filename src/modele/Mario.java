@@ -79,28 +79,7 @@ public class Mario extends GameCharacter {
         }
     }
 
-    /**
-     * Méthode pour déplacer le joueur à droite.
-     * Si la vitesse est inférieure à la vitesse maximale, on l'incrémente de 1.
-     * On incrémente la position en x de la vitesse.
-     */
-    public void deplacer_droite() {
-        this.setDirection("right");
-        if (canMove)
-            this.position.x += this.speed;
-    }
-
-    /**
-     * Méthode pour déplacer le joueur à gauche.
-     * Si la vitesse est inférieure à la vitesse maximale, on l'incrémente de 1.
-     * On décrémente la position en x de la vitesse.
-     */
-    public void deplacer_gauche() {
-        this.setDirection("left");
-        if (canMove)
-            this.position.x -= this.speed;
-    }
-
+    
     /**
      * Méthode pour décrémenter la vitesse du joueur.
      * Si la vitesse est supérieure à 0, on la décrémente du facteur de
@@ -123,13 +102,6 @@ public class Mario extends GameCharacter {
         return this.image[index];
     }
 
-    public void noMoving() {
-        this.canMove = false;
-    }
-
-    public void yesMoving() {
-        this.canMove = true;
-    }
 
     public boolean isInvincible() {
         return invincible;

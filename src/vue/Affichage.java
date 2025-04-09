@@ -1,15 +1,15 @@
 package vue;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import modele.*;
 import modele.Tile.TileManager;
-import java.util.List;
-import java.util.ArrayList;
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
 
 /**
  * Classe qui affiche le jeu
@@ -119,6 +119,7 @@ public class Affichage extends JPanel {
         // On crée un objet Graphics2D pour dessiner les éléments
         Graphics2D g2 = (Graphics2D) g;
         super.paintComponent(g2);
+ 
 
         // je récupère la case de mario actuelle, relative au décalage
         int case_actuelle = ((this.JoueurPrincipal.getPositionX() - decalage) / CONSTANTS.TAILLE_CELLULE);
@@ -160,7 +161,13 @@ public class Affichage extends JPanel {
                 return; // skip draw every other frame
         }
 
+
+        for (int i = 0; i < this.tilemanager.sizeGameCharacterList(); i ++){
+            GameCharacter gc = this.tilemanager.getListeGameCharacters(i);
+            g2.drawImage(gc.getImage(0), gc.getPosition().x, gc.getPosition().y, null);
+        }
         this.drawCoin(g2);
+       
 
         // affichons mario en dernier (pour qu'il soit au-dessus de tout) :
         g2.drawImage(this.animationJoueur.getCurrentToDraw(), JoueurPrincipal.getPositionX(),
@@ -207,4 +214,6 @@ public class Affichage extends JPanel {
             // System.out.println("euuh coinToCatch null ? ");
         }
     }
+
+   
 }

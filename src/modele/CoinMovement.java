@@ -16,6 +16,7 @@ public class CoinMovement extends Thread {
         this.c = c;   
         this.thread_continue = true;
         this.positionDepart = position_depart;
+        (new Descente(c)).start();
     }
 
     public void stop_thread(){
@@ -28,23 +29,10 @@ public class CoinMovement extends Thread {
         while (thread_continue) { 
             try {
                 Thread.sleep(DELAY);
-                
-                positionDepart = Collision.coinToCatch.position;
-                if (force_coin >= 0)
-                    logger.log(Level.WARNING, "coin is going down");
-                else
-                    logger.log(Level.WARNING, "coin is going up");
 
-                this.force_coin += CONSTANTS.GRAVITY;
-                if (this.force_coin >= CONSTANTS.FORCE_MAX)
-                    this.force_coin = CONSTANTS.FORCE_MAX;
-
-                Collision.coinToCatch.position.y += this.force_coin;
-
-                if (Collision.coinToCatch.position.y >= positionDepart.y) {
-                    coinAllowedToFallDown = false;
-                    Collision.coinToCatch = null;
-                    force_coin = 0;
+                if (this.c.position.y >= positionDepart.y) {
+                    this.c.allowedToFallDown = false;
+                    this.stop_thread();
                 }
             } catch (Exception e) {
             }
