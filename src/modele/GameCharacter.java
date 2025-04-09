@@ -16,7 +16,7 @@ public class GameCharacter extends Rectangle {
     // direction of the character
     private String direction;
     // image of the character
-    protected BufferedImage image;
+    public BufferedImage image;
 
     // constructor
     protected GameCharacter() {

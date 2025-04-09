@@ -3,24 +3,23 @@
 import controleur.*;
 import javax.swing.JFrame;
 import modele.*;
+import modele.Tile.TileManager;
 import vue.*;
 
 public class Main {
     // on lance ça dans la méthode main
     public static void main(String[] args) {
 
-        // On crée l'objet de loggingconfig qui va gérer le fichier de log
-        LoggingConfig logs_manager = new LoggingConfig();
         // on crée une fenetre
         JFrame fenetre = new JFrame();
 
         // Get the player instance : classe singleton .
         Mario j = Mario.getInstance();
+        // Get the tile manager instance : classe singleton .;
+        TileManager tilemanager = TileManager.getInstance(); // Get the tile manager instance : classe singleton .;
 
-        Score score = new Score();
-        Coin coin = new Coin(score);
         // on ajoute un panel à la fenetre
-        Affichage GamePanel = new Affichage(score, coin);
+        Affichage GamePanel = new Affichage();
         fenetre.add(GamePanel);
 
         // on ajoute un thread pour la gravité
@@ -30,6 +29,11 @@ public class Main {
         // on crée un thread pour le saut
         Jumping jumpin = new Jumping(des);
 
+        // lancer le thread de tous les ennemis
+        for (Ennemi ennemi : tilemanager.getListeEnnemis()) {
+            ennemi.thread.start();
+        }
+
         // on crée un thread pour le mouvement : qui detecte les touches (<- et -> et
         // ESPACE)
         MouvementJoueur mv = new MouvementJoueur();
@@ -37,7 +41,7 @@ public class Main {
         dl.start();
 
         // on ajoute un thread pour la collision
-        Collision col = new Collision(GamePanel, jumpin, des, coin);
+        Collision col = new Collision(jumpin, des);
         col.start();
         fenetre.addKeyListener(mv);
         fenetre.pack();

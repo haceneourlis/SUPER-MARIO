@@ -15,6 +15,7 @@ public class Jumping {
 
     // Descente instance
     private Descente descente;
+    private DescenteCoins descenteCoins;
     // Instance de Mario
     private Mario mario = Mario.getInstance();
 
@@ -24,6 +25,10 @@ public class Jumping {
     // saut.
     public Jumping(Descente descente) {
         this.descente = descente;
+    }
+
+    public void setThreadDecenteCoins(DescenteCoins descenteCoins) {
+        this.descenteCoins = descenteCoins;
     }
 
     /**
@@ -42,9 +47,9 @@ public class Jumping {
     }
 
     public void jumpLaCoin() {
-        if (!this.descente.coinAllowedToFallDown) {
-            this.descente.force_coin = -IMPULSION * 4;
-            this.descente.coinAllowedToFallDown = true;
+        if (!this.descenteCoins.coinAllowedToFallDown) {
+            this.descenteCoins.force_coin = -IMPULSION;
+            this.descenteCoins.coinAllowedToFallDown = true;
             logger.log(Level.WARNING, "coin jump");
         }
     }

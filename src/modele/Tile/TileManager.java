@@ -5,8 +5,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
 import modele.CONSTANTS;
+import modele.Ennemi;
 import modele.Mario;
 
 /**
@@ -30,6 +33,9 @@ public class TileManager {
         // matrice du jeu qui sera importée depuis un fichier texte
         public int[][] tilesMatrice;
 
+        // instance unique de la classe TileManager (singleton)
+        private static TileManager instance = null;
+
         // décalage de mario (en nombre de colonnes) par rapport à une certaine colonne
         // appelée "colonne de scrolling"
         private int decalage = 0;
@@ -38,19 +44,47 @@ public class TileManager {
         // loadMatrice
         private int maxColLevel = 0;
 
-        public TileManager() {
+        private ArrayList<Ennemi> listeEnnemis;
+        private Ennemi Koopa;
+
+        private TileManager() {
                 // On récupère l'instance du Joueur
                 this.mario = Mario.getInstance();
 
                 // J'ai mis 64 tuiles ici, mais on peut adapter plus tard
                 tiles = new Tile[64];
 
+                listeEnnemis = new ArrayList<>();
+                // Ajouter plusieurs ennemis
+                Koopa = new Ennemi(600, 20, 20, 5, true, this, "koopa");
+                this.listeEnnemis.add(Koopa);
                 // méthode qui va juste charger les images et les mettres dans le tableau de
                 // tuiles
                 getTileImage();
 
                 // méthode qui va charger la matrice du jeu dans la matrice tilesMatrice
                 loadMatrice("/resources/matrice.txt");
+        }
+
+        public static TileManager getInstance() {
+                if (instance == null) {
+                        // Si l'instance n'existe pas, on la crée
+                        instance = new TileManager();
+
+                }
+                return instance;
+        }
+
+        public ArrayList<Ennemi> getListeEnnemis() {
+                return listeEnnemis;
+        }
+
+        public void addEnnemi(Ennemi ennemi) {
+                this.listeEnnemis.add(ennemi);
+        }
+
+        public Ennemi getKoopa() {
+                return Koopa;
         }
 
         /**

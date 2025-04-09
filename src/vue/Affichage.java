@@ -31,7 +31,7 @@ public class Affichage extends JPanel {
     private List<AnimationGoomba> animationGoomba;
 
     // Variable pour le gestionnaire de tuiles
-    public TileManager tm;
+    public TileManager tilemanager;
 
     private Font marioFont;
 
@@ -61,12 +61,9 @@ public class Affichage extends JPanel {
      * @throws IOException
      * @throws FontFormatException
      */
-    public Affichage(Score score, Coin coin) {
+    public Affichage() {
         // Initialiser la fenêtre avec les dimensions prévues.
         setPreferredSize(new Dimension(CONSTANTS.LARGEUR_VUE, CONSTANTS.HAUTEUR_VUE)); // Set window size
-        this.score = score;
-
-        this.coin = coin;
 
         try {
             this.marioFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/resources/PressStart2P-Regular.ttf"))
@@ -81,21 +78,17 @@ public class Affichage extends JPanel {
         this.JoueurPrincipal = Mario.getInstance(); // Get the player instance : classe singleton .
 
         // Initialiser le gestionnaire de tuiles
-        tm = new TileManager();
+        this.tilemanager = TileManager.getInstance(); // Get the tile manager instance : classe singleton .;
+
+        this.listeEnnemis = new ArrayList<>(); // Liste des ennemis
+        this.listeEnnemis = tilemanager.getListeEnnemis(); // Récupérer la liste des ennemis depuis le TileManager
 
         // Initialiser l'ennemi (au-dessus du sol)
-        // ennemi = new Ennemi(630, 20, 20, 5, true, tm);
+        // ennemi = new Ennemi(630, 20, 20, 5, true, tilemanager);
         // ennemi.thread.start(); // Lancer le thread de l'ennemi
 
-        listeEnnemis = new ArrayList<>();
         animationKoopa = new ArrayList<>();
         animationGoomba = new ArrayList<>();
-
-        // Ajouter plusieurs ennemis
-        Ennemi koopa = new Ennemi(600, 20, 20, 5, true, tm, "koopa");
-        // Ennemi goomba = new Ennemi(500, 20, 20, 5, false, tm);
-        listeEnnemis.add(koopa);
-        // listeEnnemis.add(goomba);
 
         // Mettre à jour l'affichage toutes les 50ms
         (new Redessine(this)).start();
@@ -106,45 +99,16 @@ public class Affichage extends JPanel {
 
         // télecharger l'image du coeur
         try {
-            coeurImage = ImageIO.read(getClass().getResourceAsStream("/resources/coeur.png"));
+            coeurImage = ImageIO.read(getClass().getResourceAsStream("/resources/coin.png"));
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        // Démarrer les threads des ennemis et de leurs animations
-        animationKoopa.add(new AnimationKoopa(koopa));
-        // animationGoomba.add(new AnimationGoomba(goomba));
+        animationKoopa.add(new AnimationKoopa(tilemanager.getKoopa()));
 
-        for (Ennemi ennemi : listeEnnemis) {
-            ennemi.thread.start();
-        }
         for (AnimationKoopa Koopa : animationKoopa) {
             Koopa.start();
         }
-        // for (AnimationGoomba Goomba : animationGoomba) {
-        // Goomba.start();
-        // }
-    }
-
-    // getter de tileManager
-    public TileManager getTileManager() {
-        return this.tm;
-    }
-
-    /**
-     * Getter de l'objet Ennemi.
-     * 
-     * @return l'ennemi du jeu.
-     */
-    // public Ennemi getEnnemi() {
-    // return ennemi;
-    // }
-    public List<Ennemi> getEnnemis() {
-        return listeEnnemis;
-    }
-
-    public void removeEnnemi(Ennemi ennemi) {
-        this.listeEnnemis.remove(ennemi);
     }
 
     /**
@@ -171,7 +135,7 @@ public class Affichage extends JPanel {
         g2.translate(-this.decalage, 0);
 
         // affichons la matrice du jeu : (le terrain)
-        this.tm.draw(g2);
+        this.tilemanager.draw(g2);
 
         // Dessiner tous les ennemis avec leur animation respective
         for (int i = 0; i < listeEnnemis.size(); i++) {
@@ -228,22 +192,17 @@ public class Affichage extends JPanel {
             g.drawString("GAME OVER", getWidth() / 2 - 150, getHeight() / 2);
         }
 
-        // g2.dispose();
-
-        g2.setFont(marioFont);
-        g2.setColor(Color.WHITE);
-        g2.drawString("Score : " + score.getCurrentScore(), SCORE_X + decalage, SCORE_Y);
-        g2.drawString("Coins : " + coin.getNombreDePieces(), COINS_X + decalage, COINS_Y);
-
     }
 
     // draw un coin sautant
     public void drawCoin(Graphics2D g2) {
         if (Collision.coinToCatch != null) {
-            g2.drawImage(Collision.coinToCatch.image, Collision.coinToCatch.position.x * CONSTANTS.TAILLE_CELLULE,
+            g2.drawImage(Collision.coinToCatch.image,
+                    Collision.coinToCatch.position.x * CONSTANTS.TAILLE_CELLULE,
                     Collision.coinToCatch.position.y * CONSTANTS.TAILLE_CELLULE, null);
-            System.out.println("coinToCatch : " + Collision.coinToCatch.position.x * CONSTANTS.TAILLE_CELLULE + " "
-                    + Collision.coinToCatch.position.y * CONSTANTS.TAILLE_CELLULE);
+            // System.out.println("coinToCatch : " + Collision.coinToCatch.position.x *
+            // CONSTANTS.TAILLE_CELLULE + " "
+            // + Collision.coinToCatch.position.y * CONSTANTS.TAILLE_CELLULE);
         } else {
             // System.out.println("euuh coinToCatch null ? ");
         }

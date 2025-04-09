@@ -42,5 +42,11 @@ public class CONSTANTS {
 
     public static final int INTERVALE_COLLISION = 10;
 
-    public static final int FORCE_MAX = 4;
+    public static final int FORCE_MAX = 20;
+
+    // les types de tuiles :
+
+    public static final int CIEL = 0;
+    public static final int SOL = 1;
+    public static final int PRIZE_BRICK = 2;
 }

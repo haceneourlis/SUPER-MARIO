@@ -10,7 +10,8 @@
 package modele;
 
 import java.util.logging.*;
-import vue.Affichage;
+
+import modele.Tile.TileManager;
 
 import java.util.Iterator;
 import java.util.List;
@@ -22,43 +23,35 @@ public class Collision extends Thread {
     private Mario mario;
     private List<Ennemi> ennemis;
 
-    private Affichage gp;
     private Jumping jumpingThread;
     private Descente threadDescente;
+
+    // Initialiser le gestionnaire de tuiles
+    TileManager tm;
 
     private int previousMarioFeetY = Mario.getInstance().getPosition().y
             + Mario.getInstance().getSolidArea().y
             + Mario.getInstance().getSolidArea().height;
 
-    private Coin coin;
     public static Coin coinToCatch = null;
 
     protected boolean sur_brick = false;
 
     private static final Logger logger = Logger.getLogger(Collision.class.getName());
 
-    public Collision(Affichage affichage, Jumping jumpingThread, Descente threadDescente, Coin coin) {
-        gp = affichage;
+    public Collision(Jumping jumpingThread, Descente threadDescente) {
         this.mario = Mario.getInstance();
-        this.ennemis = gp.getEnnemis();
+
         this.jumpingThread = jumpingThread;
         this.threadDescente = threadDescente;
-        this.coin = coin;
+        this.tm = TileManager.getInstance();
+
+        this.ennemis = tm.getListeEnnemis();
     }
 
     @Override
     public void run() {
         while (true) {
-            // synchronized (gp) {
-            // while (gp.PAUSE) {
-            // try {
-            // gp.wait();
-            // } catch (InterruptedException e) {
-            // e.printStackTrace();
-            // }
-            // }
-            // }
-
             try {
                 Thread.sleep(5);
 
@@ -97,10 +90,10 @@ public class Collision extends Thread {
 
                 // check all the time if mario is on the ground .
                 // on va anticiper la collision avec la brique :
-                point1 = gp.tm.tilesMatrice[ligneBottomdanslaMatrice][colonneLeftdanslaMatrice];
-                point2 = gp.tm.tilesMatrice[ligneBottomdanslaMatrice][colonneRightdanslaMatrice];
+                point1 = tm.tilesMatrice[ligneBottomdanslaMatrice][colonneLeftdanslaMatrice];
+                point2 = tm.tilesMatrice[ligneBottomdanslaMatrice][colonneRightdanslaMatrice];
 
-                if (gp.tm.tiles[point1].collision || gp.tm.tiles[point2].collision) {
+                if (tm.tiles[point1].collision || tm.tiles[point2].collision) {
                     // System.out.println("point1 = " + point1 + " point2 = " + point2);
                     // si c'est une brique de type 3 ( puit , riviere , ... ) alors mario meurt
                     // if (point1 == 3 || point2 == 3) {
@@ -156,11 +149,11 @@ public class Collision extends Thread {
                         logger.log(Level.INFO, "at least we are in this case <up>");
                         // on prédit ou sera notre mario aprés avoir bougé
                         ligneTopdanslaMatrice = (posTopenY + threadDescente.force_mario) / CONSTANTS.TAILLE_CELLULE;
-                        point1 = gp.tm.tilesMatrice[ligneTopdanslaMatrice][colonneLeftdanslaMatrice];
-                        point2 = gp.tm.tilesMatrice[ligneTopdanslaMatrice][colonneRightdanslaMatrice];
+                        point1 = tm.tilesMatrice[ligneTopdanslaMatrice][colonneLeftdanslaMatrice];
+                        point2 = tm.tilesMatrice[ligneTopdanslaMatrice][colonneRightdanslaMatrice];
 
-                        if (gp.tm.tiles[point1].collision == true
-                                || gp.tm.tiles[point2].collision == true) {
+                        if (tm.tiles[point1].collision == true
+                                || tm.tiles[point2].collision == true) {
                             // On remet le joueur à l'emplacement juste en dessous de la brique. (pour
                             // éviter tout petit bug visuel)
                             mario.setPositionY((ligneTopdanslaMatrice + 1) * CONSTANTS.TAILLE_CELLULE);
@@ -180,8 +173,7 @@ public class Collision extends Thread {
                         // nombre de pièces
                         // Et on demande à la matrice (locale) d'être modifiée.
                         if (point1 == 30 || point2 == 30) {
-                            this.coin.IncrementNombreDePieces();
-                            gp.tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 0);
+                            tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 0);
                         }
 
                         // si mario rentre en collision avec une : brickPrize, cest-à-dire une brique
@@ -190,23 +182,25 @@ public class Collision extends Thread {
                         // et on va la supprimer de la matrice
                         // TODO : faire sortir un champignon ou une pièce de la brique
 
-                        if (point1 == 2 || point2 == 2) {
+                        if (point1 == CONSTANTS.PRIZE_BRICK || point2 == CONSTANTS.PRIZE_BRICK) {
 
                             // créer un objet (coin) et le faire sauter et redescendre sur la brique et +1
                             // au score ed mario
                             // et modifier la brique de la matrice pour qu'elle ne soit plus une brique de
                             // récompense.
 
-                            coinToCatch = new Coin(
-                                    new Point(colonneLeftdanslaMatrice, (ligneTopdanslaMatrice - 1)));
+                            coinToCatch = new Coin(new Point(colonneLeftdanslaMatrice, (ligneTopdanslaMatrice - 1)));
+                            DescenteCoins coinThread = new DescenteCoins(coinToCatch);
+                            jumpingThread.setThreadDecenteCoins(coinThread);
                             jumpingThread.jumpLaCoin();
+                            coinThread.start();
 
-                            this.coin.IncrementNombreDePieces();
+                            // this.coin.IncrementNombreDePieces();
                             logger.log(Level.WARNING, "la coin a été crée en position x = {0} et y = {1}",
                                     new Object[] { coinToCatch.position.x, coinToCatch.position.y });
 
                             logger.log(Level.INFO, "brickPrize collected !");
-                            gp.tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 1);
+                            tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 1);
                         }
 
                         point1 = 0;
@@ -220,22 +214,20 @@ public class Collision extends Thread {
 
                         colonneLeftdanslaMatrice = (posLeftenX - CONSTANTS.INTERVALE_COLLISION) /
                                 CONSTANTS.TAILLE_CELLULE;
-                        point1 = gp.tm.tilesMatrice[ligneTopdanslaMatrice][colonneLeftdanslaMatrice];
-                        point2 = gp.tm.tilesMatrice[ligneBottomdanslaMatrice][colonneLeftdanslaMatrice];
+                        point1 = tm.tilesMatrice[ligneTopdanslaMatrice][colonneLeftdanslaMatrice];
+                        point2 = tm.tilesMatrice[ligneBottomdanslaMatrice][colonneLeftdanslaMatrice];
 
                         // verification si point1 ou point2 est une pièce
                         if ((point1 == 30)) {
                             logger.log(Level.INFO, "Coin collected from left with point1 !");
-                            this.coin.IncrementNombreDePieces();
-                            gp.tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 0);
+                            tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 0);
                         } else if (point2 == 30) {
                             logger.log(Level.INFO, "Coin collected from left with point2 !");
-                            this.coin.IncrementNombreDePieces();
-                            gp.tm.modifyMatrice(ligneBottomdanslaMatrice, colonneLeftdanslaMatrice, 0);
+                            tm.modifyMatrice(ligneBottomdanslaMatrice, colonneLeftdanslaMatrice, 0);
                         }
 
-                        if (gp.tm.tiles[point1].collision == true
-                                || gp.tm.tiles[point2].collision == true) {
+                        if (tm.tiles[point1].collision == true
+                                || tm.tiles[point2].collision == true) {
                             mario.noMoving();
                         } else {
                             mario.yesMoving();
@@ -246,21 +238,21 @@ public class Collision extends Thread {
                         colonneRightdanslaMatrice = (posRightenX + CONSTANTS.INTERVALE_COLLISION) /
                                 CONSTANTS.TAILLE_CELLULE;
 
-                        point1 = gp.tm.tilesMatrice[ligneTopdanslaMatrice][colonneRightdanslaMatrice];
-                        point2 = gp.tm.tilesMatrice[ligneBottomdanslaMatrice][colonneRightdanslaMatrice];
+                        point1 = tm.tilesMatrice[ligneTopdanslaMatrice][colonneRightdanslaMatrice];
+                        point2 = tm.tilesMatrice[ligneBottomdanslaMatrice][colonneRightdanslaMatrice];
 
                         // verification si point1 ou point2 est une pièce
                         if ((point1 == 30)) {
                             logger.log(Level.INFO, "Coin collected from right with point1 !");
-                            this.coin.IncrementNombreDePieces();
-                            gp.tm.modifyMatrice(ligneTopdanslaMatrice, colonneRightdanslaMatrice, 0);
+                            // this.coin.IncrementNombreDePieces()
+                            tm.modifyMatrice(ligneTopdanslaMatrice, colonneRightdanslaMatrice, 0);
                         } else if (point2 == 30) {
                             logger.log(Level.INFO, "Coin collected from right with point2 !");
-                            this.coin.IncrementNombreDePieces();
-                            gp.tm.modifyMatrice(ligneBottomdanslaMatrice, colonneRightdanslaMatrice, 0);
+                            // this.coin.IncrementNombreDePieces();
+                            tm.modifyMatrice(ligneBottomdanslaMatrice, colonneRightdanslaMatrice, 0);
                         }
 
-                        if (gp.tm.tiles[point1].collision == true || gp.tm.tiles[point2].collision == true) {
+                        if (tm.tiles[point1].collision == true || tm.tiles[point2].collision == true) {
 
                             mario.noMoving();
                         } else {
@@ -276,7 +268,7 @@ public class Collision extends Thread {
 
                 // TODO : + collision avec les ennemeies ,
 
-                Iterator<Ennemi> iterator = gp.getEnnemis().iterator();
+                Iterator<Ennemi> iterator = tm.getListeEnnemis().iterator();
                 while (iterator.hasNext()) {
                     Ennemi ennemi = iterator.next();
 

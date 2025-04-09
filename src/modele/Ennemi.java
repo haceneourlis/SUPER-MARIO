@@ -56,10 +56,8 @@ public class Ennemi extends GameCharacter implements Runnable {
         }
         this.tileManager = tileManager;
         this.position.x = x;
-        // affiche dans la console le height de l'image 0
-        System.out.println(this.image[0].getHeight()); // 48
-        this.position.y = findGroundY(this.position.x, this.position.y);
-        System.out.println("Koopa initial position: x=" + this.position.x + ", y=" + this.position.y);
+
+        this.position.y = CONSTANTS.LE_SOL;
 
         this.solidArea.x = CONSTANTS.slidAreaDefaultX;
         this.solidArea.y = CONSTANTS.slidAreaDefaultY;
@@ -68,10 +66,9 @@ public class Ennemi extends GameCharacter implements Runnable {
 
         this.speed = speed;
         this.leftBorder = 0;
-        this.rightBorder = CONSTANTS.LARGEUR_VUE-this.solidArea.width;
+        this.rightBorder = CONSTANTS.LARGEUR_VUE - this.solidArea.width;
 
         this.movingRight = movingRight; // l'ennemi commence par aller à droite
-
 
         thread = new Thread(this);
     }
@@ -90,7 +87,8 @@ public class Ennemi extends GameCharacter implements Runnable {
         return movingRight;
     } // Indique si l'ennemi va à droite
 
-    // TODO: in the real game, ennemies disappear when they reach the left of the screen
+    // TODO: in the real game, ennemies disappear when they reach the left of the
+    // screen
 
     // faire bouger l'ennemi en tenant compte des collisions
     public void moveEnnemi() {
@@ -122,8 +120,6 @@ public class Ennemi extends GameCharacter implements Runnable {
         this.position.x = nextX;
     }
 
-
-
     // demarrer le thread
     @Override
     public void run() {
@@ -154,6 +150,7 @@ public class Ennemi extends GameCharacter implements Runnable {
 
     /**
      * Trouve la hauteur du sol pour une position donnée.
+     * 
      * @param startX Position x de départ
      * @param startY Position y de départ
      * @return La position y où l'ennemi doit se poser
@@ -174,7 +171,6 @@ public class Ennemi extends GameCharacter implements Runnable {
         // Si aucun sol trouvé, retourne la position par défaut
         return CONSTANTS.LE_SOL;
     }
-
 
     // arreter le thread
     public void stopMoving() {
