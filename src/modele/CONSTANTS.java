@@ -41,4 +41,6 @@ public class CONSTANTS {
     public static final int LE_SOL = TAILLE_CELLULE * 11;
 
     public static final int INTERVALE_COLLISION = 10;
+
+    public static final int FORCE_MAX = 4;
 }

@@ -34,10 +34,18 @@ public class Jumping {
      * "tomber" maintenant.
      */
     public void jump() {
-        if (!this.descente.allowedToFallDown) {
-            this.descente.force = -IMPULSION;
-            this.descente.allowedToFallDown = true;
+        if (!this.descente.marioAllowedToFallDown) {
+            this.descente.force_mario = -IMPULSION;
+            this.descente.marioAllowedToFallDown = true;
             mario.setDirection("up");
+        }
+    }
+
+    public void jumpLaCoin() {
+        if (!this.descente.coinAllowedToFallDown) {
+            this.descente.force_coin = -IMPULSION * 4;
+            this.descente.coinAllowedToFallDown = true;
+            logger.log(Level.WARNING, "coin jump");
         }
     }
 
