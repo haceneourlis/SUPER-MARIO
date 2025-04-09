@@ -1,2 +1,2 @@
-4月 09, 2025 3:22:58 下午 modele.Descente <init>
+4月 09, 2025 10:36:34 下午 modele.Descente <init>
 警告: Hacene supprime la méthode getCanFallDown si tu vois que tu n'en as pas besoin s'il te plait

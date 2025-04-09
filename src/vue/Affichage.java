@@ -89,8 +89,10 @@ public class Affichage extends JPanel {
 
         // Ajouter plusieurs ennemis
         Koopa koopa = new Koopa(600, 5, true, tm);
+        Koopa koopa1 = new Koopa(200, 5, true, tm);
         Goomba goomba = new Goomba(300, 4, true, tm);
         listeEnnemis.add(koopa);
+        listeEnnemis.add(koopa1);
         listeEnnemis.add(goomba);
 
         // Mettre à jour l'affichage toutes les 50ms
@@ -109,6 +111,7 @@ public class Affichage extends JPanel {
 
         // Démarrer les threads des ennemis et de leurs animations
         animationKoopa.add(new AnimationKoopa(koopa));
+        animationKoopa.add(new AnimationKoopa(koopa1));
         animationGoomba.add(new AnimationGoomba(goomba));
 
         for (Ennemi ennemi : listeEnnemis) {

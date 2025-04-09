@@ -313,46 +313,47 @@ public class Collision extends Thread {
 
                     // 如果发生碰撞
                     // FIXME: 踩到koopa时会掉命
-                        if(marioHitbox.intersects(ennemiHitbox)) {
-                            int marioFeetY = mario.getPosition().y + mario.getSolidArea().y + mario.getSolidArea().height;
-                            int ennemiHeadY = ennemi.getPosition().y + ennemi.getSolidArea().y;
 
-                            boolean fromAbove = marioFeetY <= ennemiHeadY+15 && marioFeetY >= ennemiHeadY;
-                            // boolean falling = marioFeetY > previousMarioFeetY;
-                            boolean falling = (threadDescente.force > 0);
-
-                            if(fromAbove && falling && mario.getDirection().equals("down")) {
-                                if (!mario.isInvincible()){
-                                    // 如果敌人是 Koopa，则根据当前状态进行处理
-                                    if(ennemi instanceof Koopa) {
-                                        Koopa koopa = (Koopa) ennemi;
-                                        if(koopa.getState() == Koopa.State.WALKING) {
-                                            // 第一次踩：将 Koopa 状态设为 SHELL
-                                            koopa.setState(Koopa.State.SHELL);
-                                            // 给马里奥一个向上的力，模拟踩敌人后的反弹
-                                            threadDescente.force = -jumpingThread.IMPULSION / 2;
-                                        } else if(koopa.getState() == Koopa.State.SHELL) {
-                                            // 第二次踩：直接移除敌人
-                                            iterator.remove();
-                                            threadDescente.force = -jumpingThread.IMPULSION / 2;
-                                        }
-                                    } else {
-                                        // 对于其他敌人（例如 Goomba），直接移除
-                                        iterator.remove();
-                                        threadDescente.force = -jumpingThread.IMPULSION / 2;
-                                    }
-                                }
-                            } else {
-                                if(!mario.isInvincible()){
-                                    mario.perdreVie();
-                                    if(mario.getVies() == 0) {
-                                        // 处理 Game Over 状态
-                                        threadDescente.setSol(CONSTANTS.LE_SOL * 2);
-                                        System.out.println("Game over");
-                                    }
-                                }
-                            }
-                        }
+//                    if(marioHitbox.intersects(ennemiHitbox)) {
+//                        int marioFeetY = mario.getPosition().y + mario.getSolidArea().y + mario.getSolidArea().height;
+//                        int ennemiHeadY = ennemi.getPosition().y + ennemi.getSolidArea().y;
+//
+//                        boolean fromAbove = marioFeetY <= ennemiHeadY+15 && marioFeetY >= ennemiHeadY;
+//                        // boolean falling = marioFeetY > previousMarioFeetY;
+//                        boolean falling = (threadDescente.force > 0);
+//
+//                        if(fromAbove && falling && mario.getDirection().equals("down")) {
+//                            if (!mario.isInvincible()){
+//                                // 如果敌人是 Koopa，则根据当前状态进行处理
+//                                if(ennemi instanceof Koopa) {
+//                                    Koopa koopa = (Koopa) ennemi;
+//                                    if(koopa.getState() == Koopa.State.WALKING) {
+//                                        // 第一次踩：将 Koopa 状态设为 SHELL
+//                                        koopa.setState(Koopa.State.SHELL);
+//                                        // 给马里奥一个向上的力，模拟踩敌人后的反弹
+//                                        threadDescente.force = -jumpingThread.IMPULSION / 2;
+//                                    } else if(koopa.getState() == Koopa.State.SHELL) {
+//                                        // 第二次踩：直接移除敌人
+//                                        iterator.remove();
+//                                        threadDescente.force = -jumpingThread.IMPULSION / 2;
+//                                    }
+//                                } else {
+//                                    // 对于其他敌人（例如 Goomba），直接移除
+//                                    iterator.remove();
+//                                    threadDescente.force = -jumpingThread.IMPULSION / 2;
+//                                }
+//                            }
+//                        } else {
+//                            if(!mario.isInvincible()){
+//                                mario.perdreVie();
+//                                if(mario.getVies() == 0) {
+//                                    // 处理 Game Over 状态
+//                                    threadDescente.setSol(CONSTANTS.LE_SOL * 2);
+//                                    System.out.println("Game over");
+//                                }
+//                            }
+//                        }
+//                    }
 
 
                         // FIXME: 这个版本踩不死敌人
@@ -410,7 +411,60 @@ public class Collision extends Thread {
 //                    }
 
 
-                    previousMarioFeetY = mario.getPosition().y + mario.getSolidArea().y + mario.getSolidArea().height;
+                    // FIXME: 最新版本
+                    // 如果发生碰撞
+                    if(marioHitbox.intersects(ennemiHitbox)) {
+                        int marioFeetY = mario.getPosition().y + mario.getSolidArea().y + mario.getSolidArea().height;
+                        int ennemiHeadY = ennemi.getPosition().y + ennemi.getSolidArea().y;
+
+                        boolean fromAbove = marioFeetY <= ennemiHeadY + 15 && marioFeetY >= ennemiHeadY;
+                        boolean falling = (threadDescente.force > 0);
+                        // (或 boolean falling = (mario.getPosition().y > previousMarioFeetY); )
+
+                        // 标记本次碰撞是否已处理完毕
+                        boolean collisionHandled = false;
+
+                        if(fromAbove && falling && !mario.isInvincible()) {
+                            // 只要满足踩敌条件，就执行踩敌逻辑
+                            if(ennemi instanceof Koopa) {
+                                Koopa koopa = (Koopa) ennemi;
+                                if(koopa.getState() == Koopa.State.WALKING) {
+                                    // 变龟壳
+                                    koopa.setState(Koopa.State.SHELL);
+                                    // 把 Koopa 稍微上移或左右移，让它不再跟 Mario 重叠
+                                    koopa.position.y += 10;
+
+                                    // **新增：将 Mario 立即上移，防止重叠触发扣命**
+                                    mario.setPositionY(mario.getPosition().y - 15);
+
+                                    // 重新更新 solidArea(如果壳子尺寸不同):
+                                    // koopa.solidArea.x = 0; koopa.solidArea.y = 0; ...
+                                    // 给Mario反弹
+                                    threadDescente.force = -jumpingThread.IMPULSION / 2;
+                                } else if(koopa.getState() == Koopa.State.SHELL) {
+                                    // 二踩，直接移除
+                                    iterator.remove();
+                                    threadDescente.force = -jumpingThread.IMPULSION / 2;
+                                }
+                            } else {
+                                // Goomba等其它敌人
+                                iterator.remove();
+                                threadDescente.force = -jumpingThread.IMPULSION / 2;
+                            }
+                            collisionHandled = true;
+                        }
+
+                        // 若本次碰撞未被踩敌逻辑处理，则扣命
+                        if(!collisionHandled) {
+                            if(!mario.isInvincible()){
+                                mario.perdreVie();
+                                if(mario.getVies() == 0) {
+                                    threadDescente.setSol(CONSTANTS.LE_SOL * 2);
+                                    System.out.println("Game over");
+                                }
+                            }
+                        }
+                    }
 
                 }
 
