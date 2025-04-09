@@ -83,17 +83,12 @@ public class Affichage extends JPanel {
         // Initialiser le gestionnaire de tuiles
         tm = new TileManager();
 
-        // Initialiser l'ennemi (au-dessus du sol)
-//        ennemi = new Ennemi(630, 20, 20, 5, true, tm);
-//        ennemi.thread.start(); // Lancer le thread de l'ennemi
-
-
         listeEnnemis = new ArrayList<>();
         animationKoopa = new ArrayList<>();
         animationGoomba = new ArrayList<>();
 
         // Ajouter plusieurs ennemis
-        Ennemi koopa = new Ennemi(600, 20, 20, 5, true, tm, "koopa");
+        Koopa koopa = new Koopa(600, 5, true, tm);
         Goomba goomba = new Goomba(300, 4, true, tm);
         listeEnnemis.add(koopa);
         listeEnnemis.add(goomba);
@@ -213,25 +208,71 @@ public class Affichage extends JPanel {
 //        }
 
 
-        int goombaIndex = 0; // 为 Goomba 单独维护计数器
+//        int goombaIndex = 0; // 为 Goomba 单独维护计数器
+//        for (Ennemi ennemi : listeEnnemis) {
+//            BufferedImage imageEnnemi = null;
+//            if (ennemi.getType().equals("koopa") && animationKoopa.size() > 0) {
+//                imageEnnemi = animationKoopa.get(0).getCurrentToDraw();
+//            }
+//            if (ennemi.getType().equals("goomba") && goombaIndex < animationGoomba.size()) {
+//                BufferedImage frame = animationGoomba.get(goombaIndex).getCurrentToDraw();
+////                if (frame == null) {
+////                    System.out.println("Goomba 第 " + goombaIndex + " 帧为 null");
+////                } else {
+////                    System.out.println("Goomba 第 " + goombaIndex + " 帧正常绘图");
+////                }
+//                imageEnnemi = frame;
+//                goombaIndex++;
+//            }
+//            if (imageEnnemi != null) {
+//                g2.drawImage(imageEnnemi, ennemi.getPosition().x, ennemi.getPosition().y, null);
+//            }
+//        }
+
+        // 绘制所有敌人（根据敌人类型选择对应动画）
+        int goombaIndex = 0;
         for (Ennemi ennemi : listeEnnemis) {
             BufferedImage imageEnnemi = null;
-            if (ennemi.getType().equals("koopa") && animationKoopa.size() > 0) {
-                imageEnnemi = animationKoopa.get(0).getCurrentToDraw();
-            }
-            if (ennemi.getType().equals("goomba") && goombaIndex < animationGoomba.size()) {
-                BufferedImage frame = animationGoomba.get(goombaIndex).getCurrentToDraw();
-//                if (frame == null) {
-//                    System.out.println("Goomba 第 " + goombaIndex + " 帧为 null");
-//                } else {
-//                    System.out.println("Goomba 第 " + goombaIndex + " 帧正常绘图");
-//                }
-                imageEnnemi = frame;
-                goombaIndex++;
+            if (ennemi instanceof Koopa) {
+                // 对Koopa使用 AnimationKoopa 绘制（内部已判断状态，SHELL状态下直接返回静态图）
+                if (!animationKoopa.isEmpty()) {
+                    imageEnnemi = animationKoopa.get(0).getCurrentToDraw();
+                }
+            } else if (ennemi instanceof Goomba) {
+                if (goombaIndex < animationGoomba.size()) {
+                    imageEnnemi = animationGoomba.get(goombaIndex).getCurrentToDraw();
+                    goombaIndex++;
+                }
             }
             if (imageEnnemi != null) {
                 g2.drawImage(imageEnnemi, ennemi.getPosition().x, ennemi.getPosition().y, null);
             }
+        }
+
+        // FIXME:
+        // （A）绘制 Mario 的碰撞盒
+        g2.setColor(Color.YELLOW);
+        // 如有需要可以设定线条粗细
+        // g2.setStroke(new BasicStroke(2f));
+
+        Rectangle marioHitbox = new Rectangle(
+                this.JoueurPrincipal.getPosition().x + this.JoueurPrincipal.getSolidArea().x,
+                this.JoueurPrincipal.getPosition().y + this.JoueurPrincipal.getSolidArea().y,
+                this.JoueurPrincipal.getSolidArea().width,
+                this.JoueurPrincipal.getSolidArea().height
+        );
+        g2.draw(marioHitbox);
+
+        // （B）绘制每个敌人的碰撞盒
+        g2.setColor(Color.RED);
+        for (Ennemi ennemi : listeEnnemis) {
+            Rectangle ennemiHitbox = new Rectangle(
+                    ennemi.getPosition().x + ennemi.getSolidArea().x,
+                    ennemi.getPosition().y + ennemi.getSolidArea().y,
+                    ennemi.getSolidArea().width,
+                    ennemi.getSolidArea().height
+            );
+            g2.draw(ennemiHitbox);
         }
 
 

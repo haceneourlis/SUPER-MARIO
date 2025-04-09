@@ -19,6 +19,8 @@ public class Goomba extends Ennemi {
                 System.out.println("Goomba images NOT LOADED");
             } else {
                 System.out.println("Goomba images loaded");
+                this.solidArea.x = 0;
+                this.solidArea.y = 0;
                 this.solidArea.width = images[0].getWidth();
                 this.solidArea.height = images[0].getHeight();
             }

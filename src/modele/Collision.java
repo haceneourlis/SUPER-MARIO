@@ -247,7 +247,6 @@ public class Collision extends Thread {
 
                 }
 
-                // TODO : + collision avec les ennemeies ,
 
                 Iterator<Ennemi> iterator = gp.getEnnemis().iterator();
                 while(iterator.hasNext()) {
@@ -261,7 +260,7 @@ public class Collision extends Thread {
                             mario.getSolidArea().height
                     );
 
-                    // Koopa's collision area
+                    // Enemy's collision area
                     Rectangle ennemiHitbox = new Rectangle(
                             ennemi.getPosition().x + ennemi.getSolidArea().x,
                             ennemi.getPosition().y + ennemi.getSolidArea().y,
@@ -269,46 +268,148 @@ public class Collision extends Thread {
                             ennemi.getSolidArea().height
                     );
 
-                    // collision avec les ennemis
-                    if(marioHitbox.intersects(ennemiHitbox)) {
-                        // mario's feet position
-                        int marioFeetY = mario.getPosition().y + mario.getSolidArea().y + mario.getSolidArea().height;
-                        // ennemi's head position
-                        int ennemiHeadY = ennemi.getPosition().y + ennemi.getSolidArea().y;
+//                    // collision avec les ennemis
+//                    if(marioHitbox.intersects(ennemiHitbox)) {
+//                        // mario's feet position
+//                        int marioFeetY = mario.getPosition().y + mario.getSolidArea().y + mario.getSolidArea().height;
+//                        // ennemi's head position
+//                        int ennemiHeadY = ennemi.getPosition().y + ennemi.getSolidArea().y;
+//
+//                        // check if mario jumps exactement on the ennemi
+//                        boolean fromAbove = marioFeetY <= ennemiHeadY + 10 && marioFeetY >= ennemiHeadY;
+//                        // check if mario is falling
+//                        boolean falling = marioFeetY > previousMarioFeetY;
+//
+//                        // i've added 3 conditions to check if mario is above the ennemi and if he is falling
+//                        // whether mario is invincible or not, he has to jump FROM ABOVE and his direction has to be DOWN to kill the ennemi
+//                        if(fromAbove && falling && mario.getDirection().equals("down")) {
+//                            //mario peut tuer que si il n'est pas invincible
+//                            if (!mario.isInvincible()) {
+//
+//                            System.out.println("Mario kills enemy");
+//                            iterator.remove();
+//                            threadDescente.force = -jumpingThread.IMPULSION / 2;
+//                            }
+//                        } else {
+//                            // if mario is not jumping on the ennemi, only when mario is not invincible, he will lose a life
+//                            if(!mario.isInvincible()){
+//                                mario.perdreVie();
+//                                if(mario.getVies() == 0) {
+//                                    // TODO : restart the game or show game over screen
+//                                    // show a message in the screen that mario died
+//                                    // and stop the game
+//                                    logger.log(Level.INFO, "mario died");
+//                                    threadDescente.setSol(CONSTANTS.LE_SOL * 2);
+//                                    System.out.println("Game over");
+//                                }
+//                            } else {
+//                                // if mario is invincible, no damage is taken
+//                                System.out.println("Mario loses a life, invincible time");
+//                            }
+//                        }
+//                    }
 
-                        // check if mario jumps exactement on the ennemi
-                        boolean fromAbove = marioFeetY <= ennemiHeadY + 10 && marioFeetY >= ennemiHeadY;
-                        // check if mario is falling
-                        boolean falling = marioFeetY > previousMarioFeetY;
 
-                        // i've added 3 conditions to check if mario is above the ennemi and if he is falling
-                        // whether mario is invincible or not, he has to jump FROM ABOVE and his direction has to be DOWN to kill the ennemi
-                        if(fromAbove && falling && mario.getDirection().equals("down")) {
-                            //mario peut tuer que si il n'est pas invincible
-                            if (!mario.isInvincible()) {
 
-                            System.out.println("Mario kills enemy");
-                            iterator.remove();
-                            threadDescente.force = -jumpingThread.IMPULSION / 2;
-                            }
-                        } else {
-                            // if mario is not jumping on the ennemi, only when mario is not invincible, he will lose a life
-                            if(!mario.isInvincible()){
-                                mario.perdreVie();
-                                if(mario.getVies() == 0) {
-                                    // TODO : restart the game or show game over screen
-                                    // show a message in the screen that mario died
-                                    // and stop the game
-                                    logger.log(Level.INFO, "mario died");
-                                    threadDescente.setSol(CONSTANTS.LE_SOL * 2);
-                                    System.out.println("Game over");
+                    // 如果发生碰撞
+                    // FIXME: 踩到koopa时会掉命
+                        if(marioHitbox.intersects(ennemiHitbox)) {
+                            int marioFeetY = mario.getPosition().y + mario.getSolidArea().y + mario.getSolidArea().height;
+                            int ennemiHeadY = ennemi.getPosition().y + ennemi.getSolidArea().y;
+
+                            boolean fromAbove = marioFeetY <= ennemiHeadY+15 && marioFeetY >= ennemiHeadY;
+                            // boolean falling = marioFeetY > previousMarioFeetY;
+                            boolean falling = (threadDescente.force > 0);
+
+                            if(fromAbove && falling && mario.getDirection().equals("down")) {
+                                if (!mario.isInvincible()){
+                                    // 如果敌人是 Koopa，则根据当前状态进行处理
+                                    if(ennemi instanceof Koopa) {
+                                        Koopa koopa = (Koopa) ennemi;
+                                        if(koopa.getState() == Koopa.State.WALKING) {
+                                            // 第一次踩：将 Koopa 状态设为 SHELL
+                                            koopa.setState(Koopa.State.SHELL);
+                                            // 给马里奥一个向上的力，模拟踩敌人后的反弹
+                                            threadDescente.force = -jumpingThread.IMPULSION / 2;
+                                        } else if(koopa.getState() == Koopa.State.SHELL) {
+                                            // 第二次踩：直接移除敌人
+                                            iterator.remove();
+                                            threadDescente.force = -jumpingThread.IMPULSION / 2;
+                                        }
+                                    } else {
+                                        // 对于其他敌人（例如 Goomba），直接移除
+                                        iterator.remove();
+                                        threadDescente.force = -jumpingThread.IMPULSION / 2;
+                                    }
                                 }
                             } else {
-                                // if mario is invincible, no damage is taken
-                                System.out.println("Mario loses a life, invincible time");
+                                if(!mario.isInvincible()){
+                                    mario.perdreVie();
+                                    if(mario.getVies() == 0) {
+                                        // 处理 Game Over 状态
+                                        threadDescente.setSol(CONSTANTS.LE_SOL * 2);
+                                        System.out.println("Game over");
+                                    }
+                                }
                             }
                         }
-                    }
+
+
+                        // FIXME: 这个版本踩不死敌人
+//                    if(marioHitbox.intersects(ennemiHitbox)) {
+//                        // 计算 Mario 脚底和敌人头部的 Y 坐标
+//                        int marioFeetY = mario.getPosition().y + mario.getSolidArea().y + mario.getSolidArea().height;
+//                        int ennemiHeadY = ennemi.getPosition().y + ennemi.getSolidArea().y;
+//
+//                        // 设置一个阈值，例如允许15像素内认为是踩到了敌人
+//                        int stompThreshold = 15;
+//                        // 判断 Mario 是否从上方踩到敌人（Mario 的脚部距离敌人头部在 0~stompThreshold 之间）
+//                        boolean fromAbove = (marioFeetY - ennemiHeadY >= 0) && (marioFeetY - ennemiHeadY <= stompThreshold);
+//                        // 利用 Descente 对象判断 Mario 是否在下落（force > 0 表示正在下落）
+//                        // boolean falling = (threadDescente.force > 0);
+//                        boolean falling = (mario.getPosition().y > previousMarioFeetY);
+//
+//                        // FIXME:
+//                        System.out.println("marioFeetY - ennemiHeadY = " + (marioFeetY - ennemiHeadY));
+//                        System.out.println("force = " + threadDescente.force);
+//
+//                        // 如果满足从上方踩并且处于下落状态，则执行踩敌逻辑
+//                        boolean stomped = false;
+//                        if(fromAbove && falling) {
+//                            stomped = true;
+//                            if (!mario.isInvincible()){
+//                                if(ennemi instanceof Koopa) {
+//                                    Koopa koopa = (Koopa) ennemi;
+//                                    if(koopa.getState() == Koopa.State.WALKING) {
+//                                        // 第一次踩：将 Koopa 状态设为 SHELL，不扣命
+//                                        koopa.setState(Koopa.State.SHELL);
+//                                        threadDescente.force = -jumpingThread.IMPULSION / 2;  // 给 Mario 弹跳效果
+//                                    } else if(koopa.getState() == Koopa.State.SHELL) {
+//                                        // 第二次踩：直接移除敌人
+//                                        iterator.remove();
+//                                        threadDescente.force = -jumpingThread.IMPULSION / 2;
+//                                    }
+//                                } else {
+//                                    // 对其他敌人（如 Goomba）直接移除
+//                                    iterator.remove();
+//                                    threadDescente.force = -jumpingThread.IMPULSION / 2;
+//                                }
+//                            }
+//                        }
+//
+//                        // 如果未满足有效踩敌条件，则视为碰撞，扣除一条命
+//                        if(!stomped) {
+//                            if(!mario.isInvincible()){
+//                                mario.perdreVie();
+//                                if(mario.getVies() == 0) {
+//                                    threadDescente.setSol(CONSTANTS.LE_SOL * 2);
+//                                    System.out.println("Game over");
+//                                }
+//                            }
+//                        }
+//                    }
+
+
                     previousMarioFeetY = mario.getPosition().y + mario.getSolidArea().y + mario.getSolidArea().height;
 
                 }

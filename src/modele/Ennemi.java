@@ -24,47 +24,60 @@ import modele.Tile.TileManager;
 public class Ennemi extends GameCharacter implements Runnable {
 
     // les frontières
-    private int leftBorder;
-    private int rightBorder;
+    protected int leftBorder;
+    protected int rightBorder;
 
     public Thread thread;
-    private boolean running = true;
-    private boolean movingRight; // Indique si l'ennemi va à droite
+    protected boolean running = true;
+    protected boolean movingRight; // Indique si l'ennemi va à droite
 
+    // change to PROTECTED to be accessed by subclasses
     // images de l'ennemi
-    private BufferedImage[] image;
+    protected BufferedImage[] image;
 
-    private TileManager tileManager;
+    protected TileManager tileManager;
 
     // vitesse de descente
-    private int fallSpeed = 0;
-    private final int maxFallSpeed = 10;
+    protected int fallSpeed = 0;
+    protected final int maxFallSpeed = 10;
 
-    private String type;
+    protected String type; // Type de l'ennemi (koopa, goomba, etc.)
 
     public Ennemi(int x, int width, int height, int speed, boolean movingRight, TileManager tileManager, String type) {
         super();
         this.type = type;
-        this.image = new BufferedImage[3];
-        try {
-            this.image[0] = ImageIO.read(getClass().getResourceAsStream("/resources/koopa_sprites/koopa2.png"));
-            this.image[1] = ImageIO.read(getClass().getResourceAsStream("/resources/koopa_sprites/koopa1.png"));
-            this.image[2] = ImageIO.read(getClass().getResourceAsStream("/resources/koopa_sprites/koopa2.png"));
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (type.equals("koopa")) {
+            image = new BufferedImage[3];
+            try {
+                image[0] = ImageIO.read(getClass().getResourceAsStream("/resources/koopa_sprites/koopa2.png"));
+                image[1] = ImageIO.read(getClass().getResourceAsStream("/resources/koopa_sprites/koopa1.png"));
+                image[2] = ImageIO.read(getClass().getResourceAsStream("/resources/koopa_sprites/koopa2.png"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+        // the other types (like goomba) will be implemented in the subclass
+
         this.tileManager = tileManager;
         this.position.x = x;
         // affiche dans la console le height de l'image 0
-        System.out.println(this.image[0].getHeight()); // 48
+        // System.out.println(this.image[0].getHeight()); // 48
         this.position.y = findGroundY(this.position.x, this.position.y);
-        System.out.println("Koopa initial position: x=" + this.position.x + ", y=" + this.position.y);
+        // System.out.println("Koopa initial position: x=" + this.position.x + ", y=" + this.position.y);
 
-        this.solidArea.x = CONSTANTS.slidAreaDefaultX;
-        this.solidArea.y = CONSTANTS.slidAreaDefaultY;
-        this.solidArea.height = this.image[0].getHeight(); // koopa image height
-        this.solidArea.width = this.image[0].getWidth(); // koopa image width
+//        this.solidArea.x = CONSTANTS.slidAreaDefaultX;
+//        this.solidArea.y = CONSTANTS.slidAreaDefaultY;
+//        this.solidArea.height = this.image[0].getHeight(); // koopa image height
+//        this.solidArea.width = this.image[0].getWidth(); // koopa image width
+        if (image != null && image.length > 0) {
+//            this.solidArea.x = CONSTANTS.slidAreaDefaultX;
+//            this.solidArea.y = CONSTANTS.slidAreaDefaultY;
+            this.solidArea.x = 0;
+            this.solidArea.y = 0;
+            this.solidArea.height = image[0].getHeight();
+            this.solidArea.width = image[0].getWidth();
+        }
 
         this.speed = speed;
         this.leftBorder = 0;
@@ -138,7 +151,7 @@ public class Ennemi extends GameCharacter implements Runnable {
         }
     }
 
-    private void applyGravity() {
+    protected void applyGravity() {
         int groundY = findGroundY(this.position.x, this.position.y); // Trouver le sol en fonction de x, y
 
         if (this.position.y >= groundY) {
