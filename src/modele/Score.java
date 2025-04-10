@@ -1,17 +1,13 @@
 package modele;
 
 public class Score {
-    private int current_score;
+    private static int score = 0;
 
-    public Score() {
-        this.current_score = 0;
+    public static int getScore() {
+        return score;
     }
 
-    public int getCurrentScore() {
-        return this.current_score;
-    }
-
-    public void incrementCurrentScore(int increment_factor) {
-        this.current_score = this.current_score + increment_factor;
+    public void incrementCurrentScore() {
+        score += CONSTANTS.FACTEUR_SCORE;
     }
 }

@@ -192,6 +192,11 @@ public class Affichage extends JPanel {
             g.drawString("GAME OVER", getWidth() / 2 - 150, getHeight() / 2);
         }
 
+        // affichons le score : (en haut à gauche)
+        g.setFont(marioFont);
+        g.setColor(Color.WHITE);
+        g.drawString("Score : " + Score.getScore(), SCORE_X, SCORE_Y);
+
     }
 
     // draw un coin sautant

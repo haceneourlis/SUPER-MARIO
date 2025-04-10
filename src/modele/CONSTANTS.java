@@ -49,4 +49,7 @@ public class CONSTANTS {
     public static final int CIEL = 0;
     public static final int SOL = 1;
     public static final int PRIZE_BRICK = 2;
+
+    // facteur d'incrementation du score:
+    public static final int FACTEUR_SCORE = 100;
 }
