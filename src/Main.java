@@ -1,56 +1,61 @@
-
-// classe qui va juste lancer la fenetre de jeu depuis l'affichage
 import controleur.*;
-import javax.swing.JFrame;
+import javax.swing.*;
+import java.awt.*;
 import modele.*;
+import modele.Tile.TileManager;
 import vue.*;
 
 public class Main {
-    // on lance ça dans la méthode main
     public static void main(String[] args) {
-
-        // On crée l'objet de loggingconfig qui va gérer le fichier de log
-        LoggingConfig logs_manager = new LoggingConfig();
-        // on crée une fenetre
-        JFrame fenetre = new JFrame();
-
-        // Get the player instance : classe singleton .
-        Mario j = Mario.getInstance();
-
-  
-
-        Score score = new Score();
-        Coin coin = new Coin(score);
-        // on ajoute un panel à la fenetre
-        Affichage GamePanel = new Affichage(score, coin);
-        fenetre.add(GamePanel);
-
-        // on ajoute un thread pour la gravité
-        Descente des = new Descente(GamePanel);
-        des.start();
-
-         // on crée un thread pour le saut
-        Jumping jumpin = new Jumping(des);
-
-      
-        // on crée un thread pour le mouvement : qui detecte les touches (<- et -> et
-        // ESPACE)
-        MouvementJoueur mv = new MouvementJoueur();
-        DeplacementListener dl = new DeplacementListener(mv, j, jumpin);
-        dl.start();
-        
-
-        // on ajoute un thread pour la collision
-        Collision col = new Collision(GamePanel, jumpin, des, coin);
-        col.start();
-        fenetre.addKeyListener(mv);
-
-        j.reset(mv); // lancer la partie
-
-        fenetre.pack();
+        JFrame fenetre = new JFrame("Super Mario");
         fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        fenetre.setSize(CONSTANTS.LARGEUR_VUE, CONSTANTS.HAUTEUR_VUE);
+        fenetre.setLocationRelativeTo(null); // Centrer la fenêtre
 
+        // === PANEL DE DÉMARRAGE ===
+        JPanel startPanel = new JPanel(new BorderLayout());
+        JLabel titre = new JLabel("Super Mario", SwingConstants.CENTER);
+        titre.setFont(new Font("Arial", Font.BOLD, 36));
+        JButton startBtn = new JButton("Jouer");
+        startBtn.setFont(new Font("Arial", Font.PLAIN, 24));
+
+        startPanel.add(titre, BorderLayout.NORTH);
+        startPanel.add(startBtn, BorderLayout.CENTER);
+        fenetre.setContentPane(startPanel);
         fenetre.setVisible(true);
-    }
 
+        // === ACTION SUR "JOUER" ===
+        startBtn.addActionListener(e -> {
+            // Nettoyer et créer les composants
+            TileManager tilemanager = TileManager.getInstance();
+            Mario mario = Mario.getInstance();
+            Affichage gamePanel = new Affichage();
+
+            Descente descente = new Descente();
+            Jumping jumping = new Jumping(descente);
+            MouvementJoueur mv = new MouvementJoueur();
+            DeplacementListener dl = new DeplacementListener(mv, mario, jumping);
+            Collision collision = new Collision(jumping, descente);
+
+            descente.start();
+            dl.start();
+            collision.start();
+
+            for (Ennemi ennemi : tilemanager.getListeEnnemis()) {
+                ennemi.thread.start();
+            }
+
+            mario.reset(mv);
+
+            // Remplacer le contenu de la fenêtre par le jeu
+            fenetre.setContentPane(gamePanel);
+            fenetre.revalidate();
+            fenetre.repaint();
+
+            // === Focus pour capter les touches ===
+            gamePanel.addKeyListener(mv);
+            gamePanel.setFocusable(true);
+            gamePanel.requestFocusInWindow();
+        });
+    }
 }

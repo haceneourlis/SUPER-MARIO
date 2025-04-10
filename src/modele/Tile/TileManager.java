@@ -5,8 +5,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
 import modele.CONSTANTS;
+import modele.Ennemi;
+import modele.Goomba;
+import modele.Koopa;
 import modele.Mario;
 
 /**
@@ -30,6 +35,9 @@ public class TileManager {
         // matrice du jeu qui sera importée depuis un fichier texte
         public int[][] tilesMatrice;
 
+        // instance unique de la classe TileManager (singleton)
+        private static TileManager instance = null;
+
         // décalage de mario (en nombre de colonnes) par rapport à une certaine colonne
         // appelée "colonne de scrolling"
         private int decalage = 0;
@@ -38,13 +46,23 @@ public class TileManager {
         // loadMatrice
         private int maxColLevel = 0;
 
-        public TileManager() {
+        private ArrayList<Ennemi> listeEnnemis;
+        private Ennemi koopa, goomba;
+
+        private TileManager() {
                 // On récupère l'instance du Joueur
                 this.mario = Mario.getInstance();
 
                 // J'ai mis 64 tuiles ici, mais on peut adapter plus tard
                 tiles = new Tile[64];
 
+                listeEnnemis = new ArrayList<>();
+                // Ajouter plusieurs ennemis
+                // Ajouter plusieurs ennemis
+                koopa = new Koopa(600, 5, true, this);
+                goomba = new Goomba(300, 4, true, this);
+                listeEnnemis.add(koopa);
+                listeEnnemis.add(goomba);
                 // méthode qui va juste charger les images et les mettres dans le tableau de
                 // tuiles
                 getTileImage();
@@ -52,6 +70,51 @@ public class TileManager {
                 // méthode qui va charger la matrice du jeu dans la matrice tilesMatrice
                 loadMatrice("/resources/matrice.txt");
         }
+
+        public static TileManager getInstance() {
+                if (instance == null) {
+                        // Si l'instance n'existe pas, on la crée
+                        instance = new TileManager();
+
+                }
+                return instance;
+        }
+
+        public ArrayList<Ennemi> getListeEnnemis() {
+                return listeEnnemis;
+        }
+
+        public void addEnnemi(Ennemi ennemi) {
+                this.listeEnnemis.add(ennemi);
+        }
+
+        public Ennemi getKoopa() {
+                return koopa;
+        }
+
+        public Ennemi getGoomba() {
+                return goomba;
+        }
+        public void resetState() {
+                this.mario = Mario.getInstance();  // Reprendre l'instance
+                this.listeEnnemis.clear();
+            
+                this.koopa = new Koopa(600, 5, true, this);
+                this.goomba = new Goomba(300, 4, true, this);
+            
+                this.listeEnnemis.add(koopa);
+                this.listeEnnemis.add(goomba);
+            
+                // Recharge les images (optionnel si déjà fait au début)
+                getTileImage();
+            
+                // Recharge la matrice
+                loadMatrice("/resources/matrice.txt");
+            
+                // Remettre le décalage et le niveau à 0
+                this.decalage = 0;
+            }
+            
 
         /**
          * Cette méthode ne fait que charger les tiles dans le tableau de tuiles
@@ -71,7 +134,7 @@ public class TileManager {
 
                         tiles[2] = new Tile();
                         tiles[2].image = ImageIO.read(getClass()
-                                        .getResourceAsStream("/resources/obstacle1.png"));
+                                        .getResourceAsStream("/resources/brickPrize.png"));
                         tiles[2].collision = true;
 
                         tiles[3] = new Tile();
@@ -341,5 +404,8 @@ public class TileManager {
                 tilesMatrice[row][col] = value;
         }
         
-        
+        //mettre l'instance à NULL
+        public void reset() {
+                instance = null;
+        }
 }

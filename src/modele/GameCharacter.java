@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
-
 public class GameCharacter extends Rectangle {
     // solid area of the character
     public Rectangle solidArea;
@@ -17,7 +16,7 @@ public class GameCharacter extends Rectangle {
     // direction of the character
     private String direction;
     // image of the character
-    protected BufferedImage image;
+    public BufferedImage image;
 
     // constructor
     protected GameCharacter() {
@@ -33,11 +32,6 @@ public class GameCharacter extends Rectangle {
         this.speed = 0;
         this.direction = "left"; // default direction
         this.image = null;
-    }
-
-    // set the solid area of the character
-    public void setSolidArea() {
-        // TODO : ??
     }
 
     // get the solid area of the character
@@ -92,10 +86,5 @@ public class GameCharacter extends Rectangle {
     // get the image of the character (par défaut l'appeler avec 0)
     public BufferedImage getImage(int index) {
         return this.image;
-    }
-
-    // draw method
-    public void draw(Graphics2D g2, Point position_dans_la_vue) {
-        g2.drawImage(this.image, position_dans_la_vue.x, position_dans_la_vue.y, null);
     }
 }

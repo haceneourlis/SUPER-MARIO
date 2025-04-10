@@ -10,10 +10,12 @@
 package modele;
 
 import java.util.logging.*;
-import vue.Affichage;
+
+import modele.Tile.TileManager;
 
 import java.util.Iterator;
 import java.util.List;
+import java.awt.Point;
 import java.awt.Rectangle;
 
 public class Collision extends Thread {
@@ -21,45 +23,42 @@ public class Collision extends Thread {
     private Mario mario;
     private List<Ennemi> ennemis;
 
-    private Affichage gp;
     private Jumping jumpingThread;
     private Descente threadDescente;
+
+    // Initialiser le gestionnaire de tuiles
+    TileManager tm;
+
+    // le score de mario
+    private ScoreManager scoreManager = ScoreManager.getInstance();
 
     private int previousMarioFeetY = Mario.getInstance().getPosition().y
             + Mario.getInstance().getSolidArea().y
             + Mario.getInstance().getSolidArea().height;
 
-    private Coin coin;
+    public static Coin coinToCatch = null;
 
     protected boolean sur_brick = false;
 
     private static final Logger logger = Logger.getLogger(Collision.class.getName());
 
-    public Collision(Affichage affichage, Jumping jumpingThread, Descente threadDescente, Coin coin) {
-        gp = affichage;
+    public Collision(Jumping jumpingThread, Descente threadDescente) {
         this.mario = Mario.getInstance();
-        this.ennemis = gp.getEnnemis();
+
         this.jumpingThread = jumpingThread;
         this.threadDescente = threadDescente;
-        this.coin = coin;
+        this.tm = TileManager.getInstance();
+
+        this.ennemis = tm.getListeEnnemis();
     }
 
     @Override
     public void run() {
         while (true) {
-            // synchronized (gp) {
-            // while (gp.PAUSE) {
-            // try {
-            // gp.wait();
-            // } catch (InterruptedException e) {
-            // e.printStackTrace();
-            // }
-            // }
-            // }
-
             try {
                 Thread.sleep(5);
-
+                this.tm = TileManager.getInstance();
+ 
                 mario.updateInvincibility();
 
                 // collision avec la map ou matrice de jeu
@@ -67,16 +66,7 @@ public class Collision extends Thread {
                 // on trouve les 4 points du rectangle qui vont check la collision
                 int posLeftenX = mario.getPosition().x + mario.getSolidArea().x;
                 int posRightenX = mario.getPosition().x + mario.getSolidArea().x + mario.getSolidArea().width;
-
-                // Ici j'ai modifié la variable y, il y'avait un - quelque chose.. et il ne y'en a pas besoin
                 int posTopenY = mario.getPosition().y;
-
-                // Je modifie cette ligne : CAR effectivement y avait un probleme lors de
-                // l'atterissage de mario
-                // sur une brique , il se teleportait d'un niveau i à un niveau i + 1
-                // donc pour regler ça j'ai multiplié par 2 la hauteur de la solid area de mario
-                // pour que mario aie jusqu'au niveau i+1 ensuite s'arrette , je corige
-                // l'affichage en l'affichant au niveau i . GG .
                 int posBottomenY = mario.getPosition().y + mario.getSolidArea().y + mario.getSolidArea().height * 2;
 
                 // // on trouve maintenant les lignes & colonnes ou se trouve les derniers
@@ -94,10 +84,10 @@ public class Collision extends Thread {
 
                 // check all the time if mario is on the ground .
                 // on va anticiper la collision avec la brique :
-                point1 = gp.tm.tilesMatrice[ligneBottomdanslaMatrice][colonneLeftdanslaMatrice];
-                point2 = gp.tm.tilesMatrice[ligneBottomdanslaMatrice][colonneRightdanslaMatrice];
+                point1 = tm.tilesMatrice[ligneBottomdanslaMatrice][colonneLeftdanslaMatrice];
+                point2 = tm.tilesMatrice[ligneBottomdanslaMatrice][colonneRightdanslaMatrice];
 
-                if (gp.tm.tiles[point1].collision || gp.tm.tiles[point2].collision) {
+                if (tm.tiles[point1].collision || tm.tiles[point2].collision) {
                     // System.out.println("point1 = " + point1 + " point2 = " + point2);
                     // si c'est une brique de type 3 ( puit , riviere , ... ) alors mario meurt
                     // if (point1 == 3 || point2 == 3) {
@@ -107,14 +97,12 @@ public class Collision extends Thread {
                     // mario.noMoving();
 
                     // System.out.println("waaaaaaaaaaaa333333");
-                    
+
                     // } else
-
-
-
+                    
                     if (!sur_brick) {
                         // TODO : mario dies , game stops if he falls down a hole or a river
-
+                        
                         // let's assume it is just a brick that is solid , so mario walks on it .
                         // check if mario is standing on a solid object , if so he does not stop moving
                         // , he
@@ -124,27 +112,24 @@ public class Collision extends Thread {
                         mario.position.y = (ligneBottomdanslaMatrice - 1) * CONSTANTS.TAILLE_CELLULE;
                         sur_brick = true;
                         // bloquer la descente !
+                        threadDescente.force_mario = 0;
 
-                        threadDescente.allowedToFallDown = false;
-
-                        // threadDescente.setSol((ligneBottomdanslaMatrice - 1) *
-                        // CONSTANTS.TAILLE_CELLULE);
-                        jumpingThread.notjumping();
+                        threadDescente.marioAllowedToFallDown = false;
                     } else {
                         // System.out.println("je suis sur une brick ---------------#####");
                     }
                 } else {
-                    // // debloquer la descente
-                    // threadDescente.setSol(CONSTANTS.LE_SOL);
 
-                    threadDescente.allowedToFallDown = true;
-                    // System.out.println("je ne suis plus sur un brick ---------------#####");
+                    /* MARIO FALLS DOWN HERE , so he will EVENTUALLY DIE ! */
+                    threadDescente.marioAllowedToFallDown = true;
                     sur_brick = false;
+                    if (mario.getPosition().y >= CONSTANTS.LE_SOL + CONSTANTS.TAILLE_CELLULE) {
+                        System.out.println("mario meurt !");
+                        // endormir le thread de mario
+                         threadDescente.sleep(200);
+                        mario.setDead();
+                    }
                 }
-
-                // ligneBottomdanslaMatrice = posBottomenY / CONSTANTS.TAILLE_CELLULE;
-                // point1 = 0;
-                // point2 = 0;
 
                 // cat j'ai modifier les bordures sud :
                 posBottomenY = mario.getPosition().y + mario.getSolidArea().y + mario.getSolidArea().height;
@@ -155,36 +140,62 @@ public class Collision extends Thread {
                     // ici le "up" c'est en vrai le saut de mario , donc on check si mario est
                     // rentrer en collision avec un objet en sautant
                     case "up":
-                        logger.log(Level.INFO, "at least we are in this case <up>");
                         // on prédit ou sera notre mario aprés avoir bougé
-                        ligneTopdanslaMatrice = (posTopenY + threadDescente.force) / CONSTANTS.TAILLE_CELLULE;
-                        point1 = gp.tm.tilesMatrice[ligneTopdanslaMatrice][colonneLeftdanslaMatrice];
-                        point2 = gp.tm.tilesMatrice[ligneTopdanslaMatrice][colonneRightdanslaMatrice];
-                        
-                        if (gp.tm.tiles[point1].collision == true
-                                || gp.tm.tiles[point2].collision == true) {
-                            // On remet le joueur à l'emplacement juste en dessous de la brique. (pour éviter tout petit bug visuel)
-                            mario.setPositionY((ligneTopdanslaMatrice+1)*CONSTANTS.TAILLE_CELLULE);
-                            
-                            logger.log(Level.INFO ,"collision up");
+                        ligneTopdanslaMatrice = (posTopenY + threadDescente.force_mario) / CONSTANTS.TAILLE_CELLULE;
+                        point1 = tm.tilesMatrice[ligneTopdanslaMatrice][colonneLeftdanslaMatrice];
+                        point2 = tm.tilesMatrice[ligneTopdanslaMatrice][colonneRightdanslaMatrice];
+
+                        if (tm.tiles[point1].collision == true
+                                || tm.tiles[point2].collision == true) {
+                            // On remet le joueur à l'emplacement juste en dessous de la brique. (pour
+                            // éviter tout petit bug visuel)
+                            mario.setPositionY((ligneTopdanslaMatrice + 1) * CONSTANTS.TAILLE_CELLULE);
+
+                            // mario , logiquement n'est pas sur brick , innit mate ?
+                            sur_brick = false;
 
                             // Je remets sa force à 0.
-                            threadDescente.force = 0;
+                            threadDescente.force_mario = 0;
 
                             // Je lui permet de descendre.
-                            threadDescente.allowedToFallDown = true;
+                            threadDescente.marioAllowedToFallDown = true;
                         }
-                        // Verification si point1 ou point2 est une pièce, si oui on incrémente le nombre de pièces
+                        // Verification si point1 ou point2 est une pièce, si oui on incrémente le
+                        // nombre de pièces
                         // Et on demande à la matrice (locale) d'être modifiée.
-                        if ((point1 == 30)){
-                            logger.log(Level.INFO, "Coin collected from up with point1 !");
-                            this.coin.IncrementNombreDePieces();
-                            gp.tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 0);
-                        } else if (point2 == 30){
-                            logger.log(Level.INFO, "Coin collected from up with point2 !");
-                            this.coin.IncrementNombreDePieces();
-                            gp.tm.modifyMatrice(ligneTopdanslaMatrice, colonneRightdanslaMatrice, 0);
+                        if (point1 == 30 || point2 == 30) {
+                            scoreManager.incrementCurrentCoins();
+                            scoreManager.incrementCurrentScore();
+                            tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 0);
                         }
+
+                        // si mario rentre en collision avec une : brickPrize, cest-à-dire une brique
+                        // qui donne une récompense : a coin or a mushroom .
+                        // on va faire sortir un coin ou un champignon de la brique
+                        // et on va la supprimer de la matrice
+                        // TODO : faire sortir un champignon ou une pièce de la brique
+
+                        if (point1 == CONSTANTS.PRIZE_BRICK || point2 == CONSTANTS.PRIZE_BRICK) {
+
+                            // créer un objet (coin) et le faire sauter et redescendre sur la brique et +1
+                            // au score ed mario
+                            // et modifier la brique de la matrice pour qu'elle ne soit plus une brique de
+                            // récompense.
+
+                            coinToCatch = new Coin(new Point(colonneLeftdanslaMatrice, (ligneTopdanslaMatrice - 1)));
+                            DescenteCoins coinThread = new DescenteCoins(coinToCatch);
+                            jumpingThread.setThreadDecenteCoins(coinThread);
+                            jumpingThread.jumpLaCoin();
+                            coinThread.start();
+
+                            scoreManager.incrementCurrentCoins();
+                            scoreManager.incrementCurrentScore();
+
+                            tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 1);
+                        }
+
+                        point1 = 0;
+                        point2 = 0;
                         break;
 
                     case "left":
@@ -192,20 +203,18 @@ public class Collision extends Thread {
                         // because mario can hit a wall or a tree , in which case he stops moving
                         // or even get in collision with an ennemy , in which case he dies !
 
-                        colonneLeftdanslaMatrice = (posLeftenX - mario.getSpeed()) /
+                        colonneLeftdanslaMatrice = (posLeftenX - CONSTANTS.INTERVALE_COLLISION) /
                                 CONSTANTS.TAILLE_CELLULE;
-                        point1 = gp.tm.tilesMatrice[ligneTopdanslaMatrice][colonneLeftdanslaMatrice];
-                        point2 = gp.tm.tilesMatrice[ligneBottomdanslaMatrice][colonneLeftdanslaMatrice];
-                        
+                        point1 = tm.tilesMatrice[ligneTopdanslaMatrice][colonneLeftdanslaMatrice];
+                        point2 = tm.tilesMatrice[ligneBottomdanslaMatrice][colonneLeftdanslaMatrice];
+
                         // verification si point1 ou point2 est une pièce
-                        if ((point1 == 30)){
+                        if ((point1 == 30)) {
                             logger.log(Level.INFO, "Coin collected from left with point1 !");
-                            this.coin.IncrementNombreDePieces();
-                            gp.tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 0);
-                        } else if (point2 == 30){
+                            tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 0);
+                        } else if (point2 == 30) {
                             logger.log(Level.INFO, "Coin collected from left with point2 !");
-                            this.coin.IncrementNombreDePieces();
-                            gp.tm.modifyMatrice(ligneBottomdanslaMatrice, colonneLeftdanslaMatrice, 0);
+                            tm.modifyMatrice(ligneBottomdanslaMatrice, colonneLeftdanslaMatrice, 0);
                         }
                         //verification s'il y'a collision avec le drapeau
                         if (point1 == 31 || point2 == 31 || point1 == 32 || point2 == 32 || point1 == 33 || point2 == 33 || point1 == 34 || point2 == 34 ) {
@@ -215,8 +224,8 @@ public class Collision extends Thread {
                             System.out.println("Flag reached");
                         }
 
-                        if (gp.tm.tiles[point1].collision == true
-                                || gp.tm.tiles[point2].collision == true) {
+                        if (tm.tiles[point1].collision == true
+                                || tm.tiles[point2].collision == true) {
                             mario.noMoving();
                         } else {
                             mario.yesMoving();
@@ -224,20 +233,21 @@ public class Collision extends Thread {
                         break;
                     case "right":
 
-                        colonneRightdanslaMatrice = (posRightenX + mario.getSpeed()) /
+                        colonneRightdanslaMatrice = (posRightenX + CONSTANTS.INTERVALE_COLLISION) /
                                 CONSTANTS.TAILLE_CELLULE;
-                        point1 = gp.tm.tilesMatrice[ligneTopdanslaMatrice][colonneRightdanslaMatrice];
-                        point2 = gp.tm.tilesMatrice[ligneBottomdanslaMatrice][colonneRightdanslaMatrice];
+
+                        point1 = tm.tilesMatrice[ligneTopdanslaMatrice][colonneRightdanslaMatrice];
+                        point2 = tm.tilesMatrice[ligneBottomdanslaMatrice][colonneRightdanslaMatrice];
 
                         // verification si point1 ou point2 est une pièce
-                        if ((point1 == 30)){
+                        if ((point1 == 30)) {
                             logger.log(Level.INFO, "Coin collected from right with point1 !");
-                            this.coin.IncrementNombreDePieces();
-                            gp.tm.modifyMatrice(ligneTopdanslaMatrice, colonneRightdanslaMatrice, 0);
-                        } else if (point2 == 30){
+                            // this.coin.IncrementNombreDePieces()
+                            tm.modifyMatrice(ligneTopdanslaMatrice, colonneRightdanslaMatrice, 0);
+                        } else if (point2 == 30) {
                             logger.log(Level.INFO, "Coin collected from right with point2 !");
-                            this.coin.IncrementNombreDePieces();
-                            gp.tm.modifyMatrice(ligneBottomdanslaMatrice, colonneRightdanslaMatrice, 0);
+                            // this.coin.IncrementNombreDePieces();
+                            tm.modifyMatrice(ligneBottomdanslaMatrice, colonneRightdanslaMatrice, 0);
                         }
                         //verification s'il y'a collision avec le drapeau
                         if (point1 == 31 || point2 == 31 || point1 == 32 || point2 == 32 || point1 == 33 || point2 == 33 || point1 == 34 || point2 == 34 ) {
@@ -247,7 +257,7 @@ public class Collision extends Thread {
                             System.out.println("Flag reached");
                         }
 
-                        if (gp.tm.tiles[point1].collision == true || gp.tm.tiles[point2].collision == true) {
+                        if (tm.tiles[point1].collision == true || tm.tiles[point2].collision == true) {
 
                             mario.noMoving();
                         } else {
@@ -261,10 +271,8 @@ public class Collision extends Thread {
 
                 }
 
-                // TODO : + collision avec les ennemeies ,
-
-                Iterator<Ennemi> iterator = gp.getEnnemis().iterator();
-                while(iterator.hasNext()) {
+                Iterator<Ennemi> iterator = tm.getListeEnnemis().iterator();
+                while (iterator.hasNext()) {
                     Ennemi ennemi = iterator.next();
 
                     // Mario's collision area
@@ -272,62 +280,62 @@ public class Collision extends Thread {
                             mario.getPosition().x + mario.getSolidArea().x,
                             mario.getPosition().y + mario.getSolidArea().y,
                             mario.getSolidArea().width,
-                            mario.getSolidArea().height
-                    );
+                            mario.getSolidArea().height);
 
-                    // Koopa's collision area
+                    // Enemy's collision area
                     Rectangle ennemiHitbox = new Rectangle(
                             ennemi.getPosition().x + ennemi.getSolidArea().x,
                             ennemi.getPosition().y + ennemi.getSolidArea().y,
                             ennemi.getSolidArea().width,
-                            ennemi.getSolidArea().height
-                    );
+                            ennemi.getSolidArea().height);
 
                     // collision avec les ennemis
-                    if(marioHitbox.intersects(ennemiHitbox)) {
-                        // mario's feet position
+                    if (marioHitbox.intersects(ennemiHitbox)) {
                         int marioFeetY = mario.getPosition().y + mario.getSolidArea().y + mario.getSolidArea().height;
-                        // ennemi's head position
                         int ennemiHeadY = ennemi.getPosition().y + ennemi.getSolidArea().y;
 
-                        // check if mario jumps exactement on the ennemi
-                        boolean fromAbove = marioFeetY <= ennemiHeadY + 10 && marioFeetY >= ennemiHeadY;
-                        // check if mario is falling
-                        boolean falling = marioFeetY > previousMarioFeetY;
+                        boolean fromAbove = marioFeetY <= ennemiHeadY + 15 && marioFeetY >= ennemiHeadY;
+                        boolean falling = (threadDescente.force_mario > 0);
 
-                        // i've added 3 conditions to check if mario is above the ennemi and if he is falling
-                        // whether mario is invincible or not, he has to jump FROM ABOVE and his direction has to be DOWN to kill the ennemi
-                        if(fromAbove && falling && mario.getDirection().equals("down")) {
-                            //mario peut tuer que si il n'est pas invincible
-                            if (!mario.isInvincible()) {
+                        boolean collisionHandled = false;
 
-                            System.out.println("Mario kills enemy");
-                            iterator.remove();
-                            threadDescente.force = -jumpingThread.IMPULSION / 2;
-                            }
-                        } else {
-                            // if mario is not jumping on the ennemi, only when mario is not invincible, he will lose a life
-                            if(!mario.isInvincible()){
-                                mario.perdreVie();
-                                if(mario.getVies() == 0) {
-                                    // TODO : restart the game or show game over screen
-                                    // show a message in the screen that mario died
-                                    // and stop the game
-                                    logger.log(Level.INFO, "mario died");
-                                    threadDescente.setSol(CONSTANTS.LE_SOL * 2);
-                                    System.out.println("Game over");
-                                    mario.setActive(false);
+                        if (fromAbove && falling && !mario.isInvincible()) {
+                            if (ennemi instanceof Koopa) {
+                                Koopa koopa = (Koopa) ennemi;
+                                if (koopa.getState() == Koopa.State.WALKING) {
+                                    // koopa becomes a shell
+                                    koopa.setState(Koopa.State.SHELL);
+
+                                    koopa.position.y += 10;
+                                    mario.setPositionY(mario.getPosition().y - 15);
+
+                                    threadDescente.force_mario = -jumpingThread.IMPULSION / 2;
+                                } else if (koopa.getState() == Koopa.State.SHELL) {
+                                    // koopa is already a shell, once mario jumps on it, it will be removed
+                                    iterator.remove();
+                                    threadDescente.force_mario = -jumpingThread.IMPULSION / 2;
                                 }
                             } else {
-                                // if mario is invincible, no damage is taken
-                                System.out.println("Mario loses a life, invincible time");
+                                // Goomba
+                                iterator.remove();
+                                threadDescente.force_mario = -jumpingThread.IMPULSION / 2;
+                            }
+                            collisionHandled = true;
+                        }
+
+                        if (!collisionHandled) {
+                            if (!mario.isInvincible()) {
+                                mario.perdreVie();
+                                if (mario.getVies() == 0) {
+                                    System.out.println("Game over");
+                                    mario.setActive(false);
+                                    
+                                }
                             }
                         }
                     }
-                    previousMarioFeetY = mario.getPosition().y + mario.getSolidArea().y + mario.getSolidArea().height;
 
                 }
-
 
             } catch (Exception e) {
                 e.printStackTrace();
