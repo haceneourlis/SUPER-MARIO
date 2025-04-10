@@ -29,6 +29,9 @@ public class Collision extends Thread {
     // Initialiser le gestionnaire de tuiles
     TileManager tm;
 
+    // le score de mario
+    private ScoreManager scoreManager = ScoreManager.getInstance();
+
     private int previousMarioFeetY = Mario.getInstance().getPosition().y
             + Mario.getInstance().getSolidArea().y
             + Mario.getInstance().getSolidArea().height;
@@ -173,6 +176,8 @@ public class Collision extends Thread {
                         // nombre de pièces
                         // Et on demande à la matrice (locale) d'être modifiée.
                         if (point1 == 30 || point2 == 30) {
+                            scoreManager.incrementCurrentCoins();
+                            scoreManager.incrementCurrentScore();
                             tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 0);
                         }
 
@@ -195,11 +200,9 @@ public class Collision extends Thread {
                             jumpingThread.jumpLaCoin();
                             coinThread.start();
 
-                            // this.coin.IncrementNombreDePieces();
-                            logger.log(Level.WARNING, "la coin a été crée en position x = {0} et y = {1}",
-                                    new Object[] { coinToCatch.position.x, coinToCatch.position.y });
+                            scoreManager.incrementCurrentCoins();
+                            scoreManager.incrementCurrentScore();
 
-                            logger.log(Level.INFO, "brickPrize collected !");
                             tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 1);
                         }
 

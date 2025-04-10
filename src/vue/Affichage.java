@@ -33,10 +33,13 @@ public class Affichage extends JPanel {
     // Variable pour le gestionnaire de tuiles
     public TileManager tilemanager;
 
+    // score manager
+    private ScoreManager scoreManager;
+
     private Font marioFont;
 
     // Un score et les coins
-    private Score score;
+    private ScoreManager score;
     private Coin coin;
 
     private int decalage = 0;
@@ -79,6 +82,8 @@ public class Affichage extends JPanel {
 
         // Initialiser le gestionnaire de tuiles
         this.tilemanager = TileManager.getInstance(); // Get the tile manager instance : classe singleton .;
+
+        this.scoreManager = ScoreManager.getInstance(); // Get the score manager instance : classe singleton .
 
         this.listeEnnemis = new ArrayList<>(); // Liste des ennemis
         this.listeEnnemis = tilemanager.getListeEnnemis(); // Récupérer la liste des ennemis depuis le TileManager
@@ -192,11 +197,10 @@ public class Affichage extends JPanel {
             g.drawString("GAME OVER", getWidth() / 2 - 150, getHeight() / 2);
         }
 
-        // affichons le score : (en haut à gauche)
-        g.setFont(marioFont);
-        g.setColor(Color.WHITE);
-        g.drawString("Score : " + Score.getScore(), SCORE_X, SCORE_Y);
-
+        g2.setFont(marioFont);
+        g2.setColor(Color.WHITE);
+        g2.drawString("Score : " + ScoreManager.getScore(), SCORE_X, SCORE_Y);
+        g2.drawString("Coins : " + ScoreManager.getCoins(), COINS_X, COINS_Y);
     }
 
     // draw un coin sautant
