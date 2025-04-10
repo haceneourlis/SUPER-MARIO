@@ -65,17 +65,7 @@ public class Collision extends Thread {
                 // on trouve les 4 points du rectangle qui vont check la collision
                 int posLeftenX = mario.getPosition().x + mario.getSolidArea().x;
                 int posRightenX = mario.getPosition().x + mario.getSolidArea().x + mario.getSolidArea().width;
-
-                // Ici j'ai modifié la variable y, il y'avait un - quelque chose.. et il ne y'en
-                // a pas besoin
                 int posTopenY = mario.getPosition().y;
-
-                // Je modifie cette ligne : CAR effectivement y avait un probleme lors de
-                // l'atterissage de mario
-                // sur une brique , il se teleportait d'un niveau i à un niveau i + 1
-                // donc pour regler ça j'ai multiplié par 2 la hauteur de la solid area de mario
-                // pour que mario aie jusqu'au niveau i+1 ensuite s'arrette , je corige
-                // l'affichage en l'affichant au niveau i . GG .
                 int posBottomenY = mario.getPosition().y + mario.getSolidArea().y + mario.getSolidArea().height * 2;
 
                 // // on trouve maintenant les lignes & colonnes ou se trouve les derniers
@@ -128,17 +118,14 @@ public class Collision extends Thread {
                         // System.out.println("je suis sur une brick ---------------#####");
                     }
                 } else {
-                    // // debloquer la descente
-                    // threadDescente.setSol(CONSTANTS.LE_SOL * );
 
+                    /* MARIO FALLS DOWN HERE , so he will EVENTUALLY DIE ! */
                     threadDescente.marioAllowedToFallDown = true;
-                    // System.out.println("je ne suis plus sur un brick ---------------#####");
                     sur_brick = false;
+                    if (mario.getPosition().y >= CONSTANTS.LE_SOL + CONSTANTS.TAILLE_CELLULE) {
+                        System.out.println("mario meurt !");
+                    }
                 }
-
-                // ligneBottomdanslaMatrice = posBottomenY / CONSTANTS.TAILLE_CELLULE;
-                // point1 = 0;
-                // point2 = 0;
 
                 // cat j'ai modifier les bordures sud :
                 posBottomenY = mario.getPosition().y + mario.getSolidArea().y + mario.getSolidArea().height;
@@ -149,7 +136,6 @@ public class Collision extends Thread {
                     // ici le "up" c'est en vrai le saut de mario , donc on check si mario est
                     // rentrer en collision avec un objet en sautant
                     case "up":
-                        logger.log(Level.INFO, "at least we are in this case <up>");
                         // on prédit ou sera notre mario aprés avoir bougé
                         ligneTopdanslaMatrice = (posTopenY + threadDescente.force_mario) / CONSTANTS.TAILLE_CELLULE;
                         point1 = tm.tilesMatrice[ligneTopdanslaMatrice][colonneLeftdanslaMatrice];
@@ -160,8 +146,6 @@ public class Collision extends Thread {
                             // On remet le joueur à l'emplacement juste en dessous de la brique. (pour
                             // éviter tout petit bug visuel)
                             mario.setPositionY((ligneTopdanslaMatrice + 1) * CONSTANTS.TAILLE_CELLULE);
-
-                            logger.log(Level.INFO, "collision up");
 
                             // mario , logiquement n'est pas sur brick , innit mate ?
                             sur_brick = false;

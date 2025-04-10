@@ -71,11 +71,8 @@ public class Affichage extends JPanel {
         try {
             this.marioFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/resources/PressStart2P-Regular.ttf"))
                     .deriveFont(16f);
-            System.out.println("Police Mario chargée !");
         } catch (IOException | FontFormatException e) {
             e.printStackTrace();
-            System.out.println("Police Mario pas chargée !");
-
         }
         // Initialiser le joueur (classe singleton)
         this.JoueurPrincipal = Mario.getInstance(); // Get the player instance : classe singleton .
@@ -183,6 +180,9 @@ public class Affichage extends JPanel {
         // Calcul du point de départ X pour centrer
         int startX = (getWidth() - largeurTotale) / 2;
 
+        // 2. ANNULER le décalage AVANT de dessiner les cœurs
+        g2.translate(this.decalage, 0); // Remet le contexte à 0 (sans décalage)
+
         // Dessiner les cœurs
         for (int i = 0; i < vies; i++) {
             int x = startX + i * (coeurWidth + espaceEntreCoeurs);
@@ -209,11 +209,6 @@ public class Affichage extends JPanel {
             g2.drawImage(Collision.coinToCatch.image,
                     Collision.coinToCatch.position.x * CONSTANTS.TAILLE_CELLULE,
                     Collision.coinToCatch.position.y * CONSTANTS.TAILLE_CELLULE, null);
-            // System.out.println("coinToCatch : " + Collision.coinToCatch.position.x *
-            // CONSTANTS.TAILLE_CELLULE + " "
-            // + Collision.coinToCatch.position.y * CONSTANTS.TAILLE_CELLULE);
-        } else {
-            // System.out.println("euuh coinToCatch null ? ");
         }
     }
 }

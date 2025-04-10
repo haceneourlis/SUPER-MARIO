@@ -92,9 +92,4 @@ public class GameCharacter extends Rectangle {
     public BufferedImage getImage(int index) {
         return this.image;
     }
-
-    // draw method
-    public void draw(Graphics2D g2, Point position_dans_la_vue) {
-        g2.drawImage(this.image, position_dans_la_vue.x, position_dans_la_vue.y, null);
-    }
 }
