@@ -32,6 +32,14 @@ public class Mario extends GameCharacter {
     private long invincibleStartTime = 0; //
     private int invincibleDuration = 2000; // 2 secondes
 
+    //mario gagant
+    private boolean winner = false;
+
+    // mario actif
+    private boolean actif = false;
+    // le controlleur
+    private controleur.MouvementJoueur mv;
+
     // constructeur privé
     private Mario() {
         super();
@@ -163,7 +171,10 @@ public class Mario extends GameCharacter {
         }
     }
     // Reset Mario's position, speed, lives, and invincibility
-    public void reset() {
+    public void reset(controleur.MouvementJoueur mv) {
+        if (mv!=null)
+            this.mv = mv;
+        this.mv.reset(); // si c'est null on reset celui qu'on avait passé lors du main au 1er appel
         this.position.x= X_ORIGINE;
         this.position.y= CONSTANTS.LE_SOL;
         this.vitesse = 1;
@@ -171,6 +182,22 @@ public class Mario extends GameCharacter {
         this.invincible = false;
         this.invincibleStartTime = 0;
         this.canMove = true;
+        this.winner = false;
+        this.actif = true;
+    }
+    public void setWinner(boolean winner) {
+        this.winner = winner;
+    }
+    public boolean isWinner() {
+        return winner;
+    }
+
+    public boolean isActif() {
+        return actif;
+    }
+
+    public void setActive(boolean b) {
+        this.actif = b;
     }
     
     

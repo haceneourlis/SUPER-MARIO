@@ -148,8 +148,8 @@ public class Affichage extends JPanel {
     // reset le jeu
     public void resetGame() {
         // Réinitialiser Mario
-        JoueurPrincipal.reset();
-    
+        JoueurPrincipal.reset(null);
+
         // Réinitialiser le décalage
         this.decalage = 0;
     
@@ -178,6 +178,10 @@ public class Affichage extends JPanel {
     
     private JFrame getParentFrame() {
         return (JFrame) SwingUtilities.getWindowAncestor(this);
+    }
+     
+    private void SystemExit() {
+        System.exit(0);
     }
     
     /**
@@ -257,6 +261,11 @@ public class Affichage extends JPanel {
             g.drawString("GAME OVER", getWidth() / 2 - 150, getHeight() / 2);
             gameOverAlreadyShown = true;
             SwingUtilities.invokeLater(() -> new GameOverDialog(getParentFrame(), this::resetGame));
+        }
+        if (Mario.getInstance().isWinner()&& !gameOverAlreadyShown) {
+            gameOverAlreadyShown = true;
+            // Afficher la boîte de dialogue de victoire
+            SwingUtilities.invokeLater(() -> new GameWinDialog(getParentFrame(), this::resetGame, this::SystemExit));
         }
         
 //        g2.dispose();

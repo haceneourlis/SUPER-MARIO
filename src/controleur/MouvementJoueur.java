@@ -19,6 +19,14 @@ public class MouvementJoueur implements KeyListener {
     private boolean right_pressed;
     private boolean space_pressed;
 
+    /* la méthode reset remet à faux tous les booléens de déplacement */
+    public void reset() {
+        this.left_pressed = false;
+        this.right_pressed = false;
+        this.space_pressed = false;
+    }
+
+    // Constructeur par défaut
     public MouvementJoueur() {}
 
     // Méthode qui va être appelée quand une touche est pressée

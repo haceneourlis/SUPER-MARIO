@@ -44,6 +44,9 @@ public class Main {
         Collision col = new Collision(GamePanel, jumpin, des, coin);
         col.start();
         fenetre.addKeyListener(mv);
+
+        j.reset(mv); // lancer la partie
+
         fenetre.pack();
         fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

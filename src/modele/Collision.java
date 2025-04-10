@@ -207,6 +207,13 @@ public class Collision extends Thread {
                             this.coin.IncrementNombreDePieces();
                             gp.tm.modifyMatrice(ligneBottomdanslaMatrice, colonneLeftdanslaMatrice, 0);
                         }
+                        //verification s'il y'a collision avec le drapeau
+                        if (point1 == 31 || point2 == 31 || point1 == 32 || point2 == 32 || point1 == 33 || point2 == 33 || point1 == 34 || point2 == 34 ) {
+                            logger.log(Level.INFO, "Flag reached !");
+                            mario.setWinner(true);
+                            mario.setActive(false);
+                            System.out.println("Flag reached");
+                        }
 
                         if (gp.tm.tiles[point1].collision == true
                                 || gp.tm.tiles[point2].collision == true) {
@@ -231,6 +238,13 @@ public class Collision extends Thread {
                             logger.log(Level.INFO, "Coin collected from right with point2 !");
                             this.coin.IncrementNombreDePieces();
                             gp.tm.modifyMatrice(ligneBottomdanslaMatrice, colonneRightdanslaMatrice, 0);
+                        }
+                        //verification s'il y'a collision avec le drapeau
+                        if (point1 == 31 || point2 == 31 || point1 == 32 || point2 == 32 || point1 == 33 || point2 == 33 || point1 == 34 || point2 == 34 ) {
+                            logger.log(Level.INFO, "Flag reached !");
+                            mario.setWinner(true);
+                            mario.setActive(false);
+                            System.out.println("Flag reached");
                         }
 
                         if (gp.tm.tiles[point1].collision == true || gp.tm.tiles[point2].collision == true) {
@@ -302,6 +316,7 @@ public class Collision extends Thread {
                                     logger.log(Level.INFO, "mario died");
                                     threadDescente.setSol(CONSTANTS.LE_SOL * 2);
                                     System.out.println("Game over");
+                                    mario.setActive(false);
                                 }
                             } else {
                                 // if mario is invincible, no damage is taken

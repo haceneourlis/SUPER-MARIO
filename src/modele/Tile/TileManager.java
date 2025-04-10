@@ -186,6 +186,28 @@ public class TileManager {
                         tiles[30].image = ImageIO.read(getClass()
                                         .getResourceAsStream("/resources/coin.png"));
                         tiles[30].collision = false;
+
+                        tiles[31] = new Tile();
+                        tiles[31].image = ImageIO.read(getClass()
+                                        .getResourceAsStream("/resources/drapeau-split/drapeau1.png"));
+                        tiles[31].collision = false;
+
+                        tiles[32] = new Tile();
+                        tiles[32].image = ImageIO.read(getClass()
+                                        .getResourceAsStream("/resources/drapeau-split/drapeau2.png"));
+                        tiles[31].collision = false;
+
+                        tiles[33] = new Tile();
+                        tiles[33].image = ImageIO.read(getClass()
+                                        .getResourceAsStream("/resources/drapeau-split/drapeau3.png"));
+                        tiles[33].collision = false;
+
+                        tiles[34] = new Tile();
+                        tiles[34].image = ImageIO.read(getClass()
+                                        .getResourceAsStream("/resources/drapeau-split/drapeau4.png"));
+                        tiles[34].collision = false;
+                        
+                        
                         // TODO : la suite
                 } catch (Exception e) {
                         System.err.println("Erreur");

@@ -45,30 +45,33 @@ public class DeplacementListener extends Thread{
         while(true){
             try{Thread.sleep(DELAY);}
             catch (Exception e) { e.printStackTrace(); }
-            if (mj.isLeft_pressed()){
-                // Touche gauche préssée, on déplace le joueur à gauche en incrémentant sa vitesse.
-                player.increment_speed();
-                player.deplacer_gauche();
-                last = false;
-            }
-            if (mj.isRight_pressed()){
-                // Touche droite préssée, on déplace le joueur à droite en incrémentant sa vitesse.
-                player.increment_speed();
-                player.deplacer_droite();
-                last = true;
-            }
-            if (mj.isSpace_pressed()){
-                // Touche espace préssée, on fait sauter le joueur
-                jumpin.jump();
-            }
-            if (!mj.isRight_pressed() && !mj.isLeft_pressed()){
-                // Si aucune touche n'est pressée, on décrémente la vitesse du joueur (jusqu'à qu'elle atteigne 0)
-                player.decelerer();
-                // Et on vérifie la dernière direction où il se déplaçait et on continue à le déplacer dans cette direction.
-                if (last) {
-                    player.deplacer_droite();
-                } else {
+            /* on ne fait le code suivant que si me joueur est actif */
+            if (player.isActif()){
+                if (mj.isLeft_pressed()){
+                    // Touche gauche préssée, on déplace le joueur à gauche en incrémentant sa vitesse.
+                    player.increment_speed();
                     player.deplacer_gauche();
+                    last = false;
+                }
+                if (mj.isRight_pressed()){
+                    // Touche droite préssée, on déplace le joueur à droite en incrémentant sa vitesse.
+                    player.increment_speed();
+                    player.deplacer_droite();
+                    last = true;
+                }
+                if (mj.isSpace_pressed()){
+                    // Touche espace préssée, on fait sauter le joueur
+                    jumpin.jump();
+                }
+                if (!mj.isRight_pressed() && !mj.isLeft_pressed()){
+                    // Si aucune touche n'est pressée, on décrémente la vitesse du joueur (jusqu'à qu'elle atteigne 0)
+                    player.decelerer();
+                    // Et on vérifie la dernière direction où il se déplaçait et on continue à le déplacer dans cette direction.
+                    if (last) {
+                        player.deplacer_droite();
+                    } else {
+                        player.deplacer_gauche();
+                    }
                 }
             }
         }
