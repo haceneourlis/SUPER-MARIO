@@ -20,7 +20,7 @@ import javax.imageio.ImageIO;
 public class Affichage extends JPanel {
 
     // Variables pour les instances de Mario et de l'ennemi
-    private Mario JoueurPrincipal;
+    private Mario mario;
     private List<Ennemi> listeEnnemis;
 
     // Variable pour l'animation du joueur (Mario)
@@ -71,7 +71,7 @@ public class Affichage extends JPanel {
             e.printStackTrace();
         }
         // Initialiser le joueur (classe singleton)
-        this.JoueurPrincipal = Mario.getInstance(); // Get the player instance : classe singleton .
+        this.mario = Mario.getInstance(); // Get the player instance : classe singleton .
 
         // Initialiser le gestionnaire de tuiles
         this.tilemanager = TileManager.getInstance(); // Get the tile manager instance : classe singleton .;
@@ -92,7 +92,7 @@ public class Affichage extends JPanel {
         (new Redessine(this)).start();
 
         // Lancer l'animation du joueur (Mario).
-        animationJoueur = new AnimationJoueur(JoueurPrincipal);
+        animationJoueur = new AnimationJoueur(mario);
         animationJoueur.start();
 
         // télecharger l'image du coeur
@@ -124,11 +124,11 @@ public class Affichage extends JPanel {
         super.paintComponent(g2);
 
         // je récupère la case de mario actuelle, relative au décalage
-        int case_actuelle = ((this.JoueurPrincipal.getPositionX() - decalage) / CONSTANTS.TAILLE_CELLULE);
+        int case_actuelle = ((this.mario.getPositionX() - decalage) / CONSTANTS.TAILLE_CELLULE);
         // Si la case de mario dépasse la case de scrolling, on décale la fenêtre
         if (case_actuelle >= CONSTANTS.CELLULE_SCROLLING) {
             // Le décalage correspond à la distance entre mario et la case de scrolling
-            this.decalage = JoueurPrincipal.getPositionX() - CONSTANTS.CELLULE_SCROLLING * CONSTANTS.TAILLE_CELLULE;
+            this.decalage = mario.getPositionX() - CONSTANTS.CELLULE_SCROLLING * CONSTANTS.TAILLE_CELLULE;
         }
 
         // On applique le décalage du plan de jeu
@@ -140,7 +140,7 @@ public class Affichage extends JPanel {
         g2.translate(-this.decalage, 0);
 
         // affichons la matrice du jeu : (le terrain)
-        this.tilemanager.draw(g2);
+        this.drawTiles(g2);
 
         int goombaIndex = 0;
         for (Ennemi ennemi : listeEnnemis) {
@@ -162,15 +162,16 @@ public class Affichage extends JPanel {
 
         // dessiner le coin
         this.drawCoin(g2);
+
         // Mario clignote uniquement s'il est invincible, sans affecter le reste du
         // dessin
-        if (!JoueurPrincipal.isInvincible() || (System.currentTimeMillis() / 200) % 2 == 0) {
-            g2.drawImage(this.animationJoueur.getCurrentToDraw(), JoueurPrincipal.getPositionX(),
-                    JoueurPrincipal.getPositionY(), null);
+        if (!mario.isInvincible() || (System.currentTimeMillis() / 200) % 2 == 0) {
+            g2.drawImage(this.animationJoueur.getCurrentToDraw(), mario.getPositionX(),
+                    mario.getPositionY(), null);
         }
 
         // Dessiner les vies (cœurs) CENTRÉS en haut
-        int vies = JoueurPrincipal.getVies();
+        int vies = mario.getVies();
         int coeurWidth = 30;
         int coeurHeight = 30;
         int espaceEntreCoeurs = 10;
@@ -210,5 +211,77 @@ public class Affichage extends JPanel {
                     Collision.coinToCatch.position.x * CONSTANTS.TAILLE_CELLULE,
                     Collision.coinToCatch.position.y * CONSTANTS.TAILLE_CELLULE, null);
         }
+    }
+
+    /*
+     * parce que M.V.C
+     */
+    public void drawTiles(Graphics2D g2) {
+        // récupère la case actuelle où se trouve mario
+        int case_actuelle = (this.mario.getPositionX() / CONSTANTS.TAILLE_CELLULE);
+
+        // On vérifie si sa case actuelle ne dépasse pas une certaine limite de
+        // scrolling
+        // On rajoute le décalage à cette limite car elle est relative à la position de
+        // mario (elle se déplace aussi)
+        if (case_actuelle > (CONSTANTS.CELLULE_SCROLLING + this.decalage)) {
+            // si c'est le cas, on incrémente le décalage
+            tilemanager.decalage = tilemanager.decalage + 1;
+        }
+
+        // la col ici représente la colonne de la matrice du jeu à partir de laquelle on
+        // va afficher les tuiles
+        // elle commence du nombre de décalage qu'on a, car 1 décalage = 1 colonne qui
+        // sort de l'écran
+        // donc 1 colonne qu'on ne veut plus afficher
+        int col = tilemanager.decalage;
+
+        // la ligne ici représente la ligne de la matrice du jeu à partir de laquelle on
+        // va afficher les tuiles
+        int row = 0;
+
+        // la position en x où on va commencer à dessiner la tuile sur la fenetre
+        // Comme le plan ne se déplace pas, on doit incrémenter à chaque fois la
+        // position en x de début de dessin, en fonction du décalage de mario
+        int x = tilemanager.decalage * CONSTANTS.TAILLE_CELLULE;
+        int y = 0;
+        Point point_dans_modele = new Point(x, y);
+
+        // On vérifie que la col n'est pas soit en dehors du champs visible de la
+        // fenetre (le maxCol_gameMatrix)
+        // ou alors que le col est en dehors ou pas de la matrice du jeu chargée du
+        // fichier texte.
+        while (col < (CONSTANTS.maxCol_gameMatrix + decalage) && col < tilemanager.maxColLevel
+                && row < CONSTANTS.maxRow_gameMatrix) {
+
+            // On récupère le type de la tuile à afficher qui correspond à un indice dans le
+            // tableau de tuiles
+            int TileType = tilemanager.tilesMatrice[row][col];
+
+            // Ici, le point dans le modele est le meme que dans la vue donc ça ne change
+            // rien
+            point_dans_modele.x = x;
+            point_dans_modele.y = y;
+
+            // On dessine la tuile
+            g2.drawImage(tilemanager.tiles[TileType].image, point_dans_modele.x, point_dans_modele.y, null);
+
+            // on incrémente la colonne et la position en x
+            col++;
+            x += CONSTANTS.TAILLE_CELLULE;
+
+            // si on arrive à la fin de la ligne qu'on peut afficher ou si on arrive à la
+            // fin de la matrice du jeu
+            // on incrémente la ligne et on réinitialise la colonne et la position en x
+
+            if (col == (CONSTANTS.maxCol_gameMatrix + decalage) || col >= tilemanager.maxColLevel) {
+                col = tilemanager.decalage;
+                row++;
+                y += CONSTANTS.TAILLE_CELLULE;
+                x = tilemanager.decalage * CONSTANTS.TAILLE_CELLULE;
+            }
+
+        }
+
     }
 }

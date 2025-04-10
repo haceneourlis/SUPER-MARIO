@@ -44,13 +44,11 @@ public class Descente extends Thread {
                     }
 
                     this.force_mario += CONSTANTS.GRAVITY;
-                    if (this.force_mario >= CONSTANTS.FORCE_MAX) {
-                        this.force_mario = CONSTANTS.FORCE_MAX;
+                    if (this.force_mario >= CONSTANTS.FORCE_MAX_MARIO) {
+                        this.force_mario = CONSTANTS.FORCE_MAX_MARIO;
                     }
-
                     mario.setPositionY(this.force_mario + mario.getPosition().y);
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
             }

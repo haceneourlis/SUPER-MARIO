@@ -42,7 +42,8 @@ public class CONSTANTS {
 
     public static final int INTERVALE_COLLISION = 10;
 
-    public static final int FORCE_MAX = 20;
+    public static final int FORCE_MAX_MARIO = 20;
+    public static final int FORCE_MAX_COIN = 3;
 
     // les types de tuiles :
 
@@ -52,4 +53,8 @@ public class CONSTANTS {
 
     // facteur d'incrementation du score:
     public static final int FACTEUR_SCORE = 100;
+
+    // les implusions de mario et coins :
+    public static final int IMPULSION_MARIO = 15;
+    public static final int IMPULSION_COIN = 2;
 }

@@ -40,11 +40,11 @@ public class TileManager {
 
         // décalage de mario (en nombre de colonnes) par rapport à une certaine colonne
         // appelée "colonne de scrolling"
-        private int decalage = 0;
+        public int decalage = 0;
 
         // nombre de colonnes de la matrice du jeu, sera initialisé dans la méthode
         // loadMatrice
-        private int maxColLevel = 0;
+        public int maxColLevel = 0;
 
         private ArrayList<Ennemi> listeEnnemis;
         private Ennemi koopa, goomba;
@@ -233,82 +233,6 @@ public class TileManager {
                 } catch (Exception e) {
                         System.err.println("Erreur");
                 }
-        }
-
-        /**
-         * Cette méthode dessine les tuiles du jeu
-         * Elle prend en paramètre un objet Graphics2D
-         * Elle dessine les tuiles en fonction du décalage de mario
-         * Elle sera appelée par la Vue, demander au prof si c'est correct en terme de
-         * MVC
-         */
-        public void draw(Graphics2D g2) {
-                // récupère la case actuelle où se trouve mario
-                int case_actuelle = (this.mario.getPositionX() / CONSTANTS.TAILLE_CELLULE);
-
-                // On vérifie si sa case actuelle ne dépasse pas une certaine limite de
-                // scrolling
-                // On rajoute le décalage à cette limite car elle est relative à la position de
-                // mario (elle se déplace aussi)
-                if (case_actuelle > (CONSTANTS.CELLULE_SCROLLING + this.decalage)) {
-                        // si c'est le cas, on incrémente le décalage
-                        this.decalage = this.decalage + 1;
-                }
-
-                // la col ici représente la colonne de la matrice du jeu à partir de laquelle on
-                // va afficher les tuiles
-                // elle commence du nombre de décalage qu'on a, car 1 décalage = 1 colonne qui
-                // sort de l'écran
-                // donc 1 colonne qu'on ne veut plus afficher
-                int col = decalage;
-
-                // la ligne ici représente la ligne de la matrice du jeu à partir de laquelle on
-                // va afficher les tuiles
-                int row = 0;
-
-                // la position en x où on va commencer à dessiner la tuile sur la fenetre
-                // Comme le plan ne se déplace pas, on doit incrémenter à chaque fois la
-                // position en x de début de dessin, en fonction du décalage de mario
-                int x = decalage * CONSTANTS.TAILLE_CELLULE;
-                int y = 0;
-                Point point_dans_modele = new Point(x, y);
-
-                // On vérifie que la col n'est pas soit en dehors du champs visible de la
-                // fenetre (le maxCol_gameMatrix)
-                // ou alors que le col est en dehors ou pas de la matrice du jeu chargée du
-                // fichier texte.
-                while (col < (modele.CONSTANTS.maxCol_gameMatrix + decalage) && col < this.maxColLevel
-                                && row < modele.CONSTANTS.maxRow_gameMatrix) {
-
-                        // On récupère le type de la tuile à afficher qui correspond à un indice dans le
-                        // tableau de tuiles
-                        int TileType = tilesMatrice[row][col];
-
-                        // Ici, le point dans le modele est le meme que dans la vue donc ça ne change
-                        // rien
-                        point_dans_modele.x = x;
-                        point_dans_modele.y = y;
-
-                        // On dessine la tuile
-                        g2.drawImage(tiles[TileType].image, point_dans_modele.x, point_dans_modele.y, null);
-
-                        // on incrémente la colonne et la position en x
-                        col++;
-                        x += CONSTANTS.TAILLE_CELLULE;
-
-                        // si on arrive à la fin de la ligne qu'on peut afficher ou si on arrive à la
-                        // fin de la matrice du jeu
-                        // on incrémente la ligne et on réinitialise la colonne et la position en x
-
-                        if (col == (CONSTANTS.maxCol_gameMatrix + decalage) || col >= this.maxColLevel) {
-                                col = decalage;
-                                row++;
-                                y += CONSTANTS.TAILLE_CELLULE;
-                                x = decalage * CONSTANTS.TAILLE_CELLULE;
-                        }
-
-                }
-
         }
 
         /**

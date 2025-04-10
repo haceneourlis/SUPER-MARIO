@@ -146,13 +146,10 @@ public class Collision extends Thread {
                             // On remet le joueur à l'emplacement juste en dessous de la brique. (pour
                             // éviter tout petit bug visuel)
                             mario.setPositionY((ligneTopdanslaMatrice + 1) * CONSTANTS.TAILLE_CELLULE);
-
                             // mario , logiquement n'est pas sur brick , innit mate ?
                             sur_brick = false;
-
                             // Je remets sa force à 0.
                             threadDescente.force_mario = 0;
-
                             // Je lui permet de descendre.
                             threadDescente.marioAllowedToFallDown = true;
                         }
@@ -173,13 +170,15 @@ public class Collision extends Thread {
 
                         if (point1 == CONSTANTS.PRIZE_BRICK || point2 == CONSTANTS.PRIZE_BRICK) {
 
-                            // créer un objet (coin) et le faire sauter et redescendre sur la brique et +1
-                            // au score ed mario
+                            // créer un objet (coin) et le faire sauter et redescendre sur la brique et
+                            // +prize
+                            // au score de mario
                             // et modifier la brique de la matrice pour qu'elle ne soit plus une brique de
                             // récompense.
 
                             coinToCatch = new Coin(new Point(colonneLeftdanslaMatrice, (ligneTopdanslaMatrice - 1)));
                             DescenteCoins coinThread = new DescenteCoins(coinToCatch);
+                            coinThread.coinAllowedToFallDown = false;
                             jumpingThread.setThreadDecenteCoins(coinThread);
                             jumpingThread.jumpLaCoin();
                             coinThread.start();
@@ -291,16 +290,16 @@ public class Collision extends Thread {
                                     koopa.position.y += 10;
                                     mario.setPositionY(mario.getPosition().y - 15);
 
-                                    threadDescente.force_mario = -jumpingThread.IMPULSION / 2;
+                                    threadDescente.force_mario = -CONSTANTS.IMPULSION_MARIO / 2;
                                 } else if (koopa.getState() == Koopa.State.SHELL) {
                                     // koopa is already a shell, once mario jumps on it, it will be removed
                                     iterator.remove();
-                                    threadDescente.force_mario = -jumpingThread.IMPULSION / 2;
+                                    threadDescente.force_mario = -CONSTANTS.IMPULSION_MARIO / 2;
                                 }
                             } else {
                                 // Goomba
                                 iterator.remove();
-                                threadDescente.force_mario = -jumpingThread.IMPULSION / 2;
+                                threadDescente.force_mario = -CONSTANTS.IMPULSION_MARIO / 2;
                             }
                             collisionHandled = true;
                         }

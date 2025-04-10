@@ -10,9 +10,6 @@ import java.util.logging.*;
  */
 public class Jumping {
 
-    // Constante de la puissance de l'impulsion à chaque saut
-    public final int IMPULSION = 15;
-
     // Descente instance
     private Descente descente;
     private DescenteCoins descenteCoins;
@@ -40,7 +37,7 @@ public class Jumping {
      */
     public void jump() {
         if (!this.descente.marioAllowedToFallDown) {
-            this.descente.force_mario = -IMPULSION;
+            this.descente.force_mario = -CONSTANTS.IMPULSION_MARIO;
             this.descente.marioAllowedToFallDown = true;
             mario.setDirection("up");
         }
@@ -48,9 +45,8 @@ public class Jumping {
 
     public void jumpLaCoin() {
         if (!this.descenteCoins.coinAllowedToFallDown) {
-            this.descenteCoins.force_coin = -IMPULSION;
+            this.descenteCoins.force_coin = -CONSTANTS.IMPULSION_COIN;
             this.descenteCoins.coinAllowedToFallDown = true;
-            logger.log(Level.WARNING, "coin jump");
         }
     }
 
