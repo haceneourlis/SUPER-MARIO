@@ -37,8 +37,8 @@ public class CoinMovement extends Thread {
             } catch (Exception e) {
             }
         }}
-    }
-
-
-
 }
+
+
+
+

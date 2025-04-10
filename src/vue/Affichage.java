@@ -80,7 +80,6 @@ public class Affichage extends JPanel {
         // Initialiser le gestionnaire de tuiles
         this.tilemanager = TileManager.getInstance(); // Get the tile manager instance : classe singleton .;
 
-        this.listeEnnemis = new ArrayList<>(); // Liste des ennemis
         this.listeEnnemis = tilemanager.getListeEnnemis(); // Récupérer la liste des ennemis depuis le TileManager
 
         // Initialiser l'ennemi (au-dessus du sol)
@@ -104,10 +103,20 @@ public class Affichage extends JPanel {
             e.printStackTrace();
         }
 
-        animationKoopa.add(new AnimationKoopa(tilemanager.getKoopa()));
-
+        for (int i = 0; i < listeEnnemis.size(); i ++){
+            if (listeEnnemis.get(i) instanceof Koopa){
+                animationKoopa.add(new AnimationKoopa(listeEnnemis.get(i)));
+            }
+            if (listeEnnemis.get(i) instanceof Goomba){
+                animationGoomba.add(new AnimationGoomba(listeEnnemis.get(i)));
+            }
+        }
+        
         for (AnimationKoopa Koopa : animationKoopa) {
             Koopa.start();
+        }
+        for (AnimationGoomba Goomba : animationGoomba){
+            Goomba.start();
         }
     }
 
@@ -138,28 +147,27 @@ public class Affichage extends JPanel {
         // affichons la matrice du jeu : (le terrain)
         this.tilemanager.draw(g2);
 
-        // Dessiner tous les ennemis avec leur animation respective
-        for (int i = 0; i < listeEnnemis.size(); i++) {
-            Ennemi ennemi = listeEnnemis.get(i);
+
+        int goombaIndex = 0;
+        for (Ennemi ennemi : listeEnnemis) {
             BufferedImage imageEnnemi = null;
-
-            // Sélectionner l'animation correcte en fonction du type d'ennemi
-            if (ennemi.getType().equals("koopa") && i < animationKoopa.size()) {
-                imageEnnemi = animationKoopa.get(i).getCurrentToDraw();
+            if (ennemi instanceof Koopa) {
+                // 对Koopa使用 AnimationKoopa 绘制（内部已判断状态，SHELL状态下直接返回静态图）
+                if (!animationKoopa.isEmpty()) {
+                    imageEnnemi = animationKoopa.get(0).getCurrentToDraw();
+                }
+            } else if (ennemi instanceof Goomba) {
+                if (goombaIndex < animationGoomba.size()) {
+                    imageEnnemi = animationGoomba.get(goombaIndex).getCurrentToDraw();
+                    goombaIndex++;
+                }
             }
-            // TODO: GOOMBA
-
-            // Dessiner l'ennemi
             if (imageEnnemi != null) {
                 g2.drawImage(imageEnnemi, ennemi.getPosition().x, ennemi.getPosition().y, null);
             }
         }
 
-        // Si Mario est invincible, il clignote à l'écran : on saute une frame sur deux
-        if (JoueurPrincipal.isInvincible()) {
-            if ((System.currentTimeMillis() / 100) % 2 == 0)
-                return; // skip draw every other frame
-        }
+       
 
 
         for (int i = 0; i < this.tilemanager.sizeGameCharacterList(); i ++){
@@ -173,6 +181,11 @@ public class Affichage extends JPanel {
         g2.drawImage(this.animationJoueur.getCurrentToDraw(), JoueurPrincipal.getPositionX(),
                 JoueurPrincipal.getPositionY(), null);
 
+        // Mario clignote uniquement s'il est invincible, sans affecter le reste du dessin
+        if (!JoueurPrincipal.isInvincible() || (System.currentTimeMillis() / 200) % 2 == 0) {
+            g2.drawImage(this.animationJoueur.getCurrentToDraw(), JoueurPrincipal.getPositionX(), JoueurPrincipal.getPositionY(), null);
+        }
+
         // Dessiner les vies (cœurs) CENTRÉS en haut
         int vies = JoueurPrincipal.getVies();
         int coeurWidth = 30;
@@ -184,6 +197,8 @@ public class Affichage extends JPanel {
 
         // Calcul du point de départ X pour centrer
         int startX = (getWidth() - largeurTotale) / 2;
+        // 2. ANNULER le décalage AVANT de dessiner les cœurs
+        g2.translate(this.decalage, 0);  // Remet le contexte à 0 (sans décalage)
 
         // Dessiner les cœurs
         for (int i = 0; i < vies; i++) {

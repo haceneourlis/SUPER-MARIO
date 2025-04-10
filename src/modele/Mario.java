@@ -124,16 +124,16 @@ public class Mario extends GameCharacter {
     // etc.)
     public void perdreVie() {
         if (!invincible) {
-            vies--;
+            
             invincible = true;
             invincibleStartTime = System.currentTimeMillis();
             System.out.println("Mario a perdu une vie ! Vies restantes : " + this.vies);
             if (this.vies <= 0) {
                 // Game Over
                 System.out.println("GAME OVER !");
-                // Tu peux ajouter ici une logique pour arrêter le jeu ou relancer tout
-                // Exemple : System.exit(0);
+                //TODO: Game Over screen
             }
+            vies--;
         }
     }
 

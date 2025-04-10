@@ -7,10 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
-import modele.CONSTANTS;
-import modele.Ennemi;
-import modele.GameCharacter;
-import modele.Mario;
+import modele.*;
 
 /**
  * Classe qui gère les tuiles du jeu
@@ -60,8 +57,7 @@ public class TileManager {
 
                 listeGameCharacters = new ArrayList<>();
                 // Ajouter plusieurs ennemis
-                Koopa = new Ennemi(600, 20, 20, 5, true, this, "koopa");
-                this.listeEnnemis.add(Koopa);
+               
                 // méthode qui va juste charger les images et les mettres dans le tableau de
                 // tuiles
                 getTileImage();
@@ -74,6 +70,7 @@ public class TileManager {
                 if (instance == null) {
                         // Si l'instance n'existe pas, on la crée
                         instance = new TileManager();
+                        
 
                 }
                 return instance;
@@ -363,6 +360,8 @@ public class TileManager {
                                 }
                         }
                         br.close();
+
+                        
                 } catch (IOException e) {
                         throw new RuntimeException(e);
                 }

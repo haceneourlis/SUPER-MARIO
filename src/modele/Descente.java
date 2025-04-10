@@ -27,6 +27,7 @@ public class Descente extends Thread {
     public void run() {
         while (true) {
             try {
+                
                 Thread.sleep(DELAY);
 
                 // à chaque instant t , si le mario n'est pas sur le sol : CONSTANTS.LE_SOL

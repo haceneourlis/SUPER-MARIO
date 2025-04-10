@@ -179,5 +179,6 @@ public class Collision_entite extends Thread{
             }
 
         }
+        
     }
 }
