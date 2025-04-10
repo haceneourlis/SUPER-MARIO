@@ -38,10 +38,6 @@ public class Affichage extends JPanel {
 
     private Font marioFont;
 
-    // Un score et les coins
-    private ScoreManager score;
-    private Coin coin;
-
     private int decalage = 0;
 
     private BufferedImage coeurImage;
@@ -101,15 +97,20 @@ public class Affichage extends JPanel {
 
         // télecharger l'image du coeur
         try {
-            coeurImage = ImageIO.read(getClass().getResourceAsStream("/resources/coin.png"));
+            coeurImage = ImageIO.read(getClass().getResourceAsStream("/resources/coeur.png"));
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        // Démarrer les threads des ennemis et de leurs animations
         animationKoopa.add(new AnimationKoopa(tilemanager.getKoopa()));
+        animationGoomba.add(new AnimationGoomba(tilemanager.getGoomba()));
 
         for (AnimationKoopa Koopa : animationKoopa) {
             Koopa.start();
+        }
+        for (AnimationGoomba Goomba : animationGoomba) {
+            Goomba.start();
         }
     }
 
@@ -124,7 +125,6 @@ public class Affichage extends JPanel {
 
         // je récupère la case de mario actuelle, relative au décalage
         int case_actuelle = ((this.JoueurPrincipal.getPositionX() - decalage) / CONSTANTS.TAILLE_CELLULE);
-
         // Si la case de mario dépasse la case de scrolling, on décale la fenêtre
         if (case_actuelle >= CONSTANTS.CELLULE_SCROLLING) {
             // Le décalage correspond à la distance entre mario et la case de scrolling
@@ -134,39 +134,40 @@ public class Affichage extends JPanel {
         // On applique le décalage du plan de jeu
         // (note que comme l'objet Graphics2D est rechargé à chaque appel, les
         // transformations ne s'aditionnent pas)
+        // On applique le décalage du plan de jeu
+        // (note que comme l'objet Graphics2D est rechargé à chaque appel, les
+        // transformations ne s'aditionnent pas)
         g2.translate(-this.decalage, 0);
 
         // affichons la matrice du jeu : (le terrain)
         this.tilemanager.draw(g2);
 
-        // Dessiner tous les ennemis avec leur animation respective
-        for (int i = 0; i < listeEnnemis.size(); i++) {
-            Ennemi ennemi = listeEnnemis.get(i);
+        int goombaIndex = 0;
+        for (Ennemi ennemi : listeEnnemis) {
             BufferedImage imageEnnemi = null;
-
-            // Sélectionner l'animation correcte en fonction du type d'ennemi
-            if (ennemi.getType().equals("koopa") && i < animationKoopa.size()) {
-                imageEnnemi = animationKoopa.get(i).getCurrentToDraw();
+            if (ennemi instanceof Koopa) {
+                if (!animationKoopa.isEmpty()) {
+                    imageEnnemi = animationKoopa.get(0).getCurrentToDraw();
+                }
+            } else if (ennemi instanceof Goomba) {
+                if (goombaIndex < animationGoomba.size()) {
+                    imageEnnemi = animationGoomba.get(goombaIndex).getCurrentToDraw();
+                    goombaIndex++;
+                }
             }
-            // TODO: GOOMBA
-
-            // Dessiner l'ennemi
             if (imageEnnemi != null) {
                 g2.drawImage(imageEnnemi, ennemi.getPosition().x, ennemi.getPosition().y, null);
             }
         }
 
-        // Si Mario est invincible, il clignote à l'écran : on saute une frame sur deux
-        if (JoueurPrincipal.isInvincible()) {
-            if ((System.currentTimeMillis() / 100) % 2 == 0)
-                return; // skip draw every other frame
-        }
-
+        // dessiner le coin
         this.drawCoin(g2);
-
-        // affichons mario en dernier (pour qu'il soit au-dessus de tout) :
-        g2.drawImage(this.animationJoueur.getCurrentToDraw(), JoueurPrincipal.getPositionX(),
-                JoueurPrincipal.getPositionY(), null);
+        // Mario clignote uniquement s'il est invincible, sans affecter le reste du
+        // dessin
+        if (!JoueurPrincipal.isInvincible() || (System.currentTimeMillis() / 200) % 2 == 0) {
+            g2.drawImage(this.animationJoueur.getCurrentToDraw(), JoueurPrincipal.getPositionX(),
+                    JoueurPrincipal.getPositionY(), null);
+        }
 
         // Dessiner les vies (cœurs) CENTRÉS en haut
         int vies = JoueurPrincipal.getVies();
@@ -179,7 +180,6 @@ public class Affichage extends JPanel {
 
         // Calcul du point de départ X pour centrer
         int startX = (getWidth() - largeurTotale) / 2;
-
         // 2. ANNULER le décalage AVANT de dessiner les cœurs
         g2.translate(this.decalage, 0); // Remet le contexte à 0 (sans décalage)
 

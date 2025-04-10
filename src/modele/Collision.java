@@ -253,8 +253,6 @@ public class Collision extends Thread {
 
                 }
 
-                // TODO : + collision avec les ennemeies ,
-
                 Iterator<Ennemi> iterator = tm.getListeEnnemis().iterator();
                 while (iterator.hasNext()) {
                     Ennemi ennemi = iterator.next();
@@ -266,7 +264,7 @@ public class Collision extends Thread {
                             mario.getSolidArea().width,
                             mario.getSolidArea().height);
 
-                    // Koopa's collision area
+                    // Enemy's collision area
                     Rectangle ennemiHitbox = new Rectangle(
                             ennemi.getPosition().x + ennemi.getSolidArea().x,
                             ennemi.getPosition().y + ennemi.getSolidArea().y,
@@ -275,44 +273,47 @@ public class Collision extends Thread {
 
                     // collision avec les ennemis
                     if (marioHitbox.intersects(ennemiHitbox)) {
-                        // mario's feet position
                         int marioFeetY = mario.getPosition().y + mario.getSolidArea().y + mario.getSolidArea().height;
-                        // ennemi's head position
                         int ennemiHeadY = ennemi.getPosition().y + ennemi.getSolidArea().y;
 
-                        // check if mario jumps exactement on the ennemi
-                        boolean fromAbove = marioFeetY <= ennemiHeadY + 10 && marioFeetY >= ennemiHeadY;
-                        // check if mario is falling
-                        boolean falling = marioFeetY > previousMarioFeetY;
+                        boolean fromAbove = marioFeetY <= ennemiHeadY + 15 && marioFeetY >= ennemiHeadY;
+                        boolean falling = (threadDescente.force_mario > 0);
 
-                        // i've added 3 conditions to check if mario is above the ennemi and if he is
-                        // falling
-                        // whether mario is invincible or not, he has to jump FROM ABOVE and his
-                        // direction has to be DOWN to kill the ennemi
-                        if (fromAbove && falling && mario.getDirection().equals("down")) {
-                            System.out.println("Mario kills enemy");
-                            iterator.remove();
-                            threadDescente.force_mario = -jumpingThread.IMPULSION / 2;
-                        } else {
-                            // if mario is not jumping on the ennemi, only when mario is not invincible, he
-                            // will lose a life
+                        boolean collisionHandled = false;
+
+                        if (fromAbove && falling && !mario.isInvincible()) {
+                            if (ennemi instanceof Koopa) {
+                                Koopa koopa = (Koopa) ennemi;
+                                if (koopa.getState() == Koopa.State.WALKING) {
+                                    // koopa becomes a shell
+                                    koopa.setState(Koopa.State.SHELL);
+
+                                    koopa.position.y += 10;
+                                    mario.setPositionY(mario.getPosition().y - 15);
+
+                                    threadDescente.force_mario = -jumpingThread.IMPULSION / 2;
+                                } else if (koopa.getState() == Koopa.State.SHELL) {
+                                    // koopa is already a shell, once mario jumps on it, it will be removed
+                                    iterator.remove();
+                                    threadDescente.force_mario = -jumpingThread.IMPULSION / 2;
+                                }
+                            } else {
+                                // Goomba
+                                iterator.remove();
+                                threadDescente.force_mario = -jumpingThread.IMPULSION / 2;
+                            }
+                            collisionHandled = true;
+                        }
+
+                        if (!collisionHandled) {
                             if (!mario.isInvincible()) {
                                 mario.perdreVie();
                                 if (mario.getVies() == 0) {
-                                    // TODO : restart the game or show game over screen
-                                    // show a message in the screen that mario died
-                                    // and stop the game
-                                    logger.log(Level.INFO, "mario died");
-                                    // threadDescente.setSol(CONSTANTS.LE_SOL * 2);
                                     System.out.println("Game over");
                                 }
-                            } else {
-                                // if mario is invincible, no damage is taken
-                                System.out.println("Mario loses a life, invincible time");
                             }
                         }
                     }
-                    previousMarioFeetY = mario.getPosition().y + mario.getSolidArea().y + mario.getSolidArea().height;
 
                 }
 

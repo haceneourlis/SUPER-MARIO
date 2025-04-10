@@ -2,6 +2,7 @@ package vue;
 
 import java.awt.image.BufferedImage;
 import modele.Ennemi;
+import modele.Koopa;
 
 public class AnimationKoopa extends Thread{
     // Instance de Animation (sorte d'héritage)
@@ -35,6 +36,12 @@ public class AnimationKoopa extends Thread{
 
     // getter de l'image to draw
     public BufferedImage getCurrentToDraw() {
+        if(koopa instanceof Koopa) {
+            Koopa kp = (Koopa) koopa;
+            if(kp.getState()==Koopa.State.SHELL) {
+                return kp.getImage(0);
+            }
+        }
         return this.animation.getCurrentToDraw();
     }
 

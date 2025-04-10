@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import modele.CONSTANTS;
 import modele.Ennemi;
+import modele.Goomba;
+import modele.Koopa;
 import modele.Mario;
 
 /**
@@ -45,7 +47,7 @@ public class TileManager {
         private int maxColLevel = 0;
 
         private ArrayList<Ennemi> listeEnnemis;
-        private Ennemi Koopa;
+        private Ennemi koopa, goomba;
 
         private TileManager() {
                 // On récupère l'instance du Joueur
@@ -56,8 +58,11 @@ public class TileManager {
 
                 listeEnnemis = new ArrayList<>();
                 // Ajouter plusieurs ennemis
-                Koopa = new Ennemi(600, 20, 20, 5, true, this, "koopa");
-                this.listeEnnemis.add(Koopa);
+                // Ajouter plusieurs ennemis
+                koopa = new Koopa(600, 5, true, this);
+                goomba = new Goomba(300, 4, true, this);
+                listeEnnemis.add(koopa);
+                listeEnnemis.add(goomba);
                 // méthode qui va juste charger les images et les mettres dans le tableau de
                 // tuiles
                 getTileImage();
@@ -84,7 +89,11 @@ public class TileManager {
         }
 
         public Ennemi getKoopa() {
-                return Koopa;
+                return koopa;
+        }
+
+        public Ennemi getGoomba() {
+                return goomba;
         }
 
         /**

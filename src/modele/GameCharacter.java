@@ -34,11 +34,6 @@ public class GameCharacter extends Rectangle {
         this.image = null;
     }
 
-    // set the solid area of the character
-    public void setSolidArea() {
-        // TODO : ??
-    }
-
     // get the solid area of the character
     public Rectangle getSolidArea() {
         return this.solidArea;
