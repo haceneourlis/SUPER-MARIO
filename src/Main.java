@@ -3,6 +3,7 @@
 import controleur.*;
 import javax.swing.JFrame;
 import modele.*;
+import modele.Tile.TileManager;
 import vue.*;
 
 public class Main {
@@ -12,34 +13,41 @@ public class Main {
         // on crée une fenetre
         JFrame fenetre = new JFrame();
 
+
         // Get the player instance : classe singleton .
         Mario j = Mario.getInstance();
+        // Get the tile manager instance : classe singleton .;
 
-  
 
-        Score score = new Score();
-        Coin coin = new Coin(score);
+        TileManager tilemanager = TileManager.getInstance(); // Get the tile manager instance : classe singleton .;
+   
+      
         // on ajoute un panel à la fenetre
-        Affichage GamePanel = new Affichage(score, coin);
+        Affichage GamePanel = new Affichage();
+        System.out.println("test4");
+
         fenetre.add(GamePanel);
 
         // on ajoute un thread pour la gravité
-        Descente des = new Descente(GamePanel);
+        Descente des = new Descente(j);
         des.start();
 
-         // on crée un thread pour le saut
+        // on crée un thread pour le saut
         Jumping jumpin = new Jumping(des);
 
-      
+        // lancer le thread de tous les ennemis
+        for (Ennemi ennemi : tilemanager.getListeEnnemis()) {
+            ennemi.thread.start();
+        }
+
         // on crée un thread pour le mouvement : qui detecte les touches (<- et -> et
         // ESPACE)
         MouvementJoueur mv = new MouvementJoueur();
         DeplacementListener dl = new DeplacementListener(mv, j, jumpin);
         dl.start();
-        
 
         // on ajoute un thread pour la collision
-        Collision col = new Collision(GamePanel, jumpin, des, coin);
+        Collision col = new Collision(jumpin, des);
         col.start();
         fenetre.addKeyListener(mv);
         fenetre.pack();

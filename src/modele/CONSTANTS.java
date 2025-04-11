@@ -28,7 +28,7 @@ public class CONSTANTS {
     public static final int maxRow_gameMatrix = 16;
     public static final int maxCol_gameMatrix = 32;
 
-     // Pour gérer le scrolling de la caméra:
+    // Pour gérer le scrolling de la caméra:
     // ça represente la cellule à partir de laquelle on commence à scroller
     public static final int CELLULE_SCROLLING = 10;
 
@@ -39,4 +39,30 @@ public class CONSTANTS {
     public static final int HAUTEUR_VUE = (HAUTEUR_MODELE);
 
     public static final int LE_SOL = TAILLE_CELLULE * 11;
+
+    public static final int INTERVALE_COLLISION = 10;
+
+    public static final int FORCE_MAX_MARIO = 20;
+    public static final int FORCE_MAX_COIN = 3;
+
+    // Les facteurs d'incrémentation : 
+    public static final int INCREMENT_SCORE_COIN = 10;
+    public static final int INCREMENT_SCORE_MUSHROOM = 50;
+
+
+    // les types de tuiles :
+    
+    public static final int CIEL = 0;
+    public static final int SOL = 1;
+    public static final int PRIZE_BRICK = 2;
+    public static final int MUSHROOW_BRICK = 31;
+
+    // facteur d'incrementation du score:
+    public static final int FACTEUR_SCORE = 100;
+
+    public static final int FORCE_MAX = 20;
+
+    // les implusions de mario et coins :
+    public static final int IMPULSION_MARIO = 15;
+    public static final int IMPULSION_COIN = 2;
 }

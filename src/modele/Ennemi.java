@@ -20,7 +20,6 @@ import modele.Tile.TileManager;
 
 // une classe qui hérite de la classe Thread pour gérer les ennemis
 // l'enemi bouge de droite à gauche et ne peut pas sortir de la fenêtre ()
-// TODO: Adapter la classe pour supporter plusieurs types d'ennemis, pas uniquement Koopa.
 public class Ennemi extends GameCharacter implements Runnable {
 
     // les frontières
@@ -43,9 +42,10 @@ public class Ennemi extends GameCharacter implements Runnable {
 
     protected String type; // Type de l'ennemi (koopa, goomba, etc.)
 
-    public Ennemi(int x, int width, int height, int speed, boolean movingRight, TileManager tileManager, String type) {
+    public Ennemi(int x, int width, int height, int speed, boolean movingRight, String type, TileManager tm) {
         super();
         this.type = type;
+        this.tileManager = tm;
 
         if (type.equals("koopa")) {
             image = new BufferedImage[3];
@@ -59,12 +59,9 @@ public class Ennemi extends GameCharacter implements Runnable {
         }
         // the other types (like goomba) will be implemented in the subclass
 
-        this.tileManager = tileManager;
         this.position.x = x;
-        // affiche dans la console le height de l'image 0
-        // System.out.println(this.image[0].getHeight()); // 48
-        this.position.y = findGroundY(this.position.x, this.position.y);
-        // System.out.println("Koopa initial position: x=" + this.position.x + ", y=" + this.position.y);
+
+        this.position.y = CONSTANTS.LE_SOL;
 
         if (image != null && image.length > 0) {
             this.solidArea.x = 0;
@@ -75,10 +72,9 @@ public class Ennemi extends GameCharacter implements Runnable {
 
         this.speed = speed;
         this.leftBorder = 0;
-        this.rightBorder = CONSTANTS.LARGEUR_VUE-this.solidArea.width;
+        this.rightBorder = CONSTANTS.LARGEUR_VUE - this.solidArea.width;
 
         this.movingRight = movingRight; // l'ennemi commence par aller à droite
-
 
         thread = new Thread(this);
     }
@@ -165,8 +161,6 @@ public class Ennemi extends GameCharacter implements Runnable {
         this.position.x = nextX;
     }
 
-
-
     // demarrer le thread
     @Override
     public void run() {
@@ -197,6 +191,7 @@ public class Ennemi extends GameCharacter implements Runnable {
 
     /**
      * Trouve la hauteur du sol pour une position donnée.
+     * 
      * @param startX Position x de départ
      * @param startY Position y de départ
      * @return La position y où l'ennemi doit se poser
@@ -217,7 +212,6 @@ public class Ennemi extends GameCharacter implements Runnable {
         // Si aucun sol trouvé, retourne la position par défaut
         return CONSTANTS.LE_SOL;
     }
-
 
     // arreter le thread
     public void stopMoving() {

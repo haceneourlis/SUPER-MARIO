@@ -15,9 +15,11 @@ public class Mario extends GameCharacter {
     // constante de coordonnées d'origine du joueur
     public final int X_ORIGINE = 50;
 
-    public int vitesse = 1;
     // vitesse max constante
     public final int VITESSE_MAX = 6;
+    // Max de vies
+    public final int VIE_MAX = 3;
+
 
     // Images de Mario (avec animation de walk)
     private BufferedImage[] image = new BufferedImage[4];
@@ -26,7 +28,7 @@ public class Mario extends GameCharacter {
     private boolean canMove = true;
 
     // Mario's remaining number of lives
-    private int vies = 3; //  Début avec 3 vies
+    private int vies = 3; // Début avec 3 vies
     // Mario's invincibility
     private boolean invincible = false;
     private long invincibleStartTime = 0; //
@@ -75,43 +77,22 @@ public class Mario extends GameCharacter {
      * Elle vérifie si la vitesse ne dépasse pas la constante vitesse_max.
      */
     public void increment_speed() {
-        if (this.vitesse < this.VITESSE_MAX) {
-            this.vitesse += 1;
+        if (this.speed < this.VITESSE_MAX) {
+            this.speed += 1;
         }
     }
 
-    /**
-     * Méthode pour déplacer le joueur à droite.
-     * Si la vitesse est inférieure à la vitesse maximale, on l'incrémente de 1.
-     * On incrémente la position en x de la vitesse.
-     */
-    public void deplacer_droite() {
-        this.setDirection("right");
-        if (canMove)
-            this.position.x += this.vitesse;
-    }
-
-    /**
-     * Méthode pour déplacer le joueur à gauche.
-     * Si la vitesse est inférieure à la vitesse maximale, on l'incrémente de 1.
-     * On décrémente la position en x de la vitesse.
-     */
-    public void deplacer_gauche() {
-        this.setDirection("left");
-        if (canMove)
-            this.position.x -= this.vitesse;
-    }
-
+    
     /**
      * Méthode pour décrémenter la vitesse du joueur.
      * Si la vitesse est supérieure à 0, on la décrémente du facteur de
      * décélaration.
      */
     public void decelerer() {
-        if (this.vitesse - CONSTANTS.DECELERATION > 0) {
-            this.vitesse -= CONSTANTS.DECELERATION;
+        if (this.speed - CONSTANTS.DECELERATION > 0) {
+            this.speed -= CONSTANTS.DECELERATION;
         } else {
-            this.vitesse = 0;
+            this.speed = 0;
         }
     }
 
@@ -124,13 +105,6 @@ public class Mario extends GameCharacter {
         return this.image[index];
     }
 
-    public void noMoving() {
-        this.canMove = false;
-    }
-
-    public void yesMoving() {
-        this.canMove = true;
-    }
 
     public boolean isInvincible() {
         return invincible;
@@ -144,24 +118,40 @@ public class Mario extends GameCharacter {
     }
 
     // Obtenir le nombre de vies restantes
-    public int getVies() {return this.vies;}
+    public int getVies() {
+        return this.vies;
+    }
 
     // Perdre une vie, et gérer le reset ou Game Over
-    // TODO: Need to distinguish between different types of death (falling, enemy, etc.)
+    // TODO: Need to distinguish between different types of death (falling, enemy,
+    // etc.)
     public void perdreVie() {
         if (!invincible) {
-            
+
+            this.vies--;
             invincible = true;
             invincibleStartTime = System.currentTimeMillis();
             System.out.println("Mario a perdu une vie ! Vies restantes : " + this.vies);
             if (this.vies <= 0) {
                 // Game Over
                 System.out.println("GAME OVER !");
-                //TODO: Game Over screen
+                // TODO: Game Over screen
             }
-            vies--;
         }
     }
 
-    
+    public void augmenterVie(){
+        if ((this.getVies() + 1) > 3){
+            // ne fait rien 
+        } else {
+            this.vies ++;
+        }
+    }
+
+    // Remettre Mario à sa position de départ
+    public void resetPosition() {
+        this.position = new Point(X_ORIGINE, CONSTANTS.LE_SOL);
+        this.speed = 1; // Reset de la vitesse si tu veux
+        System.out.println("Mario revient au début !");
+    }
 }
