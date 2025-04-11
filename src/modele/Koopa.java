@@ -3,7 +3,6 @@ package modele;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
-import modele.Tile.Tile;
 import modele.Tile.TileManager;
 
 public class Koopa extends Ennemi {
