@@ -29,10 +29,10 @@ public class Champignon extends GameCharacter {
         this.setPositionX(position.x);
         this.setPositionY(position.y);
         this.getSolidArea().width = 16;
-
-        (new Deplacement_entite(this)).start();
+        Deplacement_entite dp_entite = new Deplacement_entite(this, true);
+        dp_entite.start();
         Descente descente = new Descente(this);
         descente.start();
-        (new Collision_entite(this, descente)).start();
+        (new Collision_entite(this, descente, dp_entite)).start();
     }
 }

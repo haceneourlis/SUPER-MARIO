@@ -7,11 +7,14 @@ public class Deplacement_entite extends Thread {
 
     private static final int DELAY = 17;
 
+    protected boolean go_right;
+
 
     private static final Logger logger = Logger.getLogger(Collision.class.getName());
 
-    public Deplacement_entite(GameCharacter gc){
+    public Deplacement_entite(GameCharacter gc, boolean go_right){
         this.the_entity_to_move = gc;
+        this.go_right = go_right;
 
     }
 
@@ -20,7 +23,7 @@ public class Deplacement_entite extends Thread {
         while (true) {
             try {
                 Thread.sleep(DELAY);
-                if (this.the_entity_to_move.getDirection() == "right"){
+                if (this.go_right){
                     this.the_entity_to_move.deplacer_droite();
                 } else {
          

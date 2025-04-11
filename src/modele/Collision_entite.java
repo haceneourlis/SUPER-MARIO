@@ -25,11 +25,14 @@ public class Collision_entite extends Thread{
 
     private boolean sur_brick = false;
 
+    Deplacement_entite dp_entite;
 
-    public Collision_entite(GameCharacter gc, Descente descente){
+
+    public Collision_entite(GameCharacter gc, Descente descente, Deplacement_entite dp_entite){
         this.entity = gc;
         this.tm = TileManager.getInstance();
         this.descente = descente;
+        this.dp_entite = dp_entite;
         
     }
     
@@ -82,7 +85,6 @@ public class Collision_entite extends Thread{
                         this.descente.force = 0;
 
                         this.entity.allowedToFallDown = false;
-                        this.entity.setDirection("right");
                         
                     } 
 
@@ -148,7 +150,7 @@ public class Collision_entite extends Thread{
                         if (this.tm.tiles[point1].collision == true
                                 || this.tm.tiles[point2].collision == true) {
                             this.entity.yesMoving();
-                            this.entity.setDirection("right");
+                            this.dp_entite.go_right = true;
                         } else {
                             this.entity.yesMoving();
                         }
@@ -163,7 +165,7 @@ public class Collision_entite extends Thread{
                        
                         if (this.tm.tiles[point1].collision == true || this.tm.tiles[point2].collision == true) {
                             this.entity.yesMoving();
-                            this.entity.setDirection("left");
+                            this.dp_entite.go_right = false;
                         } else {
                             this.entity.yesMoving();
                         }
