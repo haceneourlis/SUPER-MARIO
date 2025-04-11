@@ -33,7 +33,6 @@ public class Descente extends Thread {
                 // alors il doit descendre
 
                 if (this.gc.allowedToFallDown) {
-                    System.out.println("FORCE : " + this.force);
                     // On vérifie si la force est négative il descend
                     // sinon il saute.
                     if (force >= 0) {

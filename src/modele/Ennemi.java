@@ -108,8 +108,8 @@ public class Ennemi extends GameCharacter implements Runnable {
             this.position.x = 0;
             movingRight = true;
             return;
-        } else if (nextX + this.solidArea.width >= CONSTANTS.LARGEUR_VUE) {
-            this.position.x = CONSTANTS.LARGEUR_VUE - this.solidArea.width;
+        } else if (nextX + this.solidArea.width >= CONSTANTS.LARGEUR_MODELE) {
+            this.position.x = CONSTANTS.LARGEUR_MODELE - this.solidArea.width;
             movingRight = false;
             return;
         }

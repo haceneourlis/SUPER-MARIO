@@ -59,12 +59,11 @@ public class Collision extends Thread {
                 mario.updateInvincibility();
 
                 // dés le début de la boucle , on va check si mario est tombé ou pas
-                if (mario.getPosition().y >= CONSTANTS.maxScreenRow * CONSTANTS.TAILLE_CELLULE) {
+                if (mario.getPosition().y >= (CONSTANTS.maxScreenRow - 2) * CONSTANTS.TAILLE_CELLULE) {
                     // il faut arreter le thread de collision et descente .
                     mario.allowedToFallDown = false;
                     threadDescente.force = 0;
 
-                    System.out.println("mario est tombé ! il est mort !");
                     Mario.killMario();
                     sleep(1000);
                 } else {

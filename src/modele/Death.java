@@ -37,7 +37,7 @@ public class Death extends Thread {
 
                 if (!Mario.VIVANT) {
                     System.out.println("GAME OVER !");
-                    sleep(3000);
+                    sleep(2000);
 
                     tileManager.decalage = 0; // Réinitialiser le décalage
                     // suppression de toutes les entités

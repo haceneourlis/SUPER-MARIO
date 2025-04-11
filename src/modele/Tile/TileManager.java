@@ -57,7 +57,6 @@ public class TileManager {
                 listeEnnemis = new ArrayList<>();
 
                 listeEntities = new ArrayList<>();
-                loadEnnemis_1();
 
                 // méthode qui va juste charger les images et les mettres dans le tableau de
                 // tuiles
@@ -65,6 +64,7 @@ public class TileManager {
 
                 // méthode qui va charger la matrice du jeu dans la matrice tilesMatrice
                 loadMatrice_1();
+                loadEnnemis_1();
         }
 
         public static TileManager getInstance() {
@@ -103,9 +103,11 @@ public class TileManager {
                 // On recharge les ennemis
                 Koopa kp1 = new Koopa(400, 4, true, this);
                 this.addEnnemi(kp1);
+                kp1.thread.start();
 
                 Goomba gb1 = new Goomba(450, 3, false, this);
                 this.addEnnemi(gb1);
+                gb1.thread.start();
 
                 System.out.println("Ennemis rechargés !:::::::::::::::::::::::::::!::::::::::::::");
         }
@@ -272,11 +274,21 @@ public class TileManager {
                         tiles[30] = new Tile();
                         tiles[30].image = ImageIO.read(getClass()
                                         .getResourceAsStream("/resources/coin.png"));
-                        tiles[30].collision = false;
                         tiles[31] = new Tile();
                         tiles[31].image = ImageIO.read(getClass()
                                         .getResourceAsStream("/resources/brickPrize.png"));
                         tiles[31].collision = true;
+
+                        tiles[32] = new Tile();
+                        tiles[32].image = ImageIO.read(getClass()
+                                        .getResourceAsStream("/resources/#1.png"));
+                        tiles[32].collision = true;
+
+                        tiles[33] = new Tile();
+                        tiles[33].image = ImageIO.read(getClass()
+                                        .getResourceAsStream("/resources/#2.png"));
+                        tiles[33].collision = true;
+
                         // TODO : la suite
                 } catch (Exception e) {
                         System.err.println("Erreur");

@@ -32,11 +32,6 @@ public class Main {
         // on crée un thread pour le saut
         Jumping jumpin = new Jumping(des);
 
-        // lancer le thread de tous les ennemis
-        for (Ennemi ennemi : tilemanager.getListeEnnemis()) {
-            ennemi.thread.start();
-        }
-
         // on crée un thread pour le mouvement : qui detecte les touches (<- et -> et
         // ESPACE)
         MouvementJoueur mv = new MouvementJoueur();

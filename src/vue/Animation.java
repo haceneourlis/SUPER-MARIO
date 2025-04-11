@@ -7,7 +7,8 @@ import java.awt.image.BufferedImage;
 import modele.GameCharacter;
 
 /**
- * Classe "abstraite" qui gère les animations du jeu avec les différentes méthodes
+ * Classe "abstraite" qui gère les animations du jeu avec les différentes
+ * méthodes
  * nécessaires pour l'animation du joueur.
  * Bien lire la doc, c'est un peu compliqué parfois.
  */
@@ -25,7 +26,8 @@ public class Animation {
     // game character (Le personnage qu'on va vouloir dessiner)
     private GameCharacter gc;
 
-    // Constructeur qui va initialiser l'image courante à null et la taille de l'animation à 0
+    // Constructeur qui va initialiser l'image courante à null et la taille de
+    // l'animation à 0
     // et l'index de l'animation à 0.
     public Animation(int size, GameCharacter gc) {
         this.gc = gc;
@@ -44,7 +46,8 @@ public class Animation {
         this.currentToDraw = image;
     }
 
-    // méthode qui s'occupe simplement de retourner l'image à l'horizontale à 180 degrés
+    // méthode qui s'occupe simplement de retourner l'image à l'horizontale à 180
+    // degrés
     // NE PAS LA LIRE, ça sert à rien. (c'est du chat gpt de toute façon)
     public BufferedImage flipImage(BufferedImage image) {
         AffineTransform tx = AffineTransform.getScaleInstance(-1, 1); // Miroir horizontal
@@ -58,7 +61,8 @@ public class Animation {
     // c'est à dire, passer d'une image de l'animation à la suivante.
     // Et créer un effet de 'loop' pour l'animation.
     public void incrementAnimationIndex(boolean right) {
-        // Je rajoute + 1, car je considère que la PREMIERE image de l'animation est l'image idl
+        // Je rajoute + 1, car je considère que la PREMIERE image de l'animation est
+        // l'image idl
         // cad, l'image où le personnage ne bouge pas.
         this.currentIndex = (currentIndex) % size + 1;
         // si il va à droite je le retourne pas, sinon je le retourne
