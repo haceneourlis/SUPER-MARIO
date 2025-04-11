@@ -14,29 +14,30 @@ public class Mario extends GameCharacter {
 
     public static boolean VIVANT = true; // Mario est vivant par défaut
 
-    // vitesse max constante
-    public final int VITESSE_MAX = 6;
-    // Max de vies
-    public final int VIE_MAX = 3;
-
     // Images de Mario (avec animation de walk)
     private BufferedImage[] image = new BufferedImage[4];
 
     // Mario's remaining number of lives
-    private static int ViesMario; // Début avec 3 vies
-    // Mario's invincibility
-    private boolean invincible;
-    private long invincibleStartTime; //
-    private int invincibleDuration; // 2 secondes
+    private static int ViesMario = CONSTANTS.VIE_MAX_MARIO; // Début avec 3 vies
 
-    // constructeur privé
+    // Booléen pour voir si mario est invincible ou non
+    private boolean invincible = false;
+
+    // Le début de son invincibilité
+    private long invincibleStartTime = 0;
+    // Le temps d'invincibilité
+    private int invincibleDuration = 2000; // 2 secondes
+
+    /**
+     * Constructeur privé de la classe Mario.
+     */
     private Mario() {
+        // Appelle le constructeur de GameCharacter
         super();
         System.out.println("Création de Mario !");
 
-        this.position = new Point(CONSTANTS.X_ORIGINE, CONSTANTS.LE_SOL);
+        this.position = new Point(CONSTANTS.POSITION_X_ORIGINE_MARIO, CONSTANTS.LE_SOL);
         this.speed = 1; // vitesse initiale
-        ViesMario = VIE_MAX; // Initialiser le nombre de vies à 3
         this.invincible = false; // Mario n'est pas invincible au départ
         this.invincibleStartTime = 0; // Temps de début d'invincibilité
         this.invincibleDuration = 2000; // Durée d'invincibilité de 2 secondes
@@ -55,9 +56,12 @@ public class Mario extends GameCharacter {
         }
     }
 
-    // permet de créer une instance unique de la classe Mario (classe singleton)
+    /**
+     * Permet de créer une instance unique de la classe Mario (classe singleton)
+     */
     public static Mario getInstance() {
         if (instance == null) {
+            // Si il n'existe pas on le crée.
             instance = new Mario();
         }
         return instance;
@@ -79,17 +83,34 @@ public class Mario extends GameCharacter {
         System.out.println("Mario est de retour !");
     }
 
-    // getter de la position en Y
+    public static void killMario() {
+        VIVANT = false;
+        ViesMario = 0; // Mario est mort
+    }
+
+    /**
+     * Getter de la position en Y.
+     * 
+     * @return int position en Y de mario
+     */
     public int getPositionY() {
         return this.position.y;
     }
 
-    // getter de la position en X
+    /**
+     * Getter de la position en X.
+     * 
+     * @return int position en X de mario.
+     */
     public int getPositionX() {
         return this.position.x;
     }
 
-    // setter de la position en Y
+    /**
+     * Setter de la position en Y de mario.
+     * 
+     * @param y la nouvelle position en Y de mario.
+     */
     public void setPositionY(int y) {
         this.position.y = y;
     }
@@ -99,7 +120,7 @@ public class Mario extends GameCharacter {
      * Elle vérifie si la vitesse ne dépasse pas la constante vitesse_max.
      */
     public void increment_speed() {
-        if (this.speed < this.VITESSE_MAX) {
+        if (this.speed < CONSTANTS.VITESSE_MAX_MARIO) {
             this.speed += 1;
         }
     }
@@ -110,8 +131,8 @@ public class Mario extends GameCharacter {
      * décélaration.
      */
     public void decelerer() {
-        if (this.speed - CONSTANTS.DECELERATION > 0) {
-            this.speed -= CONSTANTS.DECELERATION;
+        if (this.speed - CONSTANTS.DECELERATION_MARIO > 0) {
+            this.speed -= CONSTANTS.DECELERATION_MARIO;
         } else {
             this.speed = 0;
         }
@@ -119,61 +140,81 @@ public class Mario extends GameCharacter {
 
     /**
      * Methode pour obtenir l'image du joueur
-     *
+     * PAR DEFAUT METTRE L'INDEX A 0.
+     * 
      * @return l'image du joueur
      */
     public BufferedImage getImage(int index) {
         return this.image[index];
     }
 
+    /**
+     * Methode pour savoir si le joueur est invincible ou pas.
+     * 
+     * @return un booléen
+     */
     public boolean isInvincible() {
         return invincible;
     }
 
+    /**
+     * Méthode pour vérifier si la durée d'invincibilité est écoulée.
+     * Si oui, on met le booléen "invincible"(présent dans la classe) à false.
+     * 
+     * @return ne retourne rien.
+     */
     public void updateInvincibility() {
+        // Vérifie si Mario est invincible et si le temps d'invincibilité est écoulé
         if (invincible && (System.currentTimeMillis() - invincibleStartTime > invincibleDuration)) {
             invincible = false;
-            System.out.println("Mario is no longer invincible.");
         }
     }
 
-    // Obtenir le nombre de vies restantes
-    public static int getViesMario() {
-        return ViesMario;
+    /**
+     * Méthode pour obtenir le nombre de vies restantes de Mario.
+     * 
+     * @return le nombre de vies (un entier)
+     */
+    public static int getVies() {
+        return Mario.ViesMario;
     }
 
-    public static void resetVies() {
-        ViesMario = 3; // Reset to 3 lives
-        System.out.println("Mario's lives have been reset to 3.");
-    }
-
-    // Perdre une vie, et gérer le reset ou Game Over
-    // TODO: Need to distinguish between different types of death (falling, enemy,
-    // etc.)
+    /**
+     * Classe qui va gérer la perte de vie de Mario.
+     * Si Mario est déjà invincible, il ne perd pas de vie.
+     * Si Mario n'a plus de vie, on affiche un message de game over.
+     * 
+     * @param rien
+     * @return rien
+     */
     public void perdreVie() {
+        // Si Mario n'est pas déjà invincible
         if (!invincible) {
             ViesMario--;
             invincible = true;
+            // On enregistre le temps de début de l'invincibilité
             invincibleStartTime = System.currentTimeMillis();
-        }
-    }
 
-    public static void killMario() {
-        VIVANT = false;
-        ViesMario = 0; // Mario est mort
+        }
     }
 
     public void augmenterVie() {
-        if ((this.getViesMario() + 1) > 3) {
+        if ((ViesMario + 1) > 3) {
             // ne fait rien
         } else {
-            this.ViesMario++;
+            ViesMario++;
         }
     }
 
-    // Remettre Mario à sa position de départ
+    /**
+     * Méthode pour remettre mario à sa position d'origine
+     * et remettre sa vitesse à 0.
+     * 
+     * @param rien
+     * @return rien
+     */
     public void resetPosition() {
-        this.position = new Point(CONSTANTS.X_ORIGINE, CONSTANTS.LE_SOL);
+        this.position = new Point(CONSTANTS.POSITION_X_ORIGINE_MARIO, CONSTANTS.LE_SOL);
         this.speed = 1; // Reset de la vitesse si tu veux
         System.out.println("Mario revient au début !");
     }

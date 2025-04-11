@@ -1,8 +1,10 @@
 package vue;
 
+import modele.CONSTANTS;
+
 public class Redessine extends Thread {
 
-    public static final int DELAY = 5;
+    
     private boolean ok = true;
     private Affichage monAffichage;
 
@@ -26,7 +28,7 @@ public class Redessine extends Thread {
     public void run(){
         this.ok = true;
         while (this.ok){
-            try{Thread.sleep(DELAY);}
+            try{Thread.sleep(CONSTANTS.DELAY_REDESSINE);}
             catch (Exception e) { e.printStackTrace(); }
             this.monAffichage.revalidate();
             this.monAffichage.repaint();

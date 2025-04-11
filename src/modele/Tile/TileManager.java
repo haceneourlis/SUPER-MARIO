@@ -4,33 +4,30 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.System.Logger;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import modele.*;
 
 /**
  * Classe qui gère les tuiles du jeu
- * Elle charge les images des tuiles, et offre les "outils" nécessaires pour
- * qu'elles
- * soient affichées dans la vue correctement.
+ * Elle charge les images des tuiles et les mets dans un tableau.
  * Elle charge complétement la matrice du jeu, et fait correspondre chaque case
- * de la matrice
- * avec une tuile.
+ * de la matrice avec une tuile.
+ * Elle charge également les différents ennemis présents sur la map.
  */
 
 public class TileManager {
 
-        // instance de Mario pour acceder à sa position dans le modele.
+        // attribut de Mario pour acceder à sa position dans le modele.
         public Mario mario;
 
-        // un tableau de tuiles (chaque tuile est un objet de la classe Tile)
+        // un tableau de tuiles (chaque tuile est un objet de la classe Tile).
         public Tile[] tiles;
 
-        // matrice du jeu qui sera importée depuis un fichier texte
+        // matrice du jeu qui sera importée depuis un fichier texte.
         public int[][] tilesMatrice;
 
-        // instance unique de la classe TileManager (singleton)
+        // instance unique de la classe TileManager (singleton).
         private static TileManager instance = null;
 
         // décalage de mario (en nombre de colonnes) par rapport à une certaine colonne
@@ -41,10 +38,11 @@ public class TileManager {
         // loadMatrice
         public int maxColLevel = 0;
 
-        public int next_index = 0;
+        // Une liste d'ennemis présents sur la map.
+        public ArrayList<Ennemi> listeEnnemis;
+        private Ennemi kp1, kp2, gb1, gb2, gb3;
 
-        private ArrayList<Ennemi> listeEnnemis;
-
+        // La liste des entitées présentes sur la map. (ex : champignons)
         private ArrayList<GameCharacter> listeEntities;
 
         private TileManager() {
@@ -54,8 +52,10 @@ public class TileManager {
                 // J'ai mis 64 tuiles ici, mais on peut adapter plus tard
                 tiles = new Tile[64];
 
+                // On initialise la liste d'ennemis.
                 listeEnnemis = new ArrayList<>();
 
+                // On initialise la liste d'entitées.
                 listeEntities = new ArrayList<>();
 
                 // méthode qui va juste charger les images et les mettres dans le tableau de
@@ -67,15 +67,24 @@ public class TileManager {
                 loadEnnemis_1();
         }
 
+        /**
+         * Méthode qui retourne l'instance unique de la classe TileManager
+         * 
+         * @return l'instance unique de la classe TileManager
+         */
         public static TileManager getInstance() {
                 if (instance == null) {
                         // Si l'instance n'existe pas, on la crée
                         instance = new TileManager();
-
                 }
                 return instance;
         }
 
+        /**
+         * Cette méthode retourne la liste des ennemis présents sur la map.
+         * 
+         * @return la liste des ennemis présents sur la map.
+         */
         public ArrayList<Ennemi> getListeEnnemis() {
                 return listeEnnemis;
         }
@@ -101,44 +110,89 @@ public class TileManager {
                         i--;
                 }
                 // On recharge les ennemis
-                Koopa kp1 = new Koopa(400, 4, true, this);
+                kp1 = new Koopa(400, 4, true, this);
                 this.addEnnemi(kp1);
                 kp1.thread.start();
 
-                Goomba gb1 = new Goomba(450, 3, false, this);
+                kp2 = new Koopa(90 * CONSTANTS.TAILLE_CELLULE, 4, true, this);
+                this.addEnnemi(kp2);
+                kp2.thread.start();
+
+                gb1 = new Goomba(100 * CONSTANTS.TAILLE_CELLULE, 4, false, this);
                 this.addEnnemi(gb1);
                 gb1.thread.start();
+
+                gb2 = new Goomba(500, 3, false, this);
+                this.addEnnemi(gb2);
+                gb2.thread.start();
+
+                gb3 = new Goomba(150, 3, false, this);
+                this.addEnnemi(gb3);
+                gb3.thread.start();
 
                 System.out.println("Ennemis rechargés !:::::::::::::::::::::::::::!::::::::::::::");
         }
 
+        /**
+         * Cette méthode prend un ennemi en paramètre et l'ajoute à la liste des
+         * ennemis.
+         * 
+         * @param ennemi
+         * @return no return
+         */
         public void addEnnemi(Ennemi ennemi) {
                 this.listeEnnemis.add(ennemi);
         }
 
-        public GameCharacter getListeGameCharacters(int i) {
+        /**
+         * cette méthode supprime un ennemi de la liste des ennemis
+         * 
+         * @param ennemi
+         * @return no return
+         */
+        public void removeEnnemi(Ennemi ennemi) {
+                this.listeEnnemis.remove(ennemi);
+        }
+
+        /**
+         * Cette méthode rend la ième entité dans la liste des entités.
+         * 
+         * @param i
+         * @return l'entité ième
+         */
+        public GameCharacter getListEntities(int i) {
                 return this.listeEntities.get(i);
         }
 
-        public int listGameCharacters_nextindex() {
-                return next_index;
-        }
-
-        public void addGameCharacter(GameCharacter gc) {
+        /**
+         * Cette méthode prend une entity de type GameCharacter et la met dans la liste
+         * des entitées.
+         * 
+         * @param gc
+         * @return no return
+         */
+        public void addEntityToList(GameCharacter gc) {
                 this.listeEntities.add(gc);
-                next_index++;
+
         }
 
-        public void supprimerGameCharacter(int index) {
-                this.listeEntities.remove(index);
-                next_index--;
-        }
-
-        public void removeGameCharacter(GameCharacter gc) {
+        /**
+         * Cette méthode prend une entity de type GameCharacter et la retire de la liste
+         * des entitées.
+         * 
+         * @param gc
+         * @return no return
+         */
+        public void removeEntityFromList(GameCharacter gc) {
                 this.listeEntities.remove(gc);
         }
 
-        public int sizeGameCharacterList() {
+        /**
+         * Cette méthode retourne la taille de la liste des entitées.
+         * 
+         * @return int size de la liste des entitées.
+         */
+        public int sizeEntitiesList() {
                 return this.listeEntities.size();
         }
 
@@ -281,15 +335,17 @@ public class TileManager {
 
                         tiles[32] = new Tile();
                         tiles[32].image = ImageIO.read(getClass()
-                                        .getResourceAsStream("/resources/#1.png"));
+                                        .getResourceAsStream("/resources/drapeau/drapeau1.png"));
                         tiles[32].collision = true;
-
                         tiles[33] = new Tile();
                         tiles[33].image = ImageIO.read(getClass()
-                                        .getResourceAsStream("/resources/#2.png"));
+                                        .getResourceAsStream("/resources/drapeau/drapeau2.png"));
                         tiles[33].collision = true;
+                        tiles[34] = new Tile();
+                        tiles[34].image = ImageIO.read(getClass()
+                                        .getResourceAsStream("/resources/drapeau/drapeau3.png"));
+                        tiles[34].collision = true;
 
-                        // TODO : la suite
                 } catch (Exception e) {
                         System.err.println("Erreur");
                 }
@@ -317,7 +373,7 @@ public class TileManager {
                         String numbers[] = line.split(" ");
 
                         // et on initialise la matrice avec la taille en colonne
-                        tilesMatrice = new int[modele.CONSTANTS.maxRow_gameMatrix][numbers.length];
+                        tilesMatrice = new int[CONSTANTS.maxRow_gameMatrix][numbers.length];
                         // et on sauvegarde la taille en colonne
                         this.maxColLevel = numbers.length;
 
@@ -343,6 +399,14 @@ public class TileManager {
                 }
         }
 
+        /**
+         * Cette méthode permet de modifier une case de la matrice avec une valeur
+         * donnée.
+         * 
+         * @param row
+         * @param col
+         * @param value
+         */
         public void modifyMatrice(int row, int col, int value) {
                 tilesMatrice[row][col] = value;
         }

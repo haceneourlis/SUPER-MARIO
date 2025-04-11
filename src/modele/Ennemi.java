@@ -1,7 +1,6 @@
 package modele;
 
 import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
 import modele.Tile.TileManager;
 
 // package caractere;
@@ -41,35 +40,13 @@ public class Ennemi extends GameCharacter implements Runnable {
     protected int fallSpeed = 0;
     protected final int maxFallSpeed = 10;
 
-    protected String type; // Type de l'ennemi (koopa, goomba, etc.)
-
-    public Ennemi(int x, int width, int height, int speed, boolean movingRight, String type, TileManager tm) {
+    public Ennemi(int x, int width, int height, int speed, boolean movingRight, TileManager tm) {
         super();
-        this.type = type;
         this.tileManager = tm;
-
-        if (type.equals("koopa")) {
-            image = new BufferedImage[3];
-            try {
-                image[0] = ImageIO.read(getClass().getResourceAsStream("/resources/koopa_sprites/koopa2.png"));
-                image[1] = ImageIO.read(getClass().getResourceAsStream("/resources/koopa_sprites/koopa1.png"));
-                image[2] = ImageIO.read(getClass().getResourceAsStream("/resources/koopa_sprites/koopa2.png"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        // the other types (like goomba) will be implemented in the subclass
 
         this.position.x = x;
 
         this.position.y = CONSTANTS.LE_SOL;
-
-        if (image != null && image.length > 0) {
-            this.solidArea.x = 0;
-            this.solidArea.y = 0;
-            this.solidArea.height = image[0].getHeight();
-            this.solidArea.width = image[0].getWidth();
-        }
 
         this.speed = speed;
         this.leftBorder = 0;
@@ -78,10 +55,6 @@ public class Ennemi extends GameCharacter implements Runnable {
         this.movingRight = movingRight; // l'ennemi commence par aller à droite
 
         thread = new Thread(this);
-    }
-
-    public String getType() {
-        return type;
     }
 
     @Override
@@ -108,11 +81,13 @@ public class Ennemi extends GameCharacter implements Runnable {
             this.position.x = 0;
             movingRight = true;
             return;
-        } else if (nextX + this.solidArea.width >= CONSTANTS.LARGEUR_MODELE) {
-            this.position.x = CONSTANTS.LARGEUR_MODELE - this.solidArea.width;
-            movingRight = false;
-            return;
         }
+
+        // else if (nextX + this.solidArea.width >= CONSTANTS.LARGEUR_MODELE) {
+        // this.position.x = CONSTANTS.LARGEUR_MODELE - this.solidArea.width;
+        // movingRight = false;
+        // return;
+        // }
 
         // Vérifier les obstacles normaux
         if (col < CONSTANTS.maxScreenCol) {
@@ -131,10 +106,10 @@ public class Ennemi extends GameCharacter implements Runnable {
     @Override
     public void run() {
         while (running) {
-            applyGravity(); // appliquer gravité à l'ennemi
-            moveEnnemi();
             try {
-                Thread.sleep(50);
+                Thread.sleep(CONSTANTS.DELAY_ENNEMI);
+                moveEnnemi();
+                applyGravity(); // appliquer gravité à l'ennemi
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -144,6 +119,11 @@ public class Ennemi extends GameCharacter implements Runnable {
     protected void applyGravity() {
         int groundY = findGroundY(this.position.x, this.position.y); // Trouver le sol en fonction de x, y
 
+        if (groundY >= (CONSTANTS.maxScreenRow) * CONSTANTS.TAILLE_CELLULE) {
+            this.stopMoving(); // Arrête le thread de l'ennemi
+            tileManager.removeEnnemi(this); // Enlève l'ennemi de la matrice
+            return;
+        }
         if (this.position.y >= groundY) {
             // L'ennemi est au sol, il ne tombe plus
             this.position.y = groundY;
@@ -153,6 +133,7 @@ public class Ennemi extends GameCharacter implements Runnable {
             fallSpeed = Math.min(fallSpeed + CONSTANTS.GRAVITY, maxFallSpeed);
             this.position.y += fallSpeed;
         }
+
     }
 
     /**
@@ -163,20 +144,21 @@ public class Ennemi extends GameCharacter implements Runnable {
      * @return La position y où l'ennemi doit se poser
      */
     protected int findGroundY(int startX, int startY) {
+
         int col = startX / CONSTANTS.TAILLE_CELLULE; // Colonne actuelle
         int row = startY / CONSTANTS.TAILLE_CELLULE; // Ligne actuelle
 
         // Cherche le sol en dessous
-        while (row < CONSTANTS.maxScreenRow) {
+        while (row < CONSTANTS.maxRow_gameMatrix) {
             int tileType = this.tileManager.tilesMatrice[row][col];
-            if (this.tileManager.tiles[tileType].collision) {
+            if (tileManager.tiles[tileType].collision) {
                 return row * CONSTANTS.TAILLE_CELLULE - this.solidArea.height;
             }
             row++;
         }
 
         // Si aucun sol trouvé, retourne la position par défaut
-        return CONSTANTS.LE_SOL;
+        return this.position.y + CONSTANTS.TAILLE_CELLULE;
     }
 
     // arreter le thread

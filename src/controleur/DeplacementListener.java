@@ -27,9 +27,6 @@ public class DeplacementListener extends Thread {
     // Instance de Jumping pour pouvoir sauter
     private Jumping jumpin;
 
-    // Constante de délai entre chaque vérification des booléens de mj
-    public final int DELAY = 30;
-
     // Booléen qui permet d'indiquer dans quelle direction le personnage se déplace
     // Ce sera utile pour pouvoir continuer à faire avancer le personnage dans la
     // dernière
@@ -45,51 +42,46 @@ public class DeplacementListener extends Thread {
         this.jumpin = jumpin;
     }
 
-    int n = 0;
-
     // Méthode run qui va vérifier les booléens de mj et déplacer le joueur en
     // conséquence
     @Override
     public void run() {
         while (true) {
             try {
-                Thread.sleep(DELAY);
-                if (mj.isLeft_pressed()) {
-                    // Touche gauche préssée, on déplace le joueur à gauche en incrémentant sa
-                    // vitesse.
-                    player.increment_speed();
-                    player.deplacer_gauche();
-                    last = false;
-                }
-                if (mj.isRight_pressed()) {
-                    // Touche droite préssée, on déplace le joueur à droite en incrémentant sa
-                    // vitesse.
-                    player.increment_speed();
-                    player.deplacer_droite();
-                    last = true;
-                }
-                if (mj.isSpace_pressed()) {
-                    // Touche espace préssée, on fait sauter le joueur
-                    jumpin.jump();
-                    n++;
-                    System.out.println("space pressed !" + n);
-                }
-                if (!mj.isRight_pressed() && !mj.isLeft_pressed()) {
-                    // Si aucune touche n'est pressée, on décrémente la vitesse du joueur (jusqu'à
-                    // qu'elle atteigne 0)
-                    player.decelerer();
-                    // Et on vérifie la dernière direction où il se déplaçait et on continue à le
-                    // déplacer dans cette direction.
-                    if (last) {
-                        player.deplacer_droite();
-                    } else {
-                        player.deplacer_gauche();
-                    }
-                }
+                Thread.sleep(CONSTANTS.DELAY_DEPLACEMENT_LISTENER);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
+            if (mj.isLeft_pressed()) {
+                // Touche gauche préssée, on déplace le joueur à gauche en incrémentant sa
+                // vitesse.
+                player.increment_speed();
+                player.deplacer_gauche();
+                last = false;
+            }
+            if (mj.isRight_pressed()) {
+                // Touche droite préssée, on déplace le joueur à droite en incrémentant sa
+                // vitesse.
+                player.increment_speed();
+                player.deplacer_droite();
+                last = true;
+            }
+            if (mj.isSpace_pressed()) {
+                // Touche espace préssée, on fait sauter le joueur
+                jumpin.jump();
+            }
+            if (!mj.isRight_pressed() && !mj.isLeft_pressed()) {
+                // Si aucune touche n'est pressée, on décrémente la vitesse du joueur (jusqu'à
+                // qu'elle atteigne 0)
+                player.decelerer();
+                // Et on vérifie la dernière direction où il se déplaçait et on continue à le
+                // déplacer dans cette direction.
+                if (last) {
+                    player.deplacer_droite();
+                } else {
+                    player.deplacer_gauche();
+                }
+            }
         }
 
     }

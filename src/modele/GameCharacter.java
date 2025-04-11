@@ -96,11 +96,6 @@ public class GameCharacter extends Rectangle {
         return this.image;
     }
 
-    // draw method
-    public void draw(Graphics2D g2, Point position_dans_la_vue) {
-        g2.drawImage(this.image, position_dans_la_vue.x, position_dans_la_vue.y, null);
-    }
-
     /**
      * Méthode pour déplacer le joueur à droite.
      * Si la vitesse est inférieure à la vitesse maximale, on l'incrémente de 1.
@@ -123,10 +118,16 @@ public class GameCharacter extends Rectangle {
             this.position.x -= this.speed;
     }
 
+    /**
+     * Méthode pour intérdir le déplacement du joueur.
+     */
     public void noMoving() {
         this.canMove = false;
     }
 
+    /**
+     * Méthode pour autoriser le déplacement du joueur.
+     */
     public void yesMoving() {
         this.canMove = true;
     }

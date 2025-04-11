@@ -31,13 +31,13 @@ public class Death extends Thread {
             try {
                 sleep(5);
 
-                if (Mario.getViesMario() <= 0) {
+                if (Mario.getVies() <= 0) {
                     Mario.VIVANT = false; // Mario est mort
                 }
 
                 if (!Mario.VIVANT) {
-                    System.out.println("GAME OVER !");
                     sleep(2000);
+                    ScoreManager.resetScore(); // Réinitialiser le score
 
                     tileManager.decalage = 0; // Réinitialiser le décalage
                     // suppression de toutes les entités
