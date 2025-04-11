@@ -9,8 +9,6 @@ public class Main {
     // on lance ça dans la méthode main
     public static void main(String[] args) {
 
-        // On crée l'objet de loggingconfig qui va gérer le fichier de log
-        LoggingConfig logs_manager = new LoggingConfig();
         // on crée une fenetre
         JFrame fenetre = new JFrame();
 

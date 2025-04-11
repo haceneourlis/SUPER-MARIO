@@ -3,10 +3,12 @@ package modele;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import modele.Tile.TileManager;
+import vue.AnimationGoomba;
 
 public class Goomba extends Ennemi {
 
     private BufferedImage[] images = new BufferedImage[2];
+    private AnimationGoomba animationGoomba;
 
     public Goomba(int x, int speed, boolean movingRight, TileManager tileManager) {
         super(x, 20, 20, speed, movingRight, tileManager, "goomba");
@@ -35,15 +37,23 @@ public class Goomba extends Ennemi {
 
         this.position.y = findGroundY(this.position.x, this.position.y);
 
+        this.animationGoomba = new AnimationGoomba(this);
+        this.animationGoomba.start();
+
 
         this.thread = new Thread(this);
 
         //
-        System.out.println("Goomba y = " + this.position.y + ", height = " + this.solidArea.height);
+        // System.out.println("Goomba y = " + this.position.y + ", height = " + this.solidArea.height);
     }
 
     @Override
     public BufferedImage getImage(int index) {
         return images[index % 2];
+    }
+
+    // getter de l'animation
+    public AnimationGoomba getAnimationGoomba() {
+        return this.animationGoomba;
     }
 }

@@ -35,7 +35,6 @@ public class Descente extends Thread {
     public Descente(Affichage affichage) {
         gp = affichage;
         this.mario = Mario.getInstance();
-        logger.log(Level.WARNING, "Hacene supprime la méthode getCanFallDown si tu vois que tu n'en as pas besoin s'il te plait");
     }
 
     @Override

@@ -3,6 +3,7 @@ package modele;
 import modele.Tile.TileManager;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+import vue.AnimationKoopa;
 
 public class Koopa extends Ennemi {
     // defines 2 states of Koopa
@@ -12,10 +13,15 @@ public class Koopa extends Ennemi {
     }
 
     private State state;
+    // add: every koopa has its own animation
+    private AnimationKoopa animationKoopa;
 
     public Koopa(int x, int speed, boolean movingRight, TileManager tileManager) {
         super(x, 20, 20, speed, movingRight, tileManager, "koopa");
         this.state = State.WALKING;
+
+        this.animationKoopa = new AnimationKoopa(this);
+        this.animationKoopa.start();
     }
 
     public State getState() {
@@ -38,6 +44,11 @@ public class Koopa extends Ennemi {
                 e.printStackTrace();
             }
         }
+    }
+
+    // getter de l'animation
+    public AnimationKoopa getAnimationKoopa() {
+        return this.animationKoopa;
     }
 
     @Override

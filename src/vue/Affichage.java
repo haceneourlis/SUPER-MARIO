@@ -29,8 +29,8 @@ public class Affichage extends JPanel {
     private AnimationJoueur animationJoueur;
 
     // Variable pour l'animation du (des) koopa 
-    private List<AnimationKoopa> animationKoopa;
-    private List<AnimationGoomba> animationGoomba;
+//    private List<AnimationKoopa> animationKoopa;
+//    private List<AnimationGoomba> animationGoomba;
 
     // Variable pour le gestionnaire de tuiles
     public TileManager tm;
@@ -84,14 +84,22 @@ public class Affichage extends JPanel {
         tm = new TileManager();
 
         listeEnnemis = new ArrayList<>();
-        animationKoopa = new ArrayList<>();
-        animationGoomba = new ArrayList<>();
 
         // Ajouter plusieurs ennemis
-        Koopa koopa = new Koopa(600, 5, true, tm);
-        Goomba goomba = new Goomba(300, 4, true, tm);
-        listeEnnemis.add(koopa);
-        listeEnnemis.add(goomba);
+        // Koopa
+        int[] koopaPositions = {800, 1000, 1200, 1800, 2400};
+
+        for (int posX : koopaPositions) {
+            Koopa koopa = new Koopa(posX, 5, true, tm);
+            listeEnnemis.add(koopa);
+        }
+
+        // Goomba
+        int[] goombaPositions = {300, 600, 900};
+        for (int posX : goombaPositions) {
+            Goomba goomba = new Goomba(posX, 4, true, tm);
+            listeEnnemis.add(goomba);
+        }
 
         // Mettre à jour l'affichage toutes les 50ms
         (new Redessine(this)).start();
@@ -107,18 +115,9 @@ public class Affichage extends JPanel {
             e.printStackTrace();
         }
 
-        // Démarrer les threads des ennemis et de leurs animations
-        animationKoopa.add(new AnimationKoopa(koopa));
-        animationGoomba.add(new AnimationGoomba(goomba));
-
+        // Démarrer les threads des ennemis
         for (Ennemi ennemi : listeEnnemis) {
             ennemi.thread.start();
-        }
-        for (AnimationKoopa Koopa : animationKoopa) {
-            Koopa.start();
-        }
-        for (AnimationGoomba Goomba : animationGoomba) {
-            Goomba.start();
         }
     }
     
@@ -164,20 +163,14 @@ public class Affichage extends JPanel {
         // affichons la matrice du jeu : (le terrain)
         this.tm.draw(g2);
 
-
-        int goombaIndex = 0;
+        // dessine les ennemis
+        // when painting the enemies, we directly call the animation inside the enemy
         for (Ennemi ennemi : listeEnnemis) {
             BufferedImage imageEnnemi = null;
             if (ennemi instanceof Koopa) {
-                // 对Koopa使用 AnimationKoopa 绘制（内部已判断状态，SHELL状态下直接返回静态图）
-                if (!animationKoopa.isEmpty()) {
-                    imageEnnemi = animationKoopa.get(0).getCurrentToDraw();
-                }
+                imageEnnemi = ((Koopa) ennemi).getAnimationKoopa().getCurrentToDraw();
             } else if (ennemi instanceof Goomba) {
-                if (goombaIndex < animationGoomba.size()) {
-                    imageEnnemi = animationGoomba.get(goombaIndex).getCurrentToDraw();
-                    goombaIndex++;
-                }
+                imageEnnemi = ((Goomba) ennemi).getAnimationGoomba().getCurrentToDraw();
             }
             if (imageEnnemi != null) {
                 g2.drawImage(imageEnnemi, ennemi.getPosition().x, ennemi.getPosition().y, null);

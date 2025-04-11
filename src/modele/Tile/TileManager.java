@@ -50,7 +50,7 @@ public class TileManager {
                 getTileImage();
 
                 // méthode qui va charger la matrice du jeu dans la matrice tilesMatrice
-                loadMatrice("/resources/matrice.txt");
+                loadMatrice("/resources/matrice2.txt");
         }
 
         /**
