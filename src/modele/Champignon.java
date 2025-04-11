@@ -8,13 +8,13 @@ import javax.imageio.ImageIO;
 public class Champignon extends GameCharacter {
     
     // Le score qui sera relié.
-    private Score score;
+    private ScoreManager score;
 
 
     private static final Logger logger = Logger.getLogger(Champignon.class.getName());
 
     private int increment_factor;
-    public Champignon(Score score, Point position){
+    public Champignon(ScoreManager score, Point position){
         super();
         this.score = score;
         this.increment_factor = 50;

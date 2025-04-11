@@ -15,7 +15,7 @@ public class Goomba extends Ennemi {
             images[0] = ImageIO.read(getClass().getResourceAsStream("/resources/goomba_sprites/goomba1.png"));
             images[1] = ImageIO.read(getClass().getResourceAsStream("/resources/goomba_sprites/goomba2.png"));
 
-            if(images[0]==null || images[1]==null){
+            if (images[0] == null || images[1] == null) {
                 System.out.println("Goomba images NOT LOADED");
             } else {
                 System.out.println("Goomba images loaded");
@@ -28,13 +28,11 @@ public class Goomba extends Ennemi {
             System.out.println("images[0] = " + images[0]);
             System.out.println("images[1] = " + images[1]);
 
-
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        this.position.y = findGroundY(this.position.x, this.position.y);
-
+        this.position.y = CONSTANTS.LE_SOL;
 
         this.thread = new Thread(this);
 

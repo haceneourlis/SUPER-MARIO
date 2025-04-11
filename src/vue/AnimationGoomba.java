@@ -1,7 +1,9 @@
 package vue;
 
 import java.awt.image.BufferedImage;
+
 import modele.Ennemi;
+import modele.Goomba;
 
 public class AnimationGoomba extends Thread {
 
@@ -10,7 +12,6 @@ public class AnimationGoomba extends Thread {
     private int currentIndex = 0;
 
     public final int DELAY = 60;
-
 
     private boolean running = true;
 
@@ -44,11 +45,10 @@ public class AnimationGoomba extends Thread {
 
             if (delta != 0) {
                 // if goomba is moving, switch the frame
-                currentIndex = (currentIndex+1) % 2;
+                currentIndex = (currentIndex + 1) % 2;
             } else {
                 currentIndex = 0;
             }
-
 
             old_x = goomba.getPosition().x;
         }

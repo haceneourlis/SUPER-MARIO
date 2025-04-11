@@ -61,10 +61,8 @@ public class Ennemi extends GameCharacter implements Runnable {
         // the other types (like goomba) will be implemented in the subclass
 
         this.position.x = x;
-        // affiche dans la console le height de l'image 0
-        // System.out.println(this.image[0].getHeight()); // 48
-        this.position.y = findGroundY(this.position.x, this.position.y);
-        // System.out.println("Koopa initial position: x=" + this.position.x + ", y=" + this.position.y);
+
+        this.position.y = CONSTANTS.LE_SOL;
 
         if (image != null && image.length > 0) {
             this.solidArea.x = 0;

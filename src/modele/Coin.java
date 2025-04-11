@@ -14,7 +14,7 @@ public class Coin extends GameCharacter {
 
     // facteur d'incrementation
 
-    private int increment_factor = 0;
+
 
     private static final Logger logger = Logger.getLogger(Coin.class.getName());
 
@@ -29,7 +29,7 @@ public class Coin extends GameCharacter {
             this.position = position_coin;
             this.positionDepart = new Point();
             positionDepart.x = position_coin.x;
-            positionDepart.y = position_coin.y + 1;
+            positionDepart.y = position_coin.y + 2;
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Erreur dans le constructeur de Coin", e);
         }

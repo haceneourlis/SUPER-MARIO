@@ -16,7 +16,7 @@ public class DescenteCoins extends Thread {
     public int force_coin = 0;
 
     public boolean coinAllowedToFallDown = true;
-    private static final int DELAY = 17;
+    private static final int DELAY = 13; // 60 FPS
 
     // La position de départ de la pièce.
     public Point positionDepart;
@@ -54,12 +54,12 @@ public class DescenteCoins extends Thread {
                         logger.info("Coin going up : " + force_coin);
                     }
 
-                    this.force_coin += CONSTANTS.GRAVITY;
-                    if (this.force_coin >= CONSTANTS.FORCE_MAX) {
-                        this.force_coin = CONSTANTS.FORCE_MAX;
-                    }
-                    System.out.println("doing something at least ?? iww");
                     coinToCatch.setPositionY(this.force_coin + coinToCatch.getPosition().y);
+                    this.force_coin += CONSTANTS.GRAVITY;
+                    if (this.force_coin >= CONSTANTS.FORCE_MAX_COIN) {
+                        this.force_coin = CONSTANTS.FORCE_MAX_COIN;
+                    }
+
                     // On vérifie si la pièce est au sol, si oui on l'arrête
                     if (coinToCatch.getPosition().y >= coinToCatch.positionDepart.y) {
                         coinToCatch = null;
