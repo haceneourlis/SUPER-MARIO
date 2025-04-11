@@ -4,9 +4,12 @@ import java.awt.Point;
 import java.util.logging.*;
 
 /**
- * Cette classe est un thread qui va gérer la gravité de Mario en appliquant une
- * force
- * vers le bas (gravité).
+ * Cette classe est un thread qui va appliquer la < gravité > sur les coins
+ * à chaque fois que une pièce sort des bloques , un thread est créé pour cette
+ * pièce.
+ * Il va appliquer la force de gravité sur la pièce jusqu'à ce qu'elle retombe
+ * là , ou elle a été crée
+ * 
  */
 public class DescenteCoins extends Thread {
 

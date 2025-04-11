@@ -118,7 +118,6 @@ public class Collision extends Thread {
                         // System.out.println("je suis sur une brick ---------------#####");
                     }
                 } else {
-
                     /* MARIO FALLS DOWN HERE , so he will EVENTUALLY DIE ! */
                     threadDescente.marioAllowedToFallDown = true;
                     sur_brick = false;
