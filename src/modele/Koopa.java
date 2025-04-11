@@ -2,6 +2,7 @@ package modele;
 
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+import modele.Tile.TileManager;
 
 public class Koopa extends Ennemi {
     // defines 2 states of Koopa
@@ -12,8 +13,8 @@ public class Koopa extends Ennemi {
 
     private State state;
 
-    public Koopa(int x, int speed, boolean movingRight) {
-        super(x, 20, 20, speed, movingRight, "koopa");
+    public Koopa(int x, int speed, boolean movingRight, TileManager tm) {
+        super(x, 20, 20, speed, movingRight, "koopa", tm);
         this.state = State.WALKING;
     }
 

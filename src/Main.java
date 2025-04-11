@@ -21,11 +21,7 @@ public class Main {
 
         TileManager tilemanager = TileManager.getInstance(); // Get the tile manager instance : classe singleton .;
    
-        Koopa kp1 = new Koopa(400, 4, true);
-        tilemanager.addEnnemi(kp1);
-
-        Goomba gb1 = new Goomba(450, 3, false);
-        tilemanager.addEnnemi(gb1);
+      
         // on ajoute un panel à la fenetre
         Affichage GamePanel = new Affichage();
         System.out.println("test4");

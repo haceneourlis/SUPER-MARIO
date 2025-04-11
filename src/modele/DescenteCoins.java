@@ -16,7 +16,7 @@ public class DescenteCoins extends Thread {
     public int force_coin = 0;
 
     public boolean coinAllowedToFallDown = true;
-    private static final int DELAY = 13; // 60 FPS
+    private static final int DELAY = 55; // 60 FPS
 
     // La position de départ de la pièce.
     public Point positionDepart;

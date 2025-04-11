@@ -43,10 +43,10 @@ public class Ennemi extends GameCharacter implements Runnable {
 
     protected String type; // Type de l'ennemi (koopa, goomba, etc.)
 
-    public Ennemi(int x, int width, int height, int speed, boolean movingRight, String type) {
+    public Ennemi(int x, int width, int height, int speed, boolean movingRight, String type, TileManager tm) {
         super();
         this.type = type;
-        this.tileManager = TileManager.getInstance();
+        this.tileManager = tm;
 
         if (type.equals("koopa")) {
             image = new BufferedImage[3];

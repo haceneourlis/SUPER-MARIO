@@ -1,15 +1,15 @@
 package modele;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 import modele.Tile.TileManager;
 
 public class Goomba extends Ennemi {
 
     private BufferedImage[] images = new BufferedImage[2];
 
-    public Goomba(int x, int speed, boolean movingRight) {
-        super(x, 20, 20, speed, movingRight,  "goomba");
+    public Goomba(int x, int speed, boolean movingRight, TileManager tm) {
+        super(x, 20, 20, speed, movingRight,  "goomba", tm);
 
         try {
             images[0] = ImageIO.read(getClass().getResourceAsStream("/resources/goomba_sprites/goomba1.png"));

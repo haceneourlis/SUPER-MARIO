@@ -58,6 +58,11 @@ public class TileManager {
 
                 listeGameCharacters = new ArrayList<>();
                 // Ajouter plusieurs ennemis
+                Koopa kp1 = new Koopa(400, 4, true, this);
+                this.listeEnnemis.add(kp1);
+        
+                Goomba gb1 = new Goomba(450, 3, false, this);
+                this.listeEnnemis.add(gb1);
                
                 // méthode qui va juste charger les images et les mettres dans le tableau de
                 // tuiles
