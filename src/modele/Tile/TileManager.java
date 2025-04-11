@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.System.Logger;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import modele.*;
@@ -43,9 +44,8 @@ public class TileManager {
         public int next_index = 0;
 
         private ArrayList<Ennemi> listeEnnemis;
-        private Ennemi koopa, goomba;
 
-        private ArrayList<GameCharacter> listeGameCharacters;
+        private ArrayList<GameCharacter> listeEntities;
 
         private TileManager() {
                 // On récupère l'instance du Joueur
@@ -56,27 +56,21 @@ public class TileManager {
 
                 listeEnnemis = new ArrayList<>();
 
-                listeGameCharacters = new ArrayList<>();
-                // Ajouter plusieurs ennemis
-                Koopa kp1 = new Koopa(400, 4, true, this);
-                this.listeEnnemis.add(kp1);
-        
-                Goomba gb1 = new Goomba(450, 3, false, this);
-                this.listeEnnemis.add(gb1);
-               
+                listeEntities = new ArrayList<>();
+                loadEnnemis_1();
+
                 // méthode qui va juste charger les images et les mettres dans le tableau de
                 // tuiles
                 getTileImage();
 
                 // méthode qui va charger la matrice du jeu dans la matrice tilesMatrice
-                loadMatrice("/resources/matrice.txt");
+                loadMatrice_1();
         }
 
         public static TileManager getInstance() {
                 if (instance == null) {
                         // Si l'instance n'existe pas, on la crée
                         instance = new TileManager();
-                        
 
                 }
                 return instance;
@@ -86,43 +80,66 @@ public class TileManager {
                 return listeEnnemis;
         }
 
+        public void eraseALLEntities() {
+                for (int i = 0; i < listeEntities.size(); i++) {
+                        listeEntities.remove(i);
+                        i--;
+                }
+        }
+
+        public void loadMatrice_1() {
+                // On recharge la matrice du jeu
+                load("/resources/matrice.txt");
+        }
+
+        public void loadEnnemis_1() {
+                // On recharge les ennemis
+
+                // supprimer tous les ennemis de la liste
+                for (int i = 0; i < listeEnnemis.size(); i++) {
+                        listeEnnemis.remove(i);
+                        i--;
+                }
+                // On recharge les ennemis
+                Koopa kp1 = new Koopa(400, 4, true, this);
+                this.addEnnemi(kp1);
+
+                Goomba gb1 = new Goomba(450, 3, false, this);
+                this.addEnnemi(gb1);
+
+                System.out.println("Ennemis rechargés !:::::::::::::::::::::::::::!::::::::::::::");
+        }
+
         public void addEnnemi(Ennemi ennemi) {
                 this.listeEnnemis.add(ennemi);
         }
 
-        public Ennemi getKoopa() {
-                return koopa;
-        }
-
-        public Ennemi getGoomba() {
-                return goomba;
-        }
-
         public GameCharacter getListeGameCharacters(int i) {
-                return this.listeGameCharacters.get(i);
+                return this.listeEntities.get(i);
         }
 
-        public int listGameCharacters_nextindex(){
+        public int listGameCharacters_nextindex() {
                 return next_index;
         }
 
         public void addGameCharacter(GameCharacter gc) {
-                this.listeGameCharacters.add(gc);
-                next_index ++;
+                this.listeEntities.add(gc);
+                next_index++;
         }
 
-        public void supprimerGameCharacter(int index){
-                this.listeGameCharacters.remove(index);
-                next_index --;
+        public void supprimerGameCharacter(int index) {
+                this.listeEntities.remove(index);
+                next_index--;
         }
 
-        public void removeGameCharacter(GameCharacter gc){
-                this.listeGameCharacters.remove(gc);
+        public void removeGameCharacter(GameCharacter gc) {
+                this.listeEntities.remove(gc);
         }
 
-        public int sizeGameCharacterList(){
-                return this.listeGameCharacters.size();
+        public int sizeGameCharacterList() {
+                return this.listeEntities.size();
         }
+
         /**
          * Cette méthode ne fait que charger les tiles dans le tableau de tuiles
          * Elle est appelée dans le constructeur de la classe
@@ -273,7 +290,7 @@ public class TileManager {
          * 
          * @param pathToMatrice
          */
-        public void loadMatrice(String pathToMatrice) {
+        public void load(String pathToMatrice) {
                 try {
                         // On charge le fichier texte
                         InputStream is = getClass().getResourceAsStream(pathToMatrice);
@@ -309,7 +326,6 @@ public class TileManager {
                         }
                         br.close();
 
-                        
                 } catch (IOException e) {
                         throw new RuntimeException(e);
                 }
@@ -318,4 +334,5 @@ public class TileManager {
         public void modifyMatrice(int row, int col, int value) {
                 tilesMatrice[row][col] = value;
         }
+
 }

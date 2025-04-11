@@ -37,9 +37,10 @@ public class Jumping {
      * "tomber" maintenant.
      */
     public void jump() {
-        if (!this.mario.allowedToFallDown) {
-            this.descente.force = -IMPULSION;
-            this.mario.allowedToFallDown= true;
+        mario = Mario.getInstance();
+        if (!mario.allowedToFallDown) {
+            descente.force = -IMPULSION;
+            mario.allowedToFallDown = true;
             mario.setDirection("up");
         }
     }

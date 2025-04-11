@@ -10,6 +10,8 @@ public class CONSTANTS {
     public static final int RATIO_X = 1;
     public static final int RATIO_Y = 1;
     public static final int DECELERATION = 1;
+    // constante de coordonnées d'origine du joueur
+    public static final int X_ORIGINE = 50;
 
     // pour la taille des cellules du jeu (les carreaux ...):
     public static final int TAILLE_CELLULE = 32;
@@ -45,13 +47,12 @@ public class CONSTANTS {
     public static final int FORCE_MAX_MARIO = 20;
     public static final int FORCE_MAX_COIN = 3;
 
-    // Les facteurs d'incrémentation : 
+    // Les facteurs d'incrémentation :
     public static final int INCREMENT_SCORE_COIN = 10;
     public static final int INCREMENT_SCORE_MUSHROOM = 50;
 
-
     // les types de tuiles :
-    
+
     public static final int CIEL = 0;
     public static final int SOL = 1;
     public static final int PRIZE_BRICK = 2;
@@ -65,4 +66,9 @@ public class CONSTANTS {
     // les implusions de mario et coins :
     public static final int IMPULSION_MARIO = 15;
     public static final int IMPULSION_COIN = 2;
+
+    // affichage des coeurs :
+    public static final int HEART_WIDTH = 30;
+    public static final int HEART_HEIGHT = 30;
+    public static final int SPACE_BETWEEN_HEARTS = 10;
 }

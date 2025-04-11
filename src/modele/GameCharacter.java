@@ -34,6 +34,8 @@ public class GameCharacter extends Rectangle {
         solidArea.height = 8;
         solidArea.width = 8;
 
+        allowedToFallDown = false; // le joueur ne peut pas tomber au départ
+
         this.position = new Point();
         this.speed = 0;
         this.direction = "left"; // default direction
@@ -120,7 +122,6 @@ public class GameCharacter extends Rectangle {
         if (canMove)
             this.position.x -= this.speed;
     }
-
 
     public void noMoving() {
         this.canMove = false;

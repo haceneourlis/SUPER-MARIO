@@ -16,7 +16,6 @@ public class Descente extends Thread {
 
     private GameCharacter gc;
 
-
     private static final Logger logger = Logger.getLogger(Collision.class.getName());
 
     public Descente(GameCharacter gc) {
@@ -27,13 +26,14 @@ public class Descente extends Thread {
     public void run() {
         while (true) {
             try {
-                
+
                 Thread.sleep(DELAY);
 
                 // à chaque instant t , si le mario n'est pas sur le sol : CONSTANTS.LE_SOL
                 // alors il doit descendre
 
                 if (this.gc.allowedToFallDown) {
+                    System.out.println("FORCE : " + this.force);
                     // On vérifie si la force est négative il descend
                     // sinon il saute.
                     if (force >= 0) {
@@ -49,7 +49,6 @@ public class Descente extends Thread {
 
                     this.gc.setPositionY(this.force + this.gc.getPosition().y);
                 }
-                
 
             } catch (Exception e) {
                 logger.log(Level.WARNING, "Erreur thread");

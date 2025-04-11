@@ -13,15 +13,12 @@ public class Main {
         // on crée une fenetre
         JFrame fenetre = new JFrame();
 
-
         // Get the player instance : classe singleton .
         Mario j = Mario.getInstance();
         // Get the tile manager instance : classe singleton .;
 
-
         TileManager tilemanager = TileManager.getInstance(); // Get the tile manager instance : classe singleton .;
-   
-      
+
         // on ajoute un panel à la fenetre
         Affichage GamePanel = new Affichage();
         System.out.println("test4");
@@ -49,6 +46,11 @@ public class Main {
         // on ajoute un thread pour la collision
         Collision col = new Collision(jumpin, des);
         col.start();
+
+        // on ajoute un thread pour la mort
+        Death death = Death.getInstance(des, col);
+        death.start();
+
         fenetre.addKeyListener(mv);
         fenetre.pack();
         fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
