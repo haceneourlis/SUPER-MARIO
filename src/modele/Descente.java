@@ -9,48 +9,50 @@ import java.util.logging.*;
  */
 public class Descente extends Thread {
 
-    private Mario mario;
     // La force ici peut être positive (descente) comme négative (saut).
-    public int force_mario = 0;
+    public int force = 0;
 
-    public boolean marioAllowedToFallDown = true;
     private static final int DELAY = 17;
+
+    private GameCharacter gc;
+
 
     private static final Logger logger = Logger.getLogger(Collision.class.getName());
 
-    public Descente() {
-        this.mario = Mario.getInstance();
+    public Descente(GameCharacter gc) {
+        this.gc = gc;
     }
 
     @Override
     public void run() {
         while (true) {
             try {
-                if (mario.getVies() <= 0) {
-                    return; // Stoppe le thread proprement
-                }
+                
                 Thread.sleep(DELAY);
 
                 // à chaque instant t , si le mario n'est pas sur le sol : CONSTANTS.LE_SOL
                 // alors il doit descendre
 
-                if (marioAllowedToFallDown) {
+                if (this.gc.allowedToFallDown) {
                     // On vérifie si la force est négative il descend
                     // sinon il saute.
-                    if (force_mario >= 0) {
-                        mario.setDirection("down");
-                    } else if (force_mario < 0) {
-                        mario.setDirection("up");
+                    if (force >= 0) {
+                        this.gc.setDirection("down");
+                    } else if (force < 0) {
+                        this.gc.setDirection("up");
                     }
 
-                    this.force_mario += CONSTANTS.GRAVITY;
-                    if (this.force_mario >= CONSTANTS.FORCE_MAX_MARIO) {
-                        this.force_mario = CONSTANTS.FORCE_MAX_MARIO;
+                    this.force += CONSTANTS.GRAVITY;
+                    if (this.force >= CONSTANTS.FORCE_MAX) {
+                        this.force = CONSTANTS.FORCE_MAX;
                     }
-                    mario.setPositionY(this.force_mario + mario.getPosition().y);
+
+                    this.gc.setPositionY(this.force + this.gc.getPosition().y);
                 }
+                
+
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, "Erreur thread");
             }
         }
     }

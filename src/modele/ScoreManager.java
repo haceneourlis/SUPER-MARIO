@@ -33,8 +33,11 @@ public class ScoreManager {
         return nb_coins;
     }
 
-    public void incrementCurrentScore() {
-        score += CONSTANTS.FACTEUR_SCORE;
+    public void incrementCurrentScore(String bonus_type) {
+        switch (bonus_type){
+            case "coin" -> score += CONSTANTS.INCREMENT_SCORE_COIN;
+            case "mushroom" -> score += CONSTANTS.INCREMENT_SCORE_MUSHROOM;
+        }
     }
 
     public void incrementCurrentCoins() {

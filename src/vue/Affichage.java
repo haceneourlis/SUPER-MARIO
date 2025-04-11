@@ -1,15 +1,15 @@
 package vue;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import modele.*;
 import modele.Tile.TileManager;
-import java.util.List;
-import java.util.ArrayList;
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
 
 /**
  * Classe qui affiche le jeu
@@ -102,14 +102,19 @@ public class Affichage extends JPanel {
             e.printStackTrace();
         }
 
-        // Démarrer les threads des ennemis et de leurs animations
-        animationKoopa.add(new AnimationKoopa(tilemanager.getKoopa()));
-        animationGoomba.add(new AnimationGoomba(tilemanager.getGoomba()));
-
+        for (int i = 0; i < listeEnnemis.size(); i ++){
+            if (listeEnnemis.get(i) instanceof Koopa){
+                animationKoopa.add(new AnimationKoopa(listeEnnemis.get(i)));
+            }
+            if (listeEnnemis.get(i) instanceof Goomba){
+                animationGoomba.add(new AnimationGoomba(listeEnnemis.get(i)));
+            }
+        }
+        
         for (AnimationKoopa Koopa : animationKoopa) {
             Koopa.start();
         }
-        for (AnimationGoomba Goomba : animationGoomba) {
+        for (AnimationGoomba Goomba : animationGoomba){
             Goomba.start();
         }
     }
@@ -131,9 +136,6 @@ public class Affichage extends JPanel {
             this.decalage = mario.getPositionX() - CONSTANTS.CELLULE_SCROLLING * CONSTANTS.TAILLE_CELLULE;
         }
 
-        // On applique le décalage du plan de jeu
-        // (note que comme l'objet Graphics2D est rechargé à chaque appel, les
-        // transformations ne s'aditionnent pas)
         // On applique le décalage du plan de jeu
         // (note que comme l'objet Graphics2D est rechargé à chaque appel, les
         // transformations ne s'aditionnent pas)
@@ -160,14 +162,23 @@ public class Affichage extends JPanel {
             }
         }
 
-        // dessiner le coin
-        this.drawCoin(g2);
+       
 
-        // Mario clignote uniquement s'il est invincible, sans affecter le reste du
-        // dessin
+
+        for (int i = 0; i < this.tilemanager.sizeGameCharacterList(); i ++){
+            GameCharacter gc = this.tilemanager.getListeGameCharacters(i);
+            g2.drawImage(gc.getImage(0), gc.getPosition().x, gc.getPosition().y, null);
+        }
+        this.drawCoin(g2);
+       
+
+        // affichons mario en dernier (pour qu'il soit au-dessus de tout) :
+        g2.drawImage(this.animationJoueur.getCurrentToDraw(), mario.getPositionX(),
+                mario.getPositionY(), null);
+
+        // Mario clignote uniquement s'il est invincible, sans affecter le reste du dessin
         if (!mario.isInvincible() || (System.currentTimeMillis() / 200) % 2 == 0) {
-            g2.drawImage(this.animationJoueur.getCurrentToDraw(), mario.getPositionX(),
-                    mario.getPositionY(), null);
+            g2.drawImage(this.animationJoueur.getCurrentToDraw(), mario.getPositionX(), mario.getPositionY(), null);
         }
 
         // Dessiner les vies (cœurs) CENTRÉS en haut

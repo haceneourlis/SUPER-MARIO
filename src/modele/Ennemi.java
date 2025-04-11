@@ -46,7 +46,6 @@ public class Ennemi extends GameCharacter implements Runnable {
     public Ennemi(int x, int width, int height, int speed, boolean movingRight, TileManager tileManager, String type) {
         super();
         this.type = type;
-
         if (type.equals("koopa")) {
             image = new BufferedImage[3];
             try {
@@ -59,10 +58,10 @@ public class Ennemi extends GameCharacter implements Runnable {
         }
         // the other types (like goomba) will be implemented in the subclass
 
-        this.tileManager = tileManager;
         this.position.x = x;
 
         this.position.y = CONSTANTS.LE_SOL;
+        this.tileManager = tileManager;
 
         if (image != null && image.length > 0) {
             this.solidArea.x = 0;

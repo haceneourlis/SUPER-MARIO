@@ -2,7 +2,6 @@ package modele;
 
 import java.awt.Point;
 import java.util.logging.*;
-
 import javax.imageio.ImageIO;
 
 /**
@@ -12,6 +11,10 @@ import javax.imageio.ImageIO;
 public class Coin extends GameCharacter {
 
     public Point positionDepart = null;
+
+    // facteur d'incrementation
+
+
 
     private static final Logger logger = Logger.getLogger(Coin.class.getName());
 

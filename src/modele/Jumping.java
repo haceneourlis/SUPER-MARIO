@@ -10,6 +10,7 @@ import java.util.logging.*;
  */
 public class Jumping {
 
+    public final int IMPULSION = 15;
     // Descente instance
     private Descente descente;
     private DescenteCoins descenteCoins;
@@ -36,9 +37,9 @@ public class Jumping {
      * "tomber" maintenant.
      */
     public void jump() {
-        if (!this.descente.marioAllowedToFallDown) {
-            this.descente.force_mario = -CONSTANTS.IMPULSION_MARIO;
-            this.descente.marioAllowedToFallDown = true;
+        if (!this.mario.allowedToFallDown) {
+            this.descente.force = -IMPULSION;
+            this.mario.allowedToFallDown= true;
             mario.setDirection("up");
         }
     }

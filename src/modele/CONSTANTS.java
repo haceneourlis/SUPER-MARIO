@@ -45,14 +45,21 @@ public class CONSTANTS {
     public static final int FORCE_MAX_MARIO = 20;
     public static final int FORCE_MAX_COIN = 3;
 
-    // les types de tuiles :
+    // Les facteurs d'incrémentation : 
+    public static final int INCREMENT_SCORE_COIN = 10;
+    public static final int INCREMENT_SCORE_MUSHROOM = 50;
 
+
+    // les types de tuiles :
+    
     public static final int CIEL = 0;
     public static final int SOL = 1;
     public static final int PRIZE_BRICK = 2;
 
     // facteur d'incrementation du score:
     public static final int FACTEUR_SCORE = 100;
+
+    public static final int FORCE_MAX = 20;
 
     // les implusions de mario et coins :
     public static final int IMPULSION_MARIO = 15;

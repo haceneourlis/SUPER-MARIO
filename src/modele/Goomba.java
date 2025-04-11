@@ -8,9 +8,9 @@ public class Goomba extends Ennemi {
 
     private BufferedImage[] images = new BufferedImage[2];
 
-    public Goomba(int x, int speed, boolean movingRight, TileManager tileManager) {
-        super(x, 20, 20, speed, movingRight, tileManager, "goomba");
+    public Goomba(int x, int speed, TileManager tileManager, boolean movingRight) {
 
+        super(x, 20, 20, speed, movingRight, tileManager, "goomba");
         try {
             images[0] = ImageIO.read(getClass().getResourceAsStream("/resources/goomba_sprites/goomba1.png"));
             images[1] = ImageIO.read(getClass().getResourceAsStream("/resources/goomba_sprites/goomba2.png"));

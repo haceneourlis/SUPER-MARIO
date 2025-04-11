@@ -6,13 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-
 import javax.imageio.ImageIO;
-import modele.CONSTANTS;
-import modele.Ennemi;
-import modele.Goomba;
-import modele.Koopa;
-import modele.Mario;
+import modele.*;
 
 /**
  * Classe qui gère les tuiles du jeu
@@ -47,7 +42,9 @@ public class TileManager {
         public int maxColLevel = 0;
 
         private ArrayList<Ennemi> listeEnnemis;
-        private Ennemi koopa, goomba;
+        private Ennemi kp1, gb1;
+
+        private ArrayList<GameCharacter> listeGameCharacters;
 
         private TileManager() {
                 // On récupère l'instance du Joueur
@@ -57,12 +54,15 @@ public class TileManager {
                 tiles = new Tile[64];
 
                 listeEnnemis = new ArrayList<>();
+
+                listeGameCharacters = new ArrayList<>();
                 // Ajouter plusieurs ennemis
-                // Ajouter plusieurs ennemis
-                koopa = new Koopa(600, 5, true, this);
-                goomba = new Goomba(300, 4, true, this);
-                listeEnnemis.add(koopa);
-                listeEnnemis.add(goomba);
+
+                kp1 = new Koopa(400, 4, this, true);
+                listeEnnemis.add(kp1);
+
+                gb1 = new Goomba(450, 3, this, false);
+                listeEnnemis.add(gb1);
                 // méthode qui va juste charger les images et les mettres dans le tableau de
                 // tuiles
                 getTileImage();
@@ -89,11 +89,27 @@ public class TileManager {
         }
 
         public Ennemi getKoopa() {
-                return koopa;
+                return kp1;
         }
 
         public Ennemi getGoomba() {
-                return goomba;
+                return gb1;
+        }
+
+        public GameCharacter getListeGameCharacters(int i) {
+                return this.listeGameCharacters.get(i);
+        }
+
+        public void addGameCharacter(GameCharacter gc) {
+                this.listeGameCharacters.add(gc);
+        }
+
+        public void supprimerGameCharacter(int index) {
+                this.listeGameCharacters.remove(index);
+        }
+
+        public int sizeGameCharacterList() {
+                return this.listeGameCharacters.size();
         }
 
         /**
@@ -277,6 +293,7 @@ public class TileManager {
                                 }
                         }
                         br.close();
+
                 } catch (IOException e) {
                         throw new RuntimeException(e);
                 }

@@ -9,14 +9,12 @@
 
 package modele;
 
-import java.util.logging.*;
-
-import modele.Tile.TileManager;
-
-import java.util.Iterator;
-import java.util.List;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.*;
+import modele.Tile.TileManager;
 
 public class Collision extends Thread {
 
@@ -111,15 +109,16 @@ public class Collision extends Thread {
                         mario.position.y = (ligneBottomdanslaMatrice - 1) * CONSTANTS.TAILLE_CELLULE;
                         sur_brick = true;
                         // bloquer la descente !
-                        threadDescente.force_mario = 0;
+                        threadDescente.force = 0;
 
-                        threadDescente.marioAllowedToFallDown = false;
+                        this.mario.allowedToFallDown = false;
                     } else {
                         // System.out.println("je suis sur une brick ---------------#####");
                     }
                 } else {
-                    /* MARIO FALLS DOWN HERE , so he will EVENTUALLY DIE ! */
-                    threadDescente.marioAllowedToFallDown = true;
+
+                    this.mario.allowedToFallDown = true;
+                    // System.out.println("je ne suis plus sur un brick ---------------#####");
                     sur_brick = false;
                     if (mario.getPosition().y >= CONSTANTS.LE_SOL + CONSTANTS.TAILLE_CELLULE) {
                         System.out.println("mario meurt !");
@@ -136,7 +135,7 @@ public class Collision extends Thread {
                     // rentrer en collision avec un objet en sautant
                     case "up":
                         // on prédit ou sera notre mario aprés avoir bougé
-                        ligneTopdanslaMatrice = (posTopenY + threadDescente.force_mario) / CONSTANTS.TAILLE_CELLULE;
+                        ligneTopdanslaMatrice = (posTopenY + threadDescente.force) / CONSTANTS.TAILLE_CELLULE;
                         point1 = tm.tilesMatrice[ligneTopdanslaMatrice][colonneLeftdanslaMatrice];
                         point2 = tm.tilesMatrice[ligneTopdanslaMatrice][colonneRightdanslaMatrice];
 
@@ -148,16 +147,17 @@ public class Collision extends Thread {
                             // mario , logiquement n'est pas sur brick , innit mate ?
                             sur_brick = false;
                             // Je remets sa force à 0.
-                            threadDescente.force_mario = 0;
+                            threadDescente.force = 0;
+
                             // Je lui permet de descendre.
-                            threadDescente.marioAllowedToFallDown = true;
+                            this.mario.allowedToFallDown = true;
                         }
                         // Verification si point1 ou point2 est une pièce, si oui on incrémente le
                         // nombre de pièces
                         // Et on demande à la matrice (locale) d'être modifiée.
                         if (point1 == 30 || point2 == 30) {
                             scoreManager.incrementCurrentCoins();
-                            scoreManager.incrementCurrentScore();
+                            scoreManager.incrementCurrentScore("coin");
                             tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 0);
                         }
 
@@ -181,9 +181,14 @@ public class Collision extends Thread {
                             jumpingThread.setThreadDecenteCoins(coinThread);
                             jumpingThread.jumpLaCoin();
                             coinThread.start();
+                            System.out.println("Position mario avant champi : " + this.mario.getPosition().x);
+                            Champignon champignon = new Champignon(null,
+                                    new Point(colonneLeftdanslaMatrice * CONSTANTS.TAILLE_CELLULE,
+                                            (ligneTopdanslaMatrice - 1) * CONSTANTS.TAILLE_CELLULE));
+                            this.tm.addGameCharacter(champignon);
 
                             scoreManager.incrementCurrentCoins();
-                            scoreManager.incrementCurrentScore();
+                            scoreManager.incrementCurrentScore("coin");
 
                             tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 1);
                         }
@@ -206,9 +211,13 @@ public class Collision extends Thread {
                         if ((point1 == 30)) {
                             logger.log(Level.INFO, "Coin collected from left with point1 !");
                             tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 0);
+                            scoreManager.incrementCurrentCoins();
+                            scoreManager.incrementCurrentScore("coin");
                         } else if (point2 == 30) {
                             logger.log(Level.INFO, "Coin collected from left with point2 !");
                             tm.modifyMatrice(ligneBottomdanslaMatrice, colonneLeftdanslaMatrice, 0);
+                            scoreManager.incrementCurrentCoins();
+                            scoreManager.incrementCurrentScore("coin");
                         }
 
                         if (tm.tiles[point1].collision == true
@@ -229,12 +238,14 @@ public class Collision extends Thread {
                         // verification si point1 ou point2 est une pièce
                         if ((point1 == 30)) {
                             logger.log(Level.INFO, "Coin collected from right with point1 !");
-                            // this.coin.IncrementNombreDePieces()
                             tm.modifyMatrice(ligneTopdanslaMatrice, colonneRightdanslaMatrice, 0);
+                            scoreManager.incrementCurrentCoins();
+                            scoreManager.incrementCurrentScore("coin");
                         } else if (point2 == 30) {
                             logger.log(Level.INFO, "Coin collected from right with point2 !");
-                            // this.coin.IncrementNombreDePieces();
                             tm.modifyMatrice(ligneBottomdanslaMatrice, colonneRightdanslaMatrice, 0);
+                            scoreManager.incrementCurrentCoins();
+                            scoreManager.incrementCurrentScore("coin");
                         }
 
                         if (tm.tiles[point1].collision == true || tm.tiles[point2].collision == true) {
@@ -251,7 +262,7 @@ public class Collision extends Thread {
 
                 }
 
-                Iterator<Ennemi> iterator = tm.getListeEnnemis().iterator();
+                Iterator<Ennemi> iterator = this.tm.getListeEnnemis().iterator();
                 while (iterator.hasNext()) {
                     Ennemi ennemi = iterator.next();
 
@@ -275,7 +286,7 @@ public class Collision extends Thread {
                         int ennemiHeadY = ennemi.getPosition().y + ennemi.getSolidArea().y;
 
                         boolean fromAbove = marioFeetY <= ennemiHeadY + 15 && marioFeetY >= ennemiHeadY;
-                        boolean falling = (threadDescente.force_mario > 0);
+                        boolean falling = (threadDescente.force > 0);
 
                         boolean collisionHandled = false;
 
@@ -289,16 +300,16 @@ public class Collision extends Thread {
                                     koopa.position.y += 10;
                                     mario.setPositionY(mario.getPosition().y - 15);
 
-                                    threadDescente.force_mario = -CONSTANTS.IMPULSION_MARIO / 2;
+                                    threadDescente.force = -CONSTANTS.IMPULSION_MARIO / 2;
                                 } else if (koopa.getState() == Koopa.State.SHELL) {
                                     // koopa is already a shell, once mario jumps on it, it will be removed
                                     iterator.remove();
-                                    threadDescente.force_mario = -CONSTANTS.IMPULSION_MARIO / 2;
+                                    threadDescente.force = -CONSTANTS.IMPULSION_MARIO / 2;
                                 }
                             } else {
                                 // Goomba
                                 iterator.remove();
-                                threadDescente.force_mario = -CONSTANTS.IMPULSION_MARIO / 2;
+                                threadDescente.force = -CONSTANTS.IMPULSION_MARIO / 2;
                             }
                             collisionHandled = true;
                         }
@@ -314,10 +325,10 @@ public class Collision extends Thread {
                     }
 
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
     }
 }
