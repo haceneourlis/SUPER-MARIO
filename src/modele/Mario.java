@@ -25,7 +25,7 @@ public class Mario extends GameCharacter {
     private boolean invincible = false;
 
     // Le début de son invincibilité
-    private long invincibleStartTime = 0; 
+    private long invincibleStartTime = 0;
     // Le temps d'invincibilité
     private int invincibleDuration = 2000; // 2 secondes
 
@@ -51,7 +51,7 @@ public class Mario extends GameCharacter {
 
     /**
      * Permet de créer une instance unique de la classe Mario (classe singleton)
-    */
+     */
     public static Mario getInstance() {
         if (instance == null) {
             // Si il n'existe pas on le crée.
@@ -62,6 +62,7 @@ public class Mario extends GameCharacter {
 
     /**
      * Getter de la position en Y.
+     * 
      * @return int position en Y de mario
      */
     public int getPositionY() {
@@ -70,15 +71,16 @@ public class Mario extends GameCharacter {
 
     /**
      * Getter de la position en X.
+     * 
      * @return int position en X de mario.
      */
     public int getPositionX() {
         return this.position.x;
     }
 
-
     /**
      * Setter de la position en Y de mario.
+     * 
      * @param y la nouvelle position en Y de mario.
      */
     public void setPositionY(int y) {
@@ -95,7 +97,6 @@ public class Mario extends GameCharacter {
         }
     }
 
-    
     /**
      * Méthode pour décrémenter la vitesse du joueur.
      * Si la vitesse est supérieure à 0, on la décrémente du facteur de
@@ -112,6 +113,7 @@ public class Mario extends GameCharacter {
     /**
      * Methode pour obtenir l'image du joueur
      * PAR DEFAUT METTRE L'INDEX A 0.
+     * 
      * @return l'image du joueur
      */
     public BufferedImage getImage(int index) {
@@ -120,6 +122,7 @@ public class Mario extends GameCharacter {
 
     /**
      * Methode pour savoir si le joueur est invincible ou pas.
+     * 
      * @return un booléen
      */
     public boolean isInvincible() {
@@ -129,6 +132,7 @@ public class Mario extends GameCharacter {
     /**
      * Méthode pour vérifier si la durée d'invincibilité est écoulée.
      * Si oui, on met le booléen "invincible"(présent dans la classe) à false.
+     * 
      * @return ne retourne rien.
      */
     public void updateInvincibility() {
@@ -140,6 +144,7 @@ public class Mario extends GameCharacter {
 
     /**
      * Méthode pour obtenir le nombre de vies restantes de Mario.
+     * 
      * @return le nombre de vies (un entier)
      */
     public int getVies() {
@@ -150,6 +155,7 @@ public class Mario extends GameCharacter {
      * Classe qui va gérer la perte de vie de Mario.
      * Si Mario est déjà invincible, il ne perd pas de vie.
      * Si Mario n'a plus de vie, on affiche un message de game over.
+     * 
      * @param rien
      * @return rien
      */
@@ -171,26 +177,29 @@ public class Mario extends GameCharacter {
             }
         }
     }
+
     /**
      * Méthode pour augmenter le nombre de vies de Mario.
      * Si Mario a déjà 3 vies, on ne fait rien.
      * Sinon, on augmente le nombre de vies de 1.
+     * 
      * @param rien
      * @return rien
      */
-    public void augmenterVie(){
+    public void augmenterVie() {
         // Si Mario a déjà 3 vies, on ne fait rien
-        if ((this.getVies() + 1) > 3){
-            // ne fait rien 
-        // Sinon, on augmente le nombre de vies de 1
+        if ((this.getVies() + 1) > 3) {
+            // ne fait rien
+            // Sinon, on augmente le nombre de vies de 1
         } else {
-            this.vies ++;
+            this.vies++;
         }
     }
 
     /**
      * Méthode pour remettre mario à sa position d'origine
      * et remettre sa vitesse à 0.
+     * 
      * @param rien
      * @return rien
      */
