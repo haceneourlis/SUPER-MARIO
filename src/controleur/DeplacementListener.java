@@ -24,9 +24,6 @@ public class DeplacementListener extends Thread{
     // Instance de Jumping pour pouvoir sauter
     private Jumping jumpin;
 
-    // Constante de délai entre chaque vérification des booléens de mj
-    public final int DELAY = 30;
-
     // Booléen qui permet d'indiquer dans quelle direction le personnage se déplace
     // Ce sera utile pour pouvoir continuer à faire avancer le personnage dans la dernière
     // direction où il se déplaçait, tant que la vitesse != 0 (en decelerant evidemment).
@@ -46,7 +43,7 @@ public class DeplacementListener extends Thread{
             if (player.getVies() <= 0) {
                 return; // Stoppe le thread proprement
             }
-            try{Thread.sleep(DELAY);}
+            try{Thread.sleep(CONSTANTS.DELAY_DEPLACEMENT_LISTENER);}
             catch (Exception e) { e.printStackTrace(); }
             if (mj.isLeft_pressed()){
                 // Touche gauche préssée, on déplace le joueur à gauche en incrémentant sa vitesse.

@@ -121,11 +121,16 @@ public class GameCharacter extends Rectangle {
             this.position.x -= this.speed;
     }
 
-
+    /**
+     * Méthode pour intérdir le déplacement du joueur.
+     */
     public void noMoving() {
         this.canMove = false;
     }
 
+    /**
+     * Méthode pour autoriser le déplacement du joueur.
+     */
     public void yesMoving() {
         this.canMove = true;
     }

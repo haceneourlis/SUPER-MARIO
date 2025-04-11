@@ -1,7 +1,6 @@
 
 /*
  * cette classe est un thread qui va vérifier les collisions entre les différents objets du jeu
- * elle n'est pas encore complète
  * elle interagit avec la classe Mario et Ennemi
  * elle interagit avec la classe Affichage
  * elle interagit que AVEC LES VALEURS DU MODELE (pas de la vue) - C'EST IMPORTANT à SAVOIR car c'est que le prof nous a demandé la derniere fois-
@@ -54,7 +53,7 @@ public class Collision extends Thread {
     public void run() {
         while (true) {
             try {
-                Thread.sleep(5);
+                Thread.sleep(CONSTANTS.DELAY_COLLISION_MARIO);
 
                 mario.updateInvincibility();
 
@@ -188,8 +187,11 @@ public class Collision extends Thread {
                         }
 
                         if (point1 == CONSTANTS.MUSHROOW_BRICK || point2 == CONSTANTS.MUSHROOW_BRICK){
-                            Champignon champignon = new Champignon(null, new Point(colonneLeftdanslaMatrice*CONSTANTS.TAILLE_CELLULE, (ligneTopdanslaMatrice - 1)*CONSTANTS.TAILLE_CELLULE), tm.listGameCharacters_nextindex());
-                            this.tm.addGameCharacter(champignon);
+                            // Je crée un champignon
+                            Champignon champignon = new Champignon(new Point(colonneLeftdanslaMatrice*CONSTANTS.TAILLE_CELLULE, (ligneTopdanslaMatrice - 1)*CONSTANTS.TAILLE_CELLULE));
+                            // Je le rajoute à la liste des entités présentes sur la map.
+                            this.tm.addEntityToList(champignon);
+                            // Je modifie la matrice pour que la brique ne soit plus une brique de récompense.
                             tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 1);
                         }
 

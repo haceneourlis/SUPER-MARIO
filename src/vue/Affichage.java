@@ -19,7 +19,7 @@ import modele.Tile.TileManager;
 
 public class Affichage extends JPanel {
 
-    // Variables pour les instances de Mario et de l'ennemi
+    // Variables pour les instances de Mario et des ennemis
     private Mario mario;
     private List<Ennemi> listeEnnemis;
 
@@ -36,27 +36,22 @@ public class Affichage extends JPanel {
     // score manager
     private ScoreManager scoreManager;
 
+    // Police d'écriture utilisée
     private Font marioFont;
 
+    // attribut de décalage, c'est à dire de décalage du plan pour le scrolling
     private int decalage = 0;
 
+    // Image des coeurs (vies)
     private BufferedImage coeurImage;
 
-    // Constantes pour l'affichage du score
-    private final int SCORE_X = 10;
-    private final int SCORE_Y = 30;
-
-    // Constante pour l'affichage du nombre de coins
-    private final int COINS_X = 200;
-    private final int COINS_Y = 30;
+  
 
     /**
      * Constructeur de la classe Affichage.
-     * On initialise la taille de la fenêtre et on crée les instances de Mario et de
-     * l'ennemi.
-     * On lance également les threads de l'ennemi, de l'animation du joueur et de
+     * On initialise la taille de la fenêtre et récupère les instances de mario et des ennemis.
+     * On lance également les threads de l'animation du joueur et des ennemis et de
      * l'actualisation de la fenetre (redessine).
-     * 
      * @throws IOException
      * @throws FontFormatException
      */
@@ -64,44 +59,42 @@ public class Affichage extends JPanel {
         // Initialiser la fenêtre avec les dimensions prévues.
         setPreferredSize(new Dimension(CONSTANTS.LARGEUR_VUE, CONSTANTS.HAUTEUR_VUE)); // Set window size
 
+        // On charge la police d'écriture
         try {
             this.marioFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/resources/PressStart2P-Regular.ttf"))
                     .deriveFont(16f);
         } catch (IOException | FontFormatException e) {
             e.printStackTrace();
         }
+
         // Initialiser le joueur (classe singleton)
         this.mario = Mario.getInstance(); // Get the player instance : classe singleton .
 
         // Initialiser le gestionnaire de tuiles
-        this.tilemanager = TileManager.getInstance(); // Get the tile manager instance : classe singleton .;
+        this.tilemanager = TileManager.getInstance(); // Get the tile manager instance : classe singleton .
 
         this.scoreManager = ScoreManager.getInstance(); // Get the score manager instance : classe singleton .
 
-        this.listeEnnemis = new ArrayList<>(); // Liste des ennemis
         this.listeEnnemis = tilemanager.getListeEnnemis(); // Récupérer la liste des ennemis depuis le TileManager
 
-        // Initialiser l'ennemi (au-dessus du sol)
-        // ennemi = new Ennemi(630, 20, 20, 5, true, tilemanager);
-        // ennemi.thread.start(); // Lancer le thread de l'ennemi
-
+        // Initialiser la liste d'animation des ennemis
         animationKoopa = new ArrayList<>();
         animationGoomba = new ArrayList<>();
+        
 
-        // Mettre à jour l'affichage toutes les 50ms
-        (new Redessine(this)).start();
 
         // Lancer l'animation du joueur (Mario).
         animationJoueur = new AnimationJoueur(mario);
         animationJoueur.start();
 
-        // télecharger l'image du coeur
+        // charger l'image du coeur
         try {
             coeurImage = ImageIO.read(getClass().getResourceAsStream("/resources/coeur.png"));
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        // Pour chaque ennemis récupérés depuis le tilemanager, on ajoute une animation
         for (int i = 0; i < listeEnnemis.size(); i ++){
             if (listeEnnemis.get(i) instanceof Koopa){
                 animationKoopa.add(new AnimationKoopa(listeEnnemis.get(i)));
@@ -111,111 +104,24 @@ public class Affichage extends JPanel {
             }
         }
         
+        // Lancer les animations des ennemis
         for (AnimationKoopa Koopa : animationKoopa) {
             Koopa.start();
         }
         for (AnimationGoomba Goomba : animationGoomba){
             Goomba.start();
         }
+
+        // Mettre à jour l'affichage toutes les 50ms
+        (new Redessine(this)).start();
     }
 
-    /**
-     * Méthode qui dessiner les différents éléments sur la fenetre.
+
+
+     /**
+     * Méthode qui dessine les pièces qui sortent des prize blocks.
+     * @param g2
      */
-    @Override
-    protected void paintComponent(Graphics g) {
-        // On crée un objet Graphics2D pour dessiner les éléments
-        Graphics2D g2 = (Graphics2D) g;
-        super.paintComponent(g2);
-
-        // je récupère la case de mario actuelle, relative au décalage
-        int case_actuelle = ((this.mario.getPositionX() - decalage) / CONSTANTS.TAILLE_CELLULE);
-        // Si la case de mario dépasse la case de scrolling, on décale la fenêtre
-        if (case_actuelle >= CONSTANTS.CELLULE_SCROLLING) {
-            // Le décalage correspond à la distance entre mario et la case de scrolling
-            this.decalage = mario.getPositionX() - CONSTANTS.CELLULE_SCROLLING * CONSTANTS.TAILLE_CELLULE;
-        }
-
-        // On applique le décalage du plan de jeu
-        // (note que comme l'objet Graphics2D est rechargé à chaque appel, les
-        // transformations ne s'aditionnent pas)
-        g2.translate(-this.decalage, 0);
-
-        // affichons la matrice du jeu : (le terrain)
-        this.drawTiles(g2);
-
-        int goombaIndex = 0;
-        for (Ennemi ennemi : listeEnnemis) {
-            BufferedImage imageEnnemi = null;
-            if (ennemi instanceof Koopa) {
-                if (!animationKoopa.isEmpty()) {
-                    imageEnnemi = animationKoopa.get(0).getCurrentToDraw();
-                }
-            } else if (ennemi instanceof Goomba) {
-                if (goombaIndex < animationGoomba.size()) {
-                    imageEnnemi = animationGoomba.get(goombaIndex).getCurrentToDraw();
-                    goombaIndex++;
-                }
-            }
-            if (imageEnnemi != null) {
-                g2.drawImage(imageEnnemi, ennemi.getPosition().x, ennemi.getPosition().y, null);
-            }
-        }
-
-       
-
-
-        for (int i = 0; i < this.tilemanager.sizeGameCharacterList(); i ++){
-            GameCharacter gc = this.tilemanager.getListeGameCharacters(i);
-            g2.drawImage(gc.getImage(0), gc.getPosition().x, gc.getPosition().y, null);
-        }
-        this.drawCoin(g2);
-       
-
-        // affichons mario en dernier (pour qu'il soit au-dessus de tout) :
-        g2.drawImage(this.animationJoueur.getCurrentToDraw(), mario.getPositionX(),
-                mario.getPositionY(), null);
-
-        // Mario clignote uniquement s'il est invincible, sans affecter le reste du dessin
-        if (!mario.isInvincible() || (System.currentTimeMillis() / 200) % 2 == 0) {
-            g2.drawImage(this.animationJoueur.getCurrentToDraw(), mario.getPositionX(), mario.getPositionY(), null);
-        }
-
-        // Dessiner les vies (cœurs) CENTRÉS en haut
-        int vies = mario.getVies();
-        int coeurWidth = 30;
-        int coeurHeight = 30;
-        int espaceEntreCoeurs = 10;
-
-        // Calcul de la largeur totale des cœurs à dessiner
-        int largeurTotale = vies * coeurWidth + (vies - 1) * espaceEntreCoeurs;
-
-        // Calcul du point de départ X pour centrer
-        int startX = (getWidth() - largeurTotale) / 2;
-        // 2. ANNULER le décalage AVANT de dessiner les cœurs
-        g2.translate(this.decalage, 0); // Remet le contexte à 0 (sans décalage)
-
-        // Dessiner les cœurs
-        for (int i = 0; i < vies; i++) {
-            int x = startX + i * (coeurWidth + espaceEntreCoeurs);
-            g.drawImage(coeurImage, x, 10, coeurWidth, coeurHeight, null);
-
-        }
-
-        // Optionnel : Afficher "Game Over" au centre si plus de vies
-        if (vies <= 0) {
-            g.setFont(new Font("Arial", Font.BOLD, 50));
-            g.setColor(Color.RED);
-            g.drawString("GAME OVER", getWidth() / 2 - 150, getHeight() / 2);
-        }
-
-        g2.setFont(marioFont);
-        g2.setColor(Color.WHITE);
-        g2.drawString("Score : " + ScoreManager.getScore(), SCORE_X, SCORE_Y);
-        g2.drawString("Coins : " + ScoreManager.getCoins(), COINS_X, COINS_Y);
-    }
-
-    // draw un coin sautant
     public void drawCoin(Graphics2D g2) {
         if (Collision.coinToCatch != null) {
             g2.drawImage(Collision.coinToCatch.image,
@@ -225,7 +131,10 @@ public class Affichage extends JPanel {
     }
 
     /*
-     * parce que M.V.C
+     * Méthode qui va dessiner les tuiles sur la fenetre.
+     * Elle va afficher les tuiles de la matrice du jeu, en fonction de la position
+     * de mario et du décalage.
+     * Elle va n'afficher que ce qui est possible d'afficher sur la fenetre de jeu.
      */
     public void drawTiles(Graphics2D g2) {
         // récupère la case actuelle où se trouve mario
@@ -295,4 +204,108 @@ public class Affichage extends JPanel {
         }
 
     }
+
+
+    /**
+     * Méthode qui dessiner les différents éléments sur la fenetre.
+     */
+    @Override
+    protected void paintComponent(Graphics g) {
+        // On crée un objet Graphics2D pour dessiner les éléments
+        Graphics2D g2 = (Graphics2D) g;
+        super.paintComponent(g2);
+
+        // je récupère la case de mario actuelle, relative au décalage
+        int case_actuelle = ((this.mario.getPositionX() - decalage) / CONSTANTS.TAILLE_CELLULE);
+        // Si la case de mario dépasse la case de scrolling, on décale la fenêtre
+        if (case_actuelle >= CONSTANTS.CELLULE_SCROLLING) {
+            // Le décalage correspond à la distance entre mario et la case de scrolling
+            this.decalage = mario.getPositionX() - CONSTANTS.CELLULE_SCROLLING * CONSTANTS.TAILLE_CELLULE;
+        }
+
+        // On applique le décalage du plan de jeu
+        g2.translate(-this.decalage, 0);
+
+        // affichons la matrice du jeu : (le terrain)
+        this.drawTiles(g2);
+
+        // Pour chaque ennemis, on va afficher son animation
+        int goombaIndex = 0;
+        int koopaIndex = 0;
+        for (Ennemi ennemi : listeEnnemis) {
+            BufferedImage imageEnnemi = null;
+            if (ennemi instanceof Koopa) {
+                if (!animationKoopa.isEmpty()) {
+                    imageEnnemi = animationKoopa.get(koopaIndex).getCurrentToDraw();
+                    koopaIndex++;
+                }
+            } else if (ennemi instanceof Goomba) {
+                if (goombaIndex < animationGoomba.size()) {
+                    imageEnnemi = animationGoomba.get(goombaIndex).getCurrentToDraw();
+                    goombaIndex++;
+                }
+            }
+            if (imageEnnemi != null) {
+                g2.drawImage(imageEnnemi, ennemi.getPosition().x, ennemi.getPosition().y, null);
+            }
+        }
+
+       
+
+        // On affiche toutes les entités (champignons ..)
+        for (int i = 0; i < this.tilemanager.sizeEntitiesList(); i ++){
+            GameCharacter gc = this.tilemanager.getListEntities(i);
+            g2.drawImage(gc.getImage(0), gc.getPosition().x, gc.getPosition().y, null);
+        }
+
+        // On dessine toutes les coins
+        this.drawCoin(g2);
+       
+
+        // affichons mario en dernier (pour qu'il soit au-dessus de tout) :
+        g2.drawImage(this.animationJoueur.getCurrentToDraw(), mario.getPositionX(),
+                mario.getPositionY(), null);
+
+        // Mario clignote uniquement s'il est invincible, sans affecter le reste du dessin
+        if (!mario.isInvincible() || (System.currentTimeMillis() / 200) % 2 == 0) {
+            g2.drawImage(this.animationJoueur.getCurrentToDraw(), mario.getPositionX(), mario.getPositionY(), null);
+        }
+
+        // Dessiner les coeurs centrés en haut
+        int vies = mario.getVies();
+        int coeurWidth = 30;
+        int coeurHeight = 30;
+        int espaceEntreCoeurs = 10;
+
+        // Calcul de la largeur totale des cœurs à dessiner
+        int largeurTotale = vies * coeurWidth + (vies - 1) * espaceEntreCoeurs;
+
+        // Calcul du point de départ X pour centrer
+        int startX = (getWidth() - largeurTotale) / 2;
+
+        // annuler le décalage avant de dessiner les coeurs et d'afficher les scores
+        g2.translate(this.decalage, 0); 
+
+        // dessiner les coeurs
+        for (int i = 0; i < vies; i++) {
+            int x = startX + i * (coeurWidth + espaceEntreCoeurs);
+            g.drawImage(coeurImage, x, 10, coeurWidth, coeurHeight, null);
+
+        }
+        // on set la font avant d'écrire
+        g2.setFont(marioFont);
+        
+        // Afficher game over
+        if (vies <= 0) {
+            g.setColor(Color.RED);
+            g.drawString("GAME OVER", getWidth() / 2 - 150, getHeight() / 2);
+        }
+
+        // On affiche le score et le nombre de pièces
+        g2.setColor(Color.WHITE);
+        g2.drawString("Score : " + ScoreManager.getScore(), CONSTANTS.SCORE_X, CONSTANTS.SCORE_Y);
+        g2.drawString("Coins : " + ScoreManager.getCoins(), CONSTANTS.COINS_X, CONSTANTS.COINS_Y);
+    }
+
+   
 }
