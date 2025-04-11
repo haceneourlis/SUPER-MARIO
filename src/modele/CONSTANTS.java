@@ -62,6 +62,7 @@ public class CONSTANTS {
     public static final int CIEL = 0;
     public static final int SOL = 1;
     public static final int PRIZE_BRICK = 2;
+    public static final int COIN = 30;
     public static final int MUSHROOW_BRICK = 31;
 
 

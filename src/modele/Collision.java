@@ -154,19 +154,27 @@ public class Collision extends Thread {
                         // Verification si point1 ou point2 est une pièce, si oui on incrémente le
                         // nombre de pièces
                         // Et on demande à la matrice (locale) d'être modifiée.
-                        if (point1 == 30 || point2 == 30) {
+                        if (point1 == CONSTANTS.COIN) {
                             scoreManager.incrementCurrentCoins();
                             scoreManager.incrementCurrentScore("coin");
                             tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 0);
+                        } else if (point2 == CONSTANTS.COIN) {
+                            scoreManager.incrementCurrentCoins();
+                            scoreManager.incrementCurrentScore("coin");
+                            tm.modifyMatrice(ligneTopdanslaMatrice, colonneRightdanslaMatrice, 0);
+
                         }
+                        
 
                         // si mario rentre en collision avec une : brickPrize, cest-à-dire une brique
                         // qui donne une récompense : a coin or a mushroom .
                         // on va faire sortir un coin ou un champignon de la brique
                         // et on va la supprimer de la matrice
-                        // TODO : faire sortir un champignon ou une pièce de la brique
+                        
 
-                        if (point1 == CONSTANTS.PRIZE_BRICK || point2 == CONSTANTS.PRIZE_BRICK) {
+                        // On sépare bien le cas si c'est le point1 ou le point2 qu'il faut modifier
+
+                        if (point1 == CONSTANTS.PRIZE_BRICK ) {
 
                             // créer un objet (coin) et le faire sauter et redescendre sur la brique et
                             // +prize
@@ -184,15 +192,40 @@ public class Collision extends Thread {
                             scoreManager.incrementCurrentScore("coin");
 
                             tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 1);
-                        }
+                        } else if (point2 == CONSTANTS.PRIZE_BRICK){
 
-                        if (point1 == CONSTANTS.MUSHROOW_BRICK || point2 == CONSTANTS.MUSHROOW_BRICK){
+                            // créer un objet (coin) et le faire sauter et redescendre sur la brique et
+                            // +prize
+                            // au score de mario
+                            // et modifier la brique de la matrice pour qu'elle ne soit plus une brique de
+                            // récompense.
+
+                            coinToCatch = new Coin(new Point(colonneRightdanslaMatrice, (ligneTopdanslaMatrice - 1)));
+                            DescenteCoins coinThread = new DescenteCoins(coinToCatch);
+                            coinThread.coinAllowedToFallDown = false;
+                            jumpingThread.setThreadDecenteCoins(coinThread);
+                            jumpingThread.jumpLaCoin();
+                            coinThread.start();
+                            scoreManager.incrementCurrentCoins();
+                            scoreManager.incrementCurrentScore("coin");
+
+                            tm.modifyMatrice(ligneTopdanslaMatrice, colonneRightdanslaMatrice, 1);
+                        }
+                        // Cas du champignon, pareil, on sépare le cas du point1 et point2
+                        if (point1 == CONSTANTS.MUSHROOW_BRICK){
                             // Je crée un champignon
                             Champignon champignon = new Champignon(new Point(colonneLeftdanslaMatrice*CONSTANTS.TAILLE_CELLULE, (ligneTopdanslaMatrice - 1)*CONSTANTS.TAILLE_CELLULE));
                             // Je le rajoute à la liste des entités présentes sur la map.
                             this.tm.addEntityToList(champignon);
                             // Je modifie la matrice pour que la brique ne soit plus une brique de récompense.
                             tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 1);
+                        } else if (point2 == CONSTANTS.MUSHROOW_BRICK){
+                            // Je crée un champignon
+                            Champignon champignon = new Champignon(new Point(colonneRightdanslaMatrice*CONSTANTS.TAILLE_CELLULE, (ligneTopdanslaMatrice - 1)*CONSTANTS.TAILLE_CELLULE));
+                            // Je le rajoute à la liste des entités présentes sur la map.
+                            this.tm.addEntityToList(champignon);
+                            // Je modifie la matrice pour que la brique ne soit plus une brique de récompense.
+                            tm.modifyMatrice(ligneTopdanslaMatrice, colonneRightdanslaMatrice, 1);
                         }
 
                         point1 = 0;
@@ -210,12 +243,12 @@ public class Collision extends Thread {
                         point2 = tm.tilesMatrice[ligneBottomdanslaMatrice][colonneLeftdanslaMatrice];
 
                         // verification si point1 ou point2 est une pièce
-                        if ((point1 == 30)) {
+                        if ((point1 == CONSTANTS.COIN)) {
                             logger.log(Level.INFO, "Coin collected from left with point1 !");
                             tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 0);
                             scoreManager.incrementCurrentCoins();
                             scoreManager.incrementCurrentScore("coin");
-                        } else if (point2 == 30) {
+                        } else if (point2 == CONSTANTS.COIN) {
                             logger.log(Level.INFO, "Coin collected from left with point2 !");
                             tm.modifyMatrice(ligneBottomdanslaMatrice, colonneLeftdanslaMatrice, 0);
                             scoreManager.incrementCurrentCoins();
@@ -238,12 +271,12 @@ public class Collision extends Thread {
                         point2 = tm.tilesMatrice[ligneBottomdanslaMatrice][colonneRightdanslaMatrice];
 
                         // verification si point1 ou point2 est une pièce
-                        if ((point1 == 30)) {
+                        if ((point1 == CONSTANTS.COIN)) {
                             logger.log(Level.INFO, "Coin collected from right with point1 !");
                             tm.modifyMatrice(ligneTopdanslaMatrice, colonneRightdanslaMatrice, 0);
                             scoreManager.incrementCurrentCoins();
                             scoreManager.incrementCurrentScore("coin");
-                        } else if (point2 == 30) {
+                        } else if (point2 == CONSTANTS.COIN) {
                             logger.log(Level.INFO, "Coin collected from right with point2 !");
                             tm.modifyMatrice(ligneBottomdanslaMatrice, colonneRightdanslaMatrice, 0);
                             scoreManager.incrementCurrentCoins();
