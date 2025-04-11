@@ -13,11 +13,15 @@ public class Champignon extends GameCharacter {
 
     private static final Logger logger = Logger.getLogger(Champignon.class.getName());
 
-    private int increment_factor;
-    public Champignon(ScoreManager score, Point position){
+    
+
+
+    public Champignon(ScoreManager score, Point position, int index_in_list){
         super();
         this.score = score;
-        this.increment_factor = 50;
+
+        this.index_current_objet = index_in_list;
+
         this.setSpeed(3);
         try {
             this.image = ImageIO.read(getClass()

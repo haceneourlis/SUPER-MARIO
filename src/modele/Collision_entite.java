@@ -27,13 +27,18 @@ public class Collision_entite extends Thread{
 
     Deplacement_entite dp_entite;
 
+    Mario mario;
+
+    ScoreManager score;
+
 
     public Collision_entite(GameCharacter gc, Descente descente, Deplacement_entite dp_entite){
         this.entity = gc;
         this.tm = TileManager.getInstance();
         this.descente = descente;
         this.dp_entite = dp_entite;
-        
+        this.mario = Mario.getInstance();
+        this.score = ScoreManager.getInstance();
     }
     
     /**
@@ -65,7 +70,22 @@ public class Collision_entite extends Thread{
 
                 int point1, point2;
 
-                // check all the time if mario is on the ground .
+                // On va check s'il y'a une collision avec mario:
+                int mario_border_left = this.mario.getPosition().x + this.mario.getSolidArea().x;
+                int mario_border_right = this.mario.getPosition().x + this.mario.getSolidArea().x + this.mario.getSolidArea().width;
+                int mario_border_up = this.mario.getPositionY();
+                int mario_border_down = this.mario.getPosition().y + this.mario.getSolidArea().y + this.mario.getSolidArea().height * 2;
+
+                if ((this.posLeftenX >= mario_border_left && this.posLeftenX <= mario_border_right) || (this.posRightenX >= mario_border_left && this.posRightenX <= mario_border_right)){
+                    if ((this.posTopenY >= mario_border_up && this.posTopenY <= mario_border_down) || (this.posBottomenY >= mario_border_up && this.posBottomenY <= mario_border_down)){
+                        this.mario.augmenterVie();
+                        this.score.incrementCurrentScore("mushroom");
+                        this.tm.removeGameCharacter(this.entity);
+                        break;
+                    }
+                }
+
+
                 // on va anticiper la collision avec la brique :
                 point1 = this.tm.tilesMatrice[ligneBottomdanslaMatrice][colonneLeftdanslaMatrice];
                 point2 = this.tm.tilesMatrice[ligneBottomdanslaMatrice][colonneRightdanslaMatrice];

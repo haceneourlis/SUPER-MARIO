@@ -1,6 +1,5 @@
 package modele.Tile;
 
-import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,6 +39,8 @@ public class TileManager {
         // nombre de colonnes de la matrice du jeu, sera initialisé dans la méthode
         // loadMatrice
         public int maxColLevel = 0;
+
+        public int next_index = 0;
 
         private ArrayList<Ennemi> listeEnnemis;
         private Ennemi koopa, goomba;
@@ -96,12 +97,22 @@ public class TileManager {
                 return this.listeGameCharacters.get(i);
         }
 
+        public int listGameCharacters_nextindex(){
+                return next_index;
+        }
+
         public void addGameCharacter(GameCharacter gc) {
                 this.listeGameCharacters.add(gc);
+                next_index ++;
         }
 
         public void supprimerGameCharacter(int index){
                 this.listeGameCharacters.remove(index);
+                next_index --;
+        }
+
+        public void removeGameCharacter(GameCharacter gc){
+                this.listeGameCharacters.remove(gc);
         }
 
         public int sizeGameCharacterList(){
@@ -240,6 +251,10 @@ public class TileManager {
                         tiles[30].image = ImageIO.read(getClass()
                                         .getResourceAsStream("/resources/coin.png"));
                         tiles[30].collision = false;
+                        tiles[31] = new Tile();
+                        tiles[31].image = ImageIO.read(getClass()
+                                        .getResourceAsStream("/resources/brickPrize.png"));
+                        tiles[31].collision = true;
                         // TODO : la suite
                 } catch (Exception e) {
                         System.err.println("Erreur");

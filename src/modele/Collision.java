@@ -181,13 +181,15 @@ public class Collision extends Thread {
                             jumpingThread.setThreadDecenteCoins(coinThread);
                             jumpingThread.jumpLaCoin();
                             coinThread.start();
-                            System.out.println("Position mario avant champi : " + this.mario.getPosition().x);
-                            Champignon champignon = new Champignon(null, new Point(colonneLeftdanslaMatrice*CONSTANTS.TAILLE_CELLULE, (ligneTopdanslaMatrice - 1)*CONSTANTS.TAILLE_CELLULE));
-                            this.tm.addGameCharacter(champignon);
-
                             scoreManager.incrementCurrentCoins();
                             scoreManager.incrementCurrentScore("coin");
 
+                            tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 1);
+                        }
+
+                        if (point1 == CONSTANTS.MUSHROOW_BRICK || point2 == CONSTANTS.MUSHROOW_BRICK){
+                            Champignon champignon = new Champignon(null, new Point(colonneLeftdanslaMatrice*CONSTANTS.TAILLE_CELLULE, (ligneTopdanslaMatrice - 1)*CONSTANTS.TAILLE_CELLULE), tm.listGameCharacters_nextindex());
+                            this.tm.addGameCharacter(champignon);
                             tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 1);
                         }
 

@@ -17,6 +17,9 @@ public class Mario extends GameCharacter {
 
     // vitesse max constante
     public final int VITESSE_MAX = 6;
+    // Max de vies
+    public final int VIE_MAX = 3;
+
 
     // Images de Mario (avec animation de walk)
     private BufferedImage[] image = new BufferedImage[4];
@@ -134,6 +137,14 @@ public class Mario extends GameCharacter {
                 System.out.println("GAME OVER !");
                 // TODO: Game Over screen
             }
+        }
+    }
+
+    public void augmenterVie(){
+        if ((this.getVies() + 1) > 3){
+            // ne fait rien 
+        } else {
+            this.vies ++;
         }
     }
 

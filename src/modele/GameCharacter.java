@@ -22,6 +22,8 @@ public class GameCharacter extends Rectangle {
 
     public boolean canMove;
 
+    int index_current_objet;
+
     // constructor
     protected GameCharacter() {
         // rectangle representing the solid area of the character (collision area) :
