@@ -63,6 +63,13 @@ public class TileManager {
         
                 Goomba gb1 = new Goomba(450, 3, false, this);
                 this.listeEnnemis.add(gb1);
+
+                Goomba gb2 = new Goomba(700, 20, false, this);
+                this.listeEnnemis.add(gb2);
+                Goomba gb3 = new Goomba(1000, 3, false, this);
+                this.listeEnnemis.add(gb3);
+
+                        
                
 
                 // méthode qui va juste charger les images et les mettres dans le tableau de
@@ -277,7 +284,20 @@ public class TileManager {
                         tiles[31].image = ImageIO.read(getClass()
                                         .getResourceAsStream("/resources/brickPrize.png"));
                         tiles[31].collision = true;
-                        // TODO : la suite
+
+                        tiles[32] = new Tile();
+                        tiles[32].image = ImageIO.read(getClass()
+                                        .getResourceAsStream("/resources/drapeau/drapeau1.png"));
+                        tiles[32].collision = true;
+                        tiles[33] = new Tile();
+                        tiles[33].image = ImageIO.read(getClass()
+                                        .getResourceAsStream("/resources/drapeau/drapeau2.png"));
+                        tiles[33].collision = true;
+                        tiles[34] = new Tile();
+                        tiles[34].image = ImageIO.read(getClass()
+                                        .getResourceAsStream("/resources/drapeau/drapeau3.png"));
+                        tiles[34].collision = true;
+
                 } catch (Exception e) {
                         System.err.println("Erreur");
                 }
