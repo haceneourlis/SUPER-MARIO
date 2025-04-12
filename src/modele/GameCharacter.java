@@ -22,6 +22,8 @@ public class GameCharacter extends Rectangle {
 
     public boolean canMove;
 
+    int index_current_objet;
+
     // constructor
     protected GameCharacter() {
         // rectangle representing the solid area of the character (collision area) :
@@ -31,6 +33,8 @@ public class GameCharacter extends Rectangle {
         solidArea.y = CONSTANTS.slidAreaDefaultY;
         solidArea.height = 8;
         solidArea.width = 8;
+
+        allowedToFallDown = false; // le joueur ne peut pas tomber au départ
 
         this.position = new Point();
         this.speed = 0;
@@ -92,11 +96,6 @@ public class GameCharacter extends Rectangle {
         return this.image;
     }
 
-    // draw method
-    public void draw(Graphics2D g2, Point position_dans_la_vue) {
-        g2.drawImage(this.image, position_dans_la_vue.x, position_dans_la_vue.y, null);
-    }
-
     /**
      * Méthode pour déplacer le joueur à droite.
      * Si la vitesse est inférieure à la vitesse maximale, on l'incrémente de 1.
@@ -119,11 +118,16 @@ public class GameCharacter extends Rectangle {
             this.position.x -= this.speed;
     }
 
-
+    /**
+     * Méthode pour intérdir le déplacement du joueur.
+     */
     public void noMoving() {
         this.canMove = false;
     }
 
+    /**
+     * Méthode pour autoriser le déplacement du joueur.
+     */
     public void yesMoving() {
         this.canMove = true;
     }

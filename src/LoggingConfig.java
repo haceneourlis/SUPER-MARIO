@@ -20,7 +20,7 @@ public class LoggingConfig {
 
             // Crée un handler pour écrire dans le fichier "logs.txt"
             FileHandler fileHandler = new FileHandler("logs.txt", true); // 'true' pour append
-            fileHandler.setFormatter(new SimpleFormatter()); // Format simple des logs
+            fileHandler.setFormatter(new SimpleFormatter());
 
             // Ajoute ce handler à tous les loggers dans l'application
             Logger rootLogger = Logger.getLogger(""); // Root logger (global)
