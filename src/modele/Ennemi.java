@@ -73,32 +73,73 @@ public class Ennemi extends GameCharacter implements Runnable {
     // faire bouger l'ennemi en tenant compte des collisions
     public void moveEnnemi() {
         int nextX = this.position.x + (movingRight ? speed : -speed); // Déterminer la prochaine position en X
-        int col = (nextX + (movingRight ? this.solidArea.width - 1 : 0)) / CONSTANTS.TAILLE_CELLULE;
-        int row = (this.position.y + this.solidArea.height - 1) / CONSTANTS.TAILLE_CELLULE;
 
-        // Si Koopa touche les bords, il tourne
+        // calculer la largeur du monde
+        int worldWidth = this.tileManager.tilesMatrice[0].length * CONSTANTS.TAILLE_CELLULE;
+
+        // Si l'ennemi touche les bords, il tourne
         if (nextX <= 0) {
             this.position.x = 0;
             movingRight = true;
             return;
+        } else if (nextX + this.solidArea.width >= worldWidth) {
+            this.position.x = worldWidth - this.solidArea.width;
+            movingRight = false;
+            return;
         }
 
-        // else if (nextX + this.solidArea.width >= CONSTANTS.LARGEUR_MODELE) {
-        // this.position.x = CONSTANTS.LARGEUR_MODELE - this.solidArea.width;
-        // movingRight = false;
-        // return;
-        // }
-
-        // Vérifier les obstacles normaux
-        if (col < CONSTANTS.maxScreenCol) {
-            int tileType = this.tileManager.tilesMatrice[row][col];
-            if (this.tileManager.tiles[tileType].collision) {
+        // Pour une détection cohérente, nous utilisons l'avant de l'ennemi en fonction
+        // de son sens de déplacement.
+        int footX;
+        if (movingRight) {
+            // Quand il va à droite, la "frontière" est le bord droit
+            footX = nextX + this.solidArea.width;
+        } else {
+            // Quand il va à gauche, la "frontière" est le bord gauche
+            footX = nextX;
+        }
+        int footY = this.position.y + this.solidArea.height + 1; // 1 pixel en dessous du pied
+        int colBelow = footX / CONSTANTS.TAILLE_CELLULE;
+        int rowBelow = footY / CONSTANTS.TAILLE_CELLULE;
+        if (rowBelow >= 0 && rowBelow < this.tileManager.tilesMatrice.length &&
+                colBelow >= 0 && colBelow < this.tileManager.tilesMatrice[0].length) {
+            int tileBelowType = this.tileManager.tilesMatrice[rowBelow][colBelow];
+            // Si le tile en dessous n'est pas solide, c'est de l'air (puit)
+            if (!this.tileManager.tiles[tileBelowType].collision) {
                 movingRight = !movingRight;
                 return;
             }
         }
 
-        // Continuer à avancer
+        // check the next x position, if moving right, check the right edge, if moving
+        // left, check the left edge
+        int checkX = movingRight ? nextX + this.solidArea.width : nextX;
+        int colAhead = checkX / CONSTANTS.TAILLE_CELLULE;
+
+        // check the row of the enemy's feet
+        int rowFeet = (this.position.y + this.solidArea.height - 1) / CONSTANTS.TAILLE_CELLULE;
+
+        // Safety check: ensure the calculated row and column are within the matrix
+        // bounds
+        if (rowFeet >= 0 && rowFeet < CONSTANTS.maxRow_gameMatrix &&
+                colAhead >= 0 && colAhead < this.tileManager.tilesMatrice[0].length) {
+
+            int tileTypeAhead = this.tileManager.tilesMatrice[rowFeet][colAhead];
+            if (this.tileManager.tiles[tileTypeAhead].collision) {
+                // If an obstacle is encountered, compare the ground height at the current and
+                // next positions
+                int currentGroundY = findGroundY(this.position.x, this.position.y);
+                int nextGroundY = findGroundY(nextX, this.position.y);
+                // If the ground at the next position is higher than the current position,
+                // reverse direction
+                if (currentGroundY > nextGroundY) {
+                    movingRight = !movingRight;
+                    return;
+                }
+            }
+        }
+
+        // Continuer à avancer normalement
         this.position.x = nextX;
     }
 
@@ -119,7 +160,7 @@ public class Ennemi extends GameCharacter implements Runnable {
     protected void applyGravity() {
         int groundY = findGroundY(this.position.x, this.position.y); // Trouver le sol en fonction de x, y
 
-        if (groundY >= (CONSTANTS.maxScreenRow) * CONSTANTS.TAILLE_CELLULE) {
+        if (groundY >= (CONSTANTS.maxScreenRow + 1) * CONSTANTS.TAILLE_CELLULE) {
             this.stopMoving(); // Arrête le thread de l'ennemi
             tileManager.removeEnnemi(this); // Enlève l'ennemi de la matrice
             return;
