@@ -350,19 +350,24 @@ public class Collision extends Thread {
                                         if (koopa.getState() == Koopa.State.WALKING) {
                                             // koopa becomes a shell
                                             koopa.setState(Koopa.State.SHELL);
-
                                             mario.setPositionY(mario.getPosition().y - 15);
 
                                             threadDescente.force = -CONSTANTS.IMPULSION_MARIO / 2;
+                                            ScoreManager.incrementShells();
+                                            // ScoreManager.incrementCurrentScore("shell");
                                         } else if (koopa.getState() == Koopa.State.SHELL) {
                                             // koopa is already a shell, once mario jumps on it, it will be removed
                                             iterator.remove();
                                             threadDescente.force = -CONSTANTS.IMPULSION_MARIO / 2;
+                                            ScoreManager.incrementCurrentKoopa();
+                                            ScoreManager.incrementCurrentScore("koopa");
                                         }
                                     } else {
                                         // Goomba
                                         iterator.remove();
                                         threadDescente.force = -CONSTANTS.IMPULSION_MARIO / 2;
+                                        ScoreManager.incrementCurrentGoomba();
+                                        ScoreManager.incrementCurrentScore("goomba");
                                     }
                                     collisionHandled = true;
                                 }
