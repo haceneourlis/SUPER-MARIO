@@ -4,10 +4,12 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.*;
 import javax.swing.*;
 import modele.*;
 import modele.Tile.TileManager;
@@ -51,6 +53,12 @@ public class Affichage extends JPanel {
     int vies = 0; // Nombre de vies restantes
     // attribut static pour savoir si le jeu est terminé ou pas
     public static boolean GAME_OVER = false;
+
+    // Pour la musique de fond
+    private Clip clip;
+
+
+
 
     /**
      * Constructeur de la classe Affichage.
@@ -118,7 +126,173 @@ public class Affichage extends JPanel {
 
         // Mettre à jour l'affichage toutes les 50ms
         (new Redessine(this)).start();
+
+
+        try {
+            URL url = getClass().getResource("/resources/sounds/music_de_fond.wav");
+            if (url == null) {
+                System.err.println("Fichier introuvable : " + "src/resources/sounds/music_de_fond.wav");
+                return;
+            }
+
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
+            clip = AudioSystem.getClip();
+            clip.open(audioIn);
+            clip.loop(Clip.LOOP_CONTINUOUSLY); // musique infinie
+            clip.start();
+
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+    
     }
+
+
+    /**
+     * Méthode qui permet de jouer un son.
+     * Elle prend en paramètre le nom du son à jouer et le lance.
+     * 
+     * @param soundName
+     */
+    public void playSound(String soundName) {
+        // On va jouer le son de la pièce
+        if (soundName.equals("coin")) {
+            try {
+                URL soundURL = getClass().getResource("/resources/sounds/mario_coin.wav");
+                if (soundURL == null) {
+                    System.err.println("Fichier audio introuvable : " + "src/resources/sounds/mario_coin.wav");
+                    return;
+                }
+
+                AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundURL);
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioIn);
+                clip.start();// Ajout du clip à la liste des sons
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (soundName.equals("mushroom")) {
+            try {
+                URL soundURL = getClass().getResource("/resources/sounds/mario_ramasse_champignon.wav");
+                if (soundURL == null) {
+                    System.err.println("Fichier audio introuvable : " + "src/resources/sounds/mario_ramasse_champignon.wav");
+                    return;
+                }
+
+                AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundURL);
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioIn);
+                clip.start();// Ajout du clip à la liste des sons
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (soundName.equals("gameover")) {
+            try {
+                URL soundURL = getClass().getResource("/resources/sounds/game_over.wav");
+                if (soundURL == null) {
+                    System.err.println("Fichier audio introuvable : " + "src/resources/sounds/game_over.wav");
+                    return;
+                }
+
+                AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundURL);
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioIn);
+                clip.start();// Ajout du clip à la liste des sons
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            clip.stop();
+        }
+        if (soundName.equals("jump")) {
+            try {
+                URL soundURL = getClass().getResource("/resources/sounds/mario_jump.wav");
+                if (soundURL == null) {
+                    System.err.println("Fichier audio introuvable : " + "src/resources/sounds/mario_jump.wav");
+                    return;
+                }
+
+                AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundURL);
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioIn);
+                // Réglage du volume
+                FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                float dB = (float) (20f * Math.log10(0.3)); // volume entre 0.0 et 1.0
+                gainControl.setValue(dB);
+                clip.start();// Ajout du clip à la liste des sons
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (soundName.equals("shell")) {
+            try {
+                URL soundURL = getClass().getResource("/resources/sounds/koopa_collision.wav");
+                if (soundURL == null) {
+                    System.err.println("Fichier audio introuvable : " + "src/resources/sounds/koopa_collision.wav");
+                    return;
+                }
+
+                AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundURL);
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioIn);
+                // Réglage du volume
+                FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                float dB = (float) (20f * Math.log10(0.3)); // volume entre 0.0 et 1.0
+                gainControl.setValue(dB);
+                clip.start();// Ajout du clip à la liste des sons
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (soundName.equals("goomba")) {
+            try {
+                URL soundURL = getClass().getResource("/resources/sounds/goomba_collision.wav");
+                if (soundURL == null) {
+                    System.err.println("Fichier audio introuvable : " + "/resources/sounds/goomba_collision.wav");
+                    return;
+                }
+
+                AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundURL);
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioIn);
+                // Réglage du volume
+                FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                float dB = (float) (20f * Math.log10(0.3)); // volume entre 0.0 et 1.0
+                gainControl.setValue(dB);
+                clip.start();// Ajout du clip à la liste des sons
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (soundName.equals("invincible")) {
+            try {
+                URL soundURL = getClass().getResource("/resources/sounds/mario_takes_damage.wav");
+                if (soundURL == null) {
+                    System.err.println("Fichier audio introuvable : " + "src/resources/sounds/mario_takes_damage.wav");
+                    return;
+                }
+
+                AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundURL);
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioIn);
+                // Réglage du volume
+                FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                float dB = (float) (20f * Math.log10(0.3)); // volume entre 0.0 et 1.0
+                gainControl.setValue(dB);
+                clip.start();// Ajout du clip à la liste des sons
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (soundName.equals("game")) {
+            clip.setFramePosition(0);
+            clip.start();
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        }
+        
+    }
+    
 
     /**
      * Méthode qui dessine les pièces qui sortent des prize blocks.

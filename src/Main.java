@@ -49,6 +49,10 @@ public class Main {
                 Death death = Death.getInstance(descente_thread, collision_thread);
                 death.start();
 
+
+                // on ajoute un thread pour le son
+                BonusSoundEffect coinSoundEffect = new BonusSoundEffect(GamePanel);
+                coinSoundEffect.start();
                 fenetre.pack();
                 fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

@@ -28,6 +28,7 @@ public class Collision extends Thread {
 
     // le score de mario
     private ScoreManager scoreManager = ScoreManager.getInstance();
+    
 
     private int previousMarioFeetY = Mario.getInstance().getPosition().y
             + Mario.getInstance().getSolidArea().y
@@ -351,19 +352,25 @@ public class Collision extends Thread {
                                             // koopa becomes a shell
                                             koopa.setState(Koopa.State.SHELL);
 
-                                            koopa.position.y += 10;
+
                                             mario.setPositionY(mario.getPosition().y - 15);
 
                                             threadDescente.force = -CONSTANTS.IMPULSION_MARIO / 2;
+                                            ScoreManager.incrementShells();
+                                            //ScoreManager.incrementCurrentScore("shell");
                                         } else if (koopa.getState() == Koopa.State.SHELL) {
                                             // koopa is already a shell, once mario jumps on it, it will be removed
                                             iterator.remove();
                                             threadDescente.force = -CONSTANTS.IMPULSION_MARIO / 2;
+                                            ScoreManager.incrementCurrentKoopa();
+                                            ScoreManager.incrementCurrentScore("koopa");
                                         }
                                     } else {
                                         // Goomba
                                         iterator.remove();
                                         threadDescente.force = -CONSTANTS.IMPULSION_MARIO / 2;
+                                        ScoreManager.incrementCurrentGoomba();
+                                        ScoreManager.incrementCurrentScore("goomba");
                                     }
                                     collisionHandled = true;
                                 }

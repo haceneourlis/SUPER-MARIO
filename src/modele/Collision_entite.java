@@ -137,6 +137,8 @@ public class Collision_entite extends Thread{
                             this.mario.augmenterVie();
                             // On va incrémenter le score.
                             this.score.incrementCurrentScore("mushroom");
+                            // On incrémente le nombre de champignon.
+                            this.score.incrementCurrentMushrooms();
                             // On va enlever l'entité de la liste des entités.
                             this.tm.removeEntityFromList(this.entity);
                             // et on break à ce moment-là en arrêtant le thread
