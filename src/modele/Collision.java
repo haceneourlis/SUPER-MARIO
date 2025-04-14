@@ -351,7 +351,6 @@ public class Collision extends Thread {
                                             // koopa becomes a shell
                                             koopa.setState(Koopa.State.SHELL);
 
-                                            koopa.position.y += 10;
                                             mario.setPositionY(mario.getPosition().y - 15);
 
                                             threadDescente.force = -CONSTANTS.IMPULSION_MARIO / 2;

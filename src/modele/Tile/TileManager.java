@@ -114,7 +114,7 @@ public class TileManager {
                 this.addEnnemi(kp1);
                 kp1.thread.start();
 
-                kp2 = new Koopa(90 * CONSTANTS.TAILLE_CELLULE, 4, true, this);
+                kp2 = new Koopa(500, 4, true, this);
                 this.addEnnemi(kp2);
                 kp2.thread.start();
 

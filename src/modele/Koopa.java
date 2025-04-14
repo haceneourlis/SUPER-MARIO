@@ -55,7 +55,6 @@ public class Koopa extends Ennemi {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
 
     }

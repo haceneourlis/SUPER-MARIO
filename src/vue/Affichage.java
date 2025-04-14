@@ -209,6 +209,10 @@ public class Affichage extends JPanel {
             g2.drawString("Score : " + ScoreManager.getScore(), CONSTANTS.SCORE_X, CONSTANTS.SCORE_Y);
             g2.drawString("Coins : " + ScoreManager.getCoins(), CONSTANTS.COINS_X, CONSTANTS.COINS_Y);
         } else {
+
+            // reset les animations des koopas
+            resetAnimation();
+
             // mario meurt, on affiche le message de game over
             g2.setFont(marioFont);
             g2.setColor(Color.RED);
@@ -227,6 +231,22 @@ public class Affichage extends JPanel {
                     Collision.coinToCatch.position.x * CONSTANTS.TAILLE_CELLULE,
                     Collision.coinToCatch.position.y * CONSTANTS.TAILLE_CELLULE, null);
         }
+    }
+
+    private void resetAnimation() {
+
+        animationKoopa.clear();
+        for (int i = 0; i < listeEnnemis.size(); i++) {
+            if (listeEnnemis.get(i) instanceof Koopa) {
+                animationKoopa.add(new AnimationKoopa(listeEnnemis.get(i)));
+
+            }
+        }
+
+        for (AnimationKoopa Koopa : animationKoopa) {
+            Koopa.start();
+        }
+
     }
 
     /*
