@@ -22,6 +22,10 @@ public class AnimationGoomba extends Thread {
         this.old_x = goomba.getPosition().x;
     }
 
+    public Goomba getGoomba() {
+        return (Goomba) goomba;
+    }
+
     public BufferedImage getCurrentToDraw() {
         return goomba.getImage(currentIndex);
     }

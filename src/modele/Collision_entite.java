@@ -88,7 +88,7 @@ public class Collision_entite extends Thread{
         this.posLeftenX = this.entity.getPosition().x + this.entity.getSolidArea().x;
         this.posRightenX = this.entity.getPosition().x + this.entity.getSolidArea().x + this.entity.getSolidArea().width;
         this.posTopenY = this.entity.getPosition().y;
-        this.posBottomenY = this.entity.getPosition().y + this.entity.getSolidArea().y + this.entity.getSolidArea().height * 2;
+        this.posBottomenY = this.entity.getPosition().y + this.entity.getSolidArea().y + this.entity.getSolidArea().height*2;
 
         // On va calculer les positions dans la matrice de jeu de ces points.
         this.ligneTopdanslaMatrice = (posTopenY) / CONSTANTS.TAILLE_CELLULE;
@@ -113,6 +113,19 @@ public class Collision_entite extends Thread{
                 
                 // Calcul des points de hitbox.
                 calculate_position_indexes();
+
+                // safety check
+                // before checking the collision, we need to check if the entity is out of the map
+                if (ligneBottomdanslaMatrice < 0 || ligneBottomdanslaMatrice >= tm.tilesMatrice.length) {
+                    // if the entity is out of the map, we stop the thread
+                    ok_thread = false;
+                    continue;
+                }
+                if (colonneLeftdanslaMatrice < 0 || colonneLeftdanslaMatrice >= tm.tilesMatrice[0].length ||
+                        colonneRightdanslaMatrice < 0 || colonneRightdanslaMatrice >= tm.tilesMatrice[0].length) {
+                    ok_thread = false;
+                    continue;
+                }
 
                 /*
                 On va check s'il y'a une collision avec mario, pour ce faire on calcule

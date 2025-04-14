@@ -98,7 +98,7 @@ public class TileManager {
 
         public void loadMatrice_1() {
                 // On recharge la matrice du jeu
-                load("/resources/matrice.txt");
+                load("/resources/matrice_test.txt");
         }
 
         public void loadEnnemis_1() {

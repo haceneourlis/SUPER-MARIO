@@ -22,15 +22,19 @@ public class AnimationKoopa extends Thread {
     private int maxIndex;
 
     // Le joueur (personnage) à afficher, ici Koopa
-    private Ennemi koopa;
+    private Koopa koopa;
 
     // Constructeur qui initialise l'instance de Koopa ainsi que le old_x.
-    public AnimationKoopa(Ennemi koopa) {
+    public AnimationKoopa(Koopa koopa) {
         this.koopa = koopa;
         this.old_x = this.koopa.getPosition().x;
         this.maxIndex = 2;
         // On initialise l'animation avec l'index maximum et le joueur principal.
         this.animation = new Animation(this.maxIndex, this.koopa);
+    }
+
+    public Koopa getKoopa() {
+        return koopa;
     }
 
     // getter de l'image to draw
