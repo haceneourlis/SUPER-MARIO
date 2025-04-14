@@ -2,8 +2,11 @@ GROUPE LES MARIOS
 Membres du groupe :
 
 HACENE OURLIS
+
 Mohand Ameziane ZEGGANE
+
 ZHANG Mengtong
+
 Kasdi Cylia
 
 Nous avons réalisé ce projet nommé SUPER-MARIO, dans lequel nous avons développé nos compétences en programmation orientée objet (POO), ainsi que notre capacité de réflexion algorithmique et notre maîtrise du multi-threading.
