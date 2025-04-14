@@ -28,8 +28,8 @@ public class Affichage extends JPanel {
     private AnimationJoueur animationJoueur;
 
     // Variable pour l'animation du (des) koopa
-    private List<AnimationKoopa> animationKoopa;
-    private List<AnimationGoomba> animationGoomba;
+    // private List<AnimationKoopa> animationKoopa;
+    // private List<AnimationGoomba> animationGoomba;
 
     // Variable pour le gestionnaire de tuiles
     public TileManager tilemanager;
@@ -85,8 +85,8 @@ public class Affichage extends JPanel {
         this.listeEnnemis = tilemanager.getListeEnnemis(); // Récupérer la liste des ennemis depuis le TileManager
 
         // Initialiser la liste d'animation des ennemis
-        animationKoopa = new ArrayList<>();
-        animationGoomba = new ArrayList<>();
+//        animationKoopa = new ArrayList<>();
+//        animationGoomba = new ArrayList<>();
 
         // Lancer l'animation du joueur (Mario).
         animationJoueur = new AnimationJoueur(mario);
@@ -99,22 +99,22 @@ public class Affichage extends JPanel {
             e.printStackTrace();
         }
 
-        for (int i = 0; i < listeEnnemis.size(); i++) {
-            if (listeEnnemis.get(i) instanceof Koopa) {
-                animationKoopa.add(new AnimationKoopa(listeEnnemis.get(i)));
-            }
-            if (listeEnnemis.get(i) instanceof Goomba) {
-                animationGoomba.add(new AnimationGoomba(listeEnnemis.get(i)));
-            }
-        }
-
-        // Lancer les animations des ennemis
-        for (AnimationKoopa Koopa : animationKoopa) {
-            Koopa.start();
-        }
-        for (AnimationGoomba Goomba : animationGoomba) {
-            Goomba.start();
-        }
+//        for (int i = 0; i < listeEnnemis.size(); i++) {
+//            if (listeEnnemis.get(i) instanceof Koopa) {
+//                animationKoopa.add(new AnimationKoopa(listeEnnemis.get(i)));
+//            }
+//            if (listeEnnemis.get(i) instanceof Goomba) {
+//                animationGoomba.add(new AnimationGoomba(listeEnnemis.get(i)));
+//            }
+//        }
+//
+//        // Lancer les animations des ennemis
+//        for (AnimationKoopa Koopa : animationKoopa) {
+//            Koopa.start();
+//        }
+//        for (AnimationGoomba Goomba : animationGoomba) {
+//            Goomba.start();
+//        }
 
         // Mettre à jour l'affichage toutes les 50ms
         (new Redessine(this)).start();
@@ -148,27 +148,42 @@ public class Affichage extends JPanel {
             // affichons la matrice du jeu : (le terrain)
             this.drawTiles(g2);
 
-            int goombaIndex = 0;
-            synchronized (tilemanager.listeEnnemis) {
-                Iterator<Ennemi> iterator = tilemanager.getListeEnnemis().iterator();
-                while (iterator.hasNext()) {
-                    Ennemi ennemi = iterator.next();
-                    if (ennemi != null) {
-                        BufferedImage imageEnnemi = null;
-                        if (ennemi instanceof Koopa) {
-                            if (!animationKoopa.isEmpty()) {
-                                imageEnnemi = animationKoopa.get(0).getCurrentToDraw();
-                            }
-                        } else if (ennemi instanceof Goomba) {
-                            if (goombaIndex < animationGoomba.size()) {
-                                imageEnnemi = animationGoomba.get(goombaIndex).getCurrentToDraw();
-                                goombaIndex++;
-                            }
-                        }
-                        if (imageEnnemi != null) {
-                            g2.drawImage(imageEnnemi, ennemi.getPosition().x, ennemi.getPosition().y, null);
-                        }
-                    }
+//            int goombaIndex = 0;
+//            synchronized (tilemanager.listeEnnemis) {
+//                Iterator<Ennemi> iterator = tilemanager.getListeEnnemis().iterator();
+//                while (iterator.hasNext()) {
+//                    Ennemi ennemi = iterator.next();
+//                    if (ennemi != null) {
+//                        BufferedImage imageEnnemi = null;
+//                        if (ennemi instanceof Koopa) {
+//                            if (!animationKoopa.isEmpty()) {
+//                                imageEnnemi = animationKoopa.get(0).getCurrentToDraw();
+//                            }
+//                        } else if (ennemi instanceof Goomba) {
+//                            if (goombaIndex < animationGoomba.size()) {
+//                                imageEnnemi = animationGoomba.get(goombaIndex).getCurrentToDraw();
+//                                goombaIndex++;
+//                            }
+//                        }
+//                        if (imageEnnemi != null) {
+//                            g2.drawImage(imageEnnemi, ennemi.getPosition().x, ennemi.getPosition().y, null);
+//                        }
+//                    }
+//                }
+//            }
+
+            // dessine les ennemis
+            // when painting the enemies, we directly call the animation inside the enemy
+            for (Ennemi ennemi : listeEnnemis) {
+                BufferedImage imageEnnemi = null;
+                if (ennemi instanceof Koopa) {
+                    imageEnnemi = ((Koopa) ennemi).getAnimationKoopa().getCurrentToDraw();
+
+                } else if (ennemi instanceof Goomba) {
+                    imageEnnemi = ((Goomba) ennemi).getAnimationGoomba().getCurrentToDraw();
+                }
+                if (imageEnnemi != null) {
+                    g2.drawImage(imageEnnemi, ennemi.getPosition().x, ennemi.getPosition().y, null);
                 }
             }
 
