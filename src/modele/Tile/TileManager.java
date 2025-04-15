@@ -104,45 +104,46 @@ public class TileManager {
         public void loadEnnemis_1() {
                 // On recharge les ennemis
 
-                // supprimer tous les ennemis de la liste
-                for (int i = 0; i < listeEnnemis.size(); i++) {
-                        listeEnnemis.remove(i);
-                        i--;
-                }
-                // On recharge les ennemis
-                kp1 = new Koopa(400, 4, true, this);
-                this.addEnnemi(kp1);
-                kp1.thread.start();
+                        // supprimer tous les ennemis de la liste
+                        for (int i = 0; i < listeEnnemis.size(); i++) {
+                                listeEnnemis.remove(i);
+                                i--;
+                        }
 
-                kp2 = new Koopa(500, 4, true, this);
-                this.addEnnemi(kp2);
-                kp2.thread.start();
+                        // On recharge les ennemis
+                        kp1 = new Koopa(400, 4, true, this);
+                        this.addEnnemi(kp1);
+                        kp1.thread.start();
 
-                kp3 = new Koopa(60*CONSTANTS.TAILLE_CELLULE, 4, true, this);
-                this.addEnnemi(kp3);
-                kp3.thread.start();
+                        kp2 = new Koopa(500, 4, true, this);
+                        this.addEnnemi(kp2);
+                        kp2.thread.start();
 
-                kp4 = new Koopa(100*CONSTANTS.TAILLE_CELLULE, 4, true, this);
-                this.addEnnemi(kp4);
-                kp4.thread.start();
+                        kp3 = new Koopa(60*CONSTANTS.TAILLE_CELLULE, 4, true, this);
+                        this.addEnnemi(kp3);
+                        kp3.thread.start();
 
-                kp5 = new Koopa(150*CONSTANTS.TAILLE_CELLULE, 4, true, this);
-                this.addEnnemi(kp5);
-                this.addEnnemi(kp5);
+                        kp4 = new Koopa(100*CONSTANTS.TAILLE_CELLULE, 4, true, this);
+                        this.addEnnemi(kp4);
+                        kp4.thread.start();
 
-                gb1 = new Goomba(100 * CONSTANTS.TAILLE_CELLULE, 4, false, this);
-                this.addEnnemi(gb1);
-                gb1.thread.start();
+                        kp5 = new Koopa(140*CONSTANTS.TAILLE_CELLULE, 4, true, this);
+                        this.addEnnemi(kp5);
+                        kp5.thread.start();
 
-                gb2 = new Goomba(500, 3, false, this);
-                this.addEnnemi(gb2);
-                gb2.thread.start();
+                        gb1 = new Goomba(100 * CONSTANTS.TAILLE_CELLULE, 4, false, this);
+                        this.addEnnemi(gb1);
+                        gb1.thread.start();
 
-                gb3 = new Goomba(150, 3, false, this);
-                this.addEnnemi(gb3);
-                gb3.thread.start();
+                        gb2 = new Goomba(500, 3, false, this);
+                        this.addEnnemi(gb2);
+                        gb2.thread.start();
 
-                System.out.println("Ennemis rechargés !:::::::::::::::::::::::::::!::::::::::::::");
+                        gb3 = new Goomba(150, 3, false, this);
+                        this.addEnnemi(gb3);
+                        gb3.thread.start();
+
+                        System.out.println("Ennemis rechargés !:::::::::::::::::::::::::::!::::::::::::::");
         }
 
         /**

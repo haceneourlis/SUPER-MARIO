@@ -154,6 +154,21 @@ public class Affichage extends JPanel {
         }
     }
 
+    private void resetAnimationGoombas() {
+        for (AnimationGoomba anim : animationGoomba) {
+            anim.stopThread();
+        }
+        animationGoomba.clear();
+
+        for (Ennemi ennemi : listeEnnemis) {
+            if (ennemi instanceof Goomba goomba) {
+                AnimationGoomba anim = new AnimationGoomba(goomba);
+                animationGoomba.add(anim);
+                anim.start();
+            }
+        }
+    }
+
     /**
      * Méthode qui permet de jouer un son.
      * Elle prend en paramètre le nom du son à jouer et le lance.
@@ -328,29 +343,27 @@ public class Affichage extends JPanel {
             // affichons la matrice du jeu : (le terrain)
             this.drawTiles(g2);
 
-            int goombaIndex = 0;
-            int koopaIndex = 0;
-            synchronized (tilemanager.listeEnnemis) {
-                Iterator<Ennemi> iterator = tilemanager.getListeEnnemis().iterator();
-                while (iterator.hasNext()) {
-                    Ennemi ennemi = iterator.next();
-                    if (ennemi != null) {
-                        BufferedImage imageEnnemi = null;
-                        if (ennemi instanceof Koopa) {
-                            // the bug was here , hooly molyyy
-                            if (koopaIndex < animationKoopa.size()) {
-                                imageEnnemi = animationKoopa.get(koopaIndex).getCurrentToDraw();
-                                koopaIndex++;
-                            }
-                        } else if (ennemi instanceof Goomba) {
-                            if (goombaIndex < animationGoomba.size()) {
-                                imageEnnemi = animationGoomba.get(goombaIndex).getCurrentToDraw();
-                                goombaIndex++;
+            // dessine les ennemis
+            synchronized (listeEnnemis) {
+                for (Ennemi ennemi : listeEnnemis) {
+                    BufferedImage imageEnnemi = null;
+                    if (ennemi instanceof modele.Koopa) {
+                        for (AnimationKoopa ak : animationKoopa) {
+                            if (ak.getKoopa() == ennemi) {
+                                imageEnnemi = ak.getCurrentToDraw();
+                                break;
                             }
                         }
-                        if (imageEnnemi != null) {
-                            g2.drawImage(imageEnnemi, ennemi.position.x, ennemi.position.y, null);
+                    } else if (ennemi instanceof modele.Goomba) {
+                        for (AnimationGoomba ag : animationGoomba) {
+                            if (ag.getGoomba() == ennemi) {
+                                imageEnnemi = ag.getCurrentToDraw();
+                                break;
+                            }
                         }
+                    }
+                    if (imageEnnemi != null) {
+                        g2.drawImage(imageEnnemi, ennemi.position.x, ennemi.position.y, null);
                     }
                 }
             }
@@ -421,6 +434,7 @@ public class Affichage extends JPanel {
 
             // reset les animations des koopas
             resetAnimationKoopas();
+            resetAnimationGoombas();
 
             // mario meurt, on affiche le message de game over
             g2.setFont(marioFont);

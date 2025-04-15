@@ -13,7 +13,7 @@ public class AnimationGoomba extends Thread {
 
     public final int DELAY = 60;
 
-    private boolean running = true;
+    private boolean ok = true;
 
     private int old_x;
 
@@ -30,15 +30,15 @@ public class AnimationGoomba extends Thread {
         return goomba.getImage(currentIndex);
     }
 
-    public void stopAnimation() {
-        this.running = false;
+    public void stopThread() {
+        this.ok = false;
     }
 
     @Override
     public void run() {
-        running = true;
+        this.ok = true;
 
-        while (running) {
+        while (this.ok) {
             try {
                 Thread.sleep(DELAY);
             } catch (InterruptedException e) {
