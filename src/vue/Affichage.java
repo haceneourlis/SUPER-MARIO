@@ -324,6 +324,7 @@ public class Affichage extends JPanel {
             this.drawTiles(g2);
 
             int goombaIndex = 0;
+            int koopaIndex = 0;
             synchronized (tilemanager.listeEnnemis) {
                 Iterator<Ennemi> iterator = tilemanager.getListeEnnemis().iterator();
                 while (iterator.hasNext()) {
@@ -331,8 +332,10 @@ public class Affichage extends JPanel {
                     if (ennemi != null) {
                         BufferedImage imageEnnemi = null;
                         if (ennemi instanceof Koopa) {
-                            if (!animationKoopa.isEmpty()) {
-                                imageEnnemi = animationKoopa.get(0).getCurrentToDraw();
+                            // the bug was here , hooly molyyy
+                            if (koopaIndex < animationKoopa.size()) {
+                                imageEnnemi = animationKoopa.get(koopaIndex).getCurrentToDraw();
+                                koopaIndex++;
                             }
                         } else if (ennemi instanceof Goomba) {
                             if (goombaIndex < animationGoomba.size()) {
@@ -386,7 +389,7 @@ public class Affichage extends JPanel {
         } else {
 
             // reset les animations des koopas
-            // resetAnimationKoopas();
+            resetAnimationKoopas();
 
             // mario meurt, on affiche le message de game over
             g2.setFont(marioFont);
