@@ -56,7 +56,7 @@ public class Collision_Ennemi extends Thread {
                             boolean fromAbove = marioFeetY <= ennemiHeadY + 15 && marioFeetY >= ennemiHeadY;
                             boolean falling = (threadDescente.force > 0);
 
-                            boolean collisionHandled = false;
+                            boolean collisionFromTop = false;
 
                             if (fromAbove && falling && !mario.isInvincible()) {
                                 if (ennemi instanceof Koopa) {
@@ -64,6 +64,8 @@ public class Collision_Ennemi extends Thread {
                                     if (koopa.getState() == Koopa.State.WALKING) {
                                         // koopa becomes a shell
                                         koopa.setState(Koopa.State.SHELL);
+
+                                        mario.setPositionY(mario.getPosition().y - 15);
                                         threadDescente.force = -CONSTANTS.IMPULSION_MARIO / 2;
                                         ScoreManager.incrementShells();
                                         // ScoreManager.incrementCurrentScore("shell");
@@ -74,6 +76,7 @@ public class Collision_Ennemi extends Thread {
                                         ScoreManager.incrementCurrentKoopa();
                                         ScoreManager.incrementCurrentScore("koopa");
                                     }
+                                    System.out.println("koopa ! collsion !!!");
                                 } else {
                                     // Goomba
                                     iterator.remove();
@@ -81,11 +84,12 @@ public class Collision_Ennemi extends Thread {
                                     ScoreManager.incrementCurrentGoomba();
                                     ScoreManager.incrementCurrentScore("goomba");
                                 }
-                                collisionHandled = true;
+                                collisionFromTop = true;
                             }
 
-                            if (!collisionHandled) {
+                            if (!collisionFromTop) {
                                 if (!mario.isInvincible()) {
+                                    System.out.println("mario perd une vie meskin !");
                                     mario.perdreVie();
                                 }
                             }

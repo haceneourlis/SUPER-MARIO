@@ -114,22 +114,24 @@ public class Affichage extends JPanel {
             }
         }
 
-        try {
-            URL url = getClass().getResource("/resources/sounds/music_de_fond.wav");
-            if (url == null) {
-                System.err.println("Fichier introuvable : " + "src/resources/sounds/music_de_fond.wav");
-                return;
-            }
+        // try {
+        // URL url = getClass().getResource("/resources/sounds/music_de_fond.wav");
+        // if (url == null) {
+        // System.err.println("Fichier introuvable : " +
+        // "src/resources/sounds/music_de_fond.wav");
+        // return;
+        // }
 
-            AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
-            clip = AudioSystem.getClip();
-            clip.open(audioIn);
-            clip.loop(Clip.LOOP_CONTINUOUSLY); // musique infinie
-            clip.start();
+        // AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
+        // clip = AudioSystem.getClip();
+        // clip.open(audioIn);
+        // clip.loop(Clip.LOOP_CONTINUOUSLY); // musique infinie
+        // clip.start();
 
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            e.printStackTrace();
-        }
+        // } catch (UnsupportedAudioFileException | IOException |
+        // LineUnavailableException e) {
+        // e.printStackTrace();
+        // }
 
         // Mettre à jour l'affichage toutes les 50ms
         (new Redessine(this)).start();
