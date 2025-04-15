@@ -136,13 +136,14 @@ public class Affichage extends JPanel {
     }
 
     private void resetAnimationKoopas() {
-        for (int i = 0; i < animationKoopa.size(); i++) {
-            animationKoopa.remove(i);
-            i--;
+        for (AnimationKoopa anim : animationKoopa) {
+            anim.stopThread();
         }
-        for (int i = 0; i < listeEnnemis.size(); i++) {
-            if (listeEnnemis.get(i) instanceof Koopa) {
-                AnimationKoopa anim = new AnimationKoopa((Koopa) listeEnnemis.get(i));
+        animationKoopa.clear();
+
+        for (Ennemi ennemi : listeEnnemis) {
+            if (ennemi instanceof Koopa) {
+                AnimationKoopa anim = new AnimationKoopa((Koopa) ennemi);
                 animationKoopa.add(anim);
                 anim.start();
             }
