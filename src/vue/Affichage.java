@@ -138,8 +138,11 @@ public class Affichage extends JPanel {
     }
 
     private void resetAnimationKoopas() {
+        int n = 0;
         for (AnimationKoopa anim : animationKoopa) {
             anim.stopThread();
+            n++;
+            System.out.println("stop thread " + n);
         }
         animationKoopa.clear();
 

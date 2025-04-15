@@ -40,7 +40,7 @@ public class TileManager {
 
         // Une liste d'ennemis présents sur la map.
         public ArrayList<Ennemi> listeEnnemis;
-        private Ennemi kp1, kp2, gb1, gb2, gb3;
+        private Ennemi kp1, kp2, gb1, gb2, gb3, kp3, kp4, kp5;
 
         // La liste des entitées présentes sur la map. (ex : champignons)
         private ArrayList<GameCharacter> listeEntities;
@@ -105,10 +105,7 @@ public class TileManager {
                 // On recharge les ennemis
 
                 // supprimer tous les ennemis de la liste
-                for (int i = 0; i < listeEnnemis.size(); i++) {
-                        listeEnnemis.remove(i);
-                        i--;
-                }
+                listeEnnemis.clear();
                 // On recharge les ennemis
                 kp1 = new Koopa(400, 4, true, this);
                 this.addEnnemi(kp1);
@@ -118,17 +115,29 @@ public class TileManager {
                 this.addEnnemi(kp2);
                 kp2.thread.start();
 
-                gb1 = new Goomba(100 * CONSTANTS.TAILLE_CELLULE, 4, false, this);
-                this.addEnnemi(gb1);
-                gb1.thread.start();
+                kp3 = new Koopa(600, 4, true, this);
+                this.addEnnemi(kp3);
+                kp3.thread.start();
 
-                gb2 = new Goomba(500, 3, false, this);
-                this.addEnnemi(gb2);
-                gb2.thread.start();
+                kp4 = new Koopa(700, 4, true, this);
+                this.addEnnemi(kp4);
+                kp4.thread.start();
 
-                gb3 = new Goomba(150, 3, false, this);
-                this.addEnnemi(gb3);
-                gb3.thread.start();
+                kp5 = new Koopa(800, 4, true, this);
+                this.addEnnemi(kp5);
+                kp5.thread.start();
+
+                // gb1 = new Goomba(100 * CONSTANTS.TAILLE_CELLULE, 4, false, this);
+                // this.addEnnemi(gb1);
+                // gb1.thread.start();
+
+                // gb2 = new Goomba(500, 3, false, this);
+                // this.addEnnemi(gb2);
+                // gb2.thread.start();
+
+                // gb3 = new Goomba(150, 3, false, this);
+                // this.addEnnemi(gb3);
+                // gb3.thread.start();
 
                 System.out.println("Ennemis rechargés !:::::::::::::::::::::::::::!::::::::::::::");
         }
