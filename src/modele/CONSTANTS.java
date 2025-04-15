@@ -74,6 +74,7 @@ public class CONSTANTS {
     // Les différents DELAY pour les threads
     public static final int DELAY_COLLISION_ENTITE = 17;
     public static final int DELAY_COLLISION_MARIO = 5;
+    public static final int DELAY_COLLISION_ENNEMI = 5;
     public static final int DELAY_DEPLACEMENT_ENTITE = 17;
     public static final int DELAY_DESCENTE = 17;
     public static final int DELAY_DESCENTE_COINS = 55;

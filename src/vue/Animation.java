@@ -5,6 +5,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
 import modele.GameCharacter;
+import modele.Koopa;
 
 /**
  * Classe "abstraite" qui gère les animations du jeu avec les différentes
@@ -64,6 +65,16 @@ public class Animation {
         // Je rajoute + 1, car je considère que la PREMIERE image de l'animation est
         // l'image idl
         // cad, l'image où le personnage ne bouge pas.
+
+        if (gc instanceof Koopa) {
+
+            Koopa kp = (Koopa) gc;
+            if (kp.getState() == Koopa.State.SHELL) {
+                this.setCurrentToDraw(kp.getImage(0)); // car thread exception index out of bound ;
+                                                       // AAAAAAAAAAAAAAAAAAAAA !
+                return;
+            }
+        }
         this.currentIndex = (currentIndex) % size + 1;
         // si il va à droite je le retourne pas, sinon je le retourne
         if (!right) {

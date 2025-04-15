@@ -41,6 +41,7 @@ public class Koopa extends Ennemi {
 
     public void setState(State newState) {
         this.state = newState;
+        this.image = null;
         this.image = new BufferedImage[1];
         if (state == State.SHELL) {
             try {
@@ -57,6 +58,10 @@ public class Koopa extends Ennemi {
             }
         }
 
+    }
+
+    public int getImageLength() {
+        return this.image.length;
     }
 
     @Override

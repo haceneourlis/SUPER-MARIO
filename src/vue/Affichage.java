@@ -57,9 +57,6 @@ public class Affichage extends JPanel {
     // Pour la musique de fond
     private Clip clip;
 
-
-
-
     /**
      * Constructeur de la classe Affichage.
      * On initialise la taille de la fenêtre et récupère les instances de mario et
@@ -92,10 +89,6 @@ public class Affichage extends JPanel {
 
         this.listeEnnemis = tilemanager.getListeEnnemis(); // Récupérer la liste des ennemis depuis le TileManager
 
-        // Initialiser la liste d'animation des ennemis
-        animationKoopa = new ArrayList<>();
-        animationGoomba = new ArrayList<>();
-
         // Lancer l'animation du joueur (Mario).
         animationJoueur = new AnimationJoueur(mario);
         animationJoueur.start();
@@ -107,26 +100,19 @@ public class Affichage extends JPanel {
             e.printStackTrace();
         }
 
-        for (int i = 0; i < listeEnnemis.size(); i++) {
-            if (listeEnnemis.get(i) instanceof Koopa) {
-                animationKoopa.add(new AnimationKoopa(listeEnnemis.get(i)));
+        animationKoopa = new ArrayList<>();
+        animationGoomba = new ArrayList<>();
+        for (Ennemi ennemi : listeEnnemis) {
+            if (ennemi instanceof Goomba) {
+                AnimationGoomba anim = new AnimationGoomba((Goomba) ennemi);
+                animationGoomba.add(anim);
+                anim.start();
+            } else if (ennemi instanceof Koopa) {
+                AnimationKoopa anim = new AnimationKoopa((Koopa) ennemi);
+                animationKoopa.add(anim);
+                anim.start();
             }
-            if (listeEnnemis.get(i) instanceof Goomba) {
-                animationGoomba.add(new AnimationGoomba(listeEnnemis.get(i)));
-            }
         }
-
-        // Lancer les animations des ennemis
-        for (AnimationKoopa Koopa : animationKoopa) {
-            Koopa.start();
-        }
-        for (AnimationGoomba Goomba : animationGoomba) {
-            Goomba.start();
-        }
-
-        // Mettre à jour l'affichage toutes les 50ms
-        (new Redessine(this)).start();
-
 
         try {
             URL url = getClass().getResource("/resources/sounds/music_de_fond.wav");
@@ -144,9 +130,24 @@ public class Affichage extends JPanel {
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             e.printStackTrace();
         }
-    
+
+        // Mettre à jour l'affichage toutes les 50ms
+        (new Redessine(this)).start();
     }
 
+    private void resetAnimationKoopas() {
+        for (int i = 0; i < animationKoopa.size(); i++) {
+            animationKoopa.remove(i);
+            i--;
+        }
+        for (int i = 0; i < listeEnnemis.size(); i++) {
+            if (listeEnnemis.get(i) instanceof Koopa) {
+                AnimationKoopa anim = new AnimationKoopa((Koopa) listeEnnemis.get(i));
+                animationKoopa.add(anim);
+                anim.start();
+            }
+        }
+    }
 
     /**
      * Méthode qui permet de jouer un son.
@@ -176,7 +177,8 @@ public class Affichage extends JPanel {
             try {
                 URL soundURL = getClass().getResource("/resources/sounds/mario_ramasse_champignon.wav");
                 if (soundURL == null) {
-                    System.err.println("Fichier audio introuvable : " + "src/resources/sounds/mario_ramasse_champignon.wav");
+                    System.err.println(
+                            "Fichier audio introuvable : " + "src/resources/sounds/mario_ramasse_champignon.wav");
                     return;
                 }
 
@@ -290,9 +292,8 @@ public class Affichage extends JPanel {
             clip.start();
             clip.loop(Clip.LOOP_CONTINUOUSLY);
         }
-        
+
     }
-    
 
     /**
      * Méthode qui dessine les pièces qui sortent des prize blocks.
@@ -385,7 +386,7 @@ public class Affichage extends JPanel {
         } else {
 
             // reset les animations des koopas
-            resetAnimation();
+            // resetAnimationKoopas();
 
             // mario meurt, on affiche le message de game over
             g2.setFont(marioFont);
@@ -405,22 +406,6 @@ public class Affichage extends JPanel {
                     Collision.coinToCatch.position.x * CONSTANTS.TAILLE_CELLULE,
                     Collision.coinToCatch.position.y * CONSTANTS.TAILLE_CELLULE, null);
         }
-    }
-
-    private void resetAnimation() {
-
-        animationKoopa.clear();
-        for (int i = 0; i < listeEnnemis.size(); i++) {
-            if (listeEnnemis.get(i) instanceof Koopa) {
-                animationKoopa.add(new AnimationKoopa(listeEnnemis.get(i)));
-
-            }
-        }
-
-        for (AnimationKoopa Koopa : animationKoopa) {
-            Koopa.start();
-        }
-
     }
 
     /*
