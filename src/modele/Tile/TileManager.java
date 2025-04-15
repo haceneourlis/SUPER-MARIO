@@ -118,7 +118,7 @@ public class TileManager {
                 this.addEnnemi(kp2);
                 kp2.thread.start();
 
-                kp3 = new Koopa(50*CONSTANTS.TAILLE_CELLULE, 4, true, this);
+                kp3 = new Koopa(60*CONSTANTS.TAILLE_CELLULE, 4, true, this);
                 this.addEnnemi(kp3);
                 kp3.thread.start();
 
@@ -126,7 +126,9 @@ public class TileManager {
                 this.addEnnemi(kp4);
                 kp4.thread.start();
 
-                kp5 = new Koopa(120*CONSTANTS.TAILLE_CELLULE, 4, true, this);
+                kp5 = new Koopa(150*CONSTANTS.TAILLE_CELLULE, 4, true, this);
+                this.addEnnemi(kp5);
+                this.addEnnemi(kp5);
 
                 gb1 = new Goomba(100 * CONSTANTS.TAILLE_CELLULE, 4, false, this);
                 this.addEnnemi(gb1);
