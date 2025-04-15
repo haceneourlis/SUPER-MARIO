@@ -40,7 +40,7 @@ public class TileManager {
 
         // Une liste d'ennemis présents sur la map.
         public ArrayList<Ennemi> listeEnnemis;
-        private Ennemi kp1, kp2, kp3, gb1, gb2, gb3;
+        private Ennemi kp1, kp2, kp3, kp4, kp5,  gb1, gb2, gb3;
 
         // La liste des entitées présentes sur la map. (ex : champignons)
         private ArrayList<GameCharacter> listeEntities;
@@ -121,6 +121,12 @@ public class TileManager {
                 kp3 = new Koopa(600, 4, true, this);
                 this.addEnnemi(kp3);
                 kp3.thread.start();
+
+                kp4 = new Koopa(1200, 4, true, this);
+                this.addEnnemi(kp4);
+                kp4.thread.start();
+
+                kp5 = new Koopa(120*CONSTANTS.TAILLE_CELLULE, 4, true, this);
 
                 gb1 = new Goomba(100 * CONSTANTS.TAILLE_CELLULE, 4, false, this);
                 this.addEnnemi(gb1);

@@ -207,6 +207,31 @@ public class Affichage extends JPanel {
                 }
             }
 
+            // （A）绘制 Mario 的碰撞盒
+            g2.setColor(Color.YELLOW);
+            // 如有需要可以设定线条粗细
+            // g2.setStroke(new BasicStroke(2f));
+
+            Rectangle marioHitbox = new Rectangle(
+                    this.mario.getPosition().x + this.mario.getSolidArea().x,
+                    this.mario.getPosition().y + this.mario.getSolidArea().y,
+                    this.mario.getSolidArea().width,
+                    this.mario.getSolidArea().height
+            );
+            g2.draw(marioHitbox);
+
+            // （B）绘制每个敌人的碰撞盒
+            g2.setColor(Color.RED);
+            for (Ennemi ennemi : listeEnnemis) {
+                Rectangle ennemiHitbox = new Rectangle(
+                        ennemi.getPosition().x + ennemi.getSolidArea().x,
+                        ennemi.getPosition().y + ennemi.getSolidArea().y,
+                        ennemi.getSolidArea().width,
+                        ennemi.getSolidArea().height
+                );
+                g2.draw(ennemiHitbox);
+            }
+
 
             for (int i = 0; i < this.tilemanager.sizeEntitiesList(); i++) {
 
