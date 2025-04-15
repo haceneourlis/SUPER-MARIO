@@ -207,9 +207,9 @@ public class Affichage extends JPanel {
                 }
             }
 
-            // （A）绘制 Mario 的碰撞盒
+            // draw mario's hitbox
             g2.setColor(Color.YELLOW);
-            // 如有需要可以设定线条粗细
+            // if needed, set the stroke size
             // g2.setStroke(new BasicStroke(2f));
 
             Rectangle marioHitbox = new Rectangle(
@@ -220,7 +220,7 @@ public class Affichage extends JPanel {
             );
             g2.draw(marioHitbox);
 
-            // （B）绘制每个敌人的碰撞盒
+            // draw the hitboxes of the enemies
             g2.setColor(Color.RED);
             for (Ennemi ennemi : listeEnnemis) {
                 Rectangle ennemiHitbox = new Rectangle(
