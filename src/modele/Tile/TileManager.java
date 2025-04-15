@@ -119,11 +119,11 @@ public class TileManager {
                 this.addEnnemi(kp3);
                 kp3.thread.start();
 
-                kp4 = new Koopa(700, 4, true, this);
+                kp4 = new Koopa(1700, 4, true, this);
                 this.addEnnemi(kp4);
                 kp4.thread.start();
 
-                kp5 = new Koopa(800, 4, true, this);
+                kp5 = new Koopa(1000, 4, true, this);
                 this.addEnnemi(kp5);
                 kp5.thread.start();
 

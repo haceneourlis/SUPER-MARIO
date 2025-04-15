@@ -53,8 +53,8 @@ public class Main {
                 death.start();
 
                 // on ajoute un thread pour le son
-                // BonusSoundEffect coinSoundEffect = new BonusSoundEffect(GamePanel);
-                // coinSoundEffect.start();
+                BonusSoundEffect coinSoundEffect = new BonusSoundEffect(GamePanel);
+                coinSoundEffect.start();
                 fenetre.pack();
                 fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

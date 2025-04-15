@@ -114,43 +114,44 @@ public class Affichage extends JPanel {
             }
         }
 
-        // try {
-        // URL url = getClass().getResource("/resources/sounds/music_de_fond.wav");
-        // if (url == null) {
-        // System.err.println("Fichier introuvable : " +
-        // "src/resources/sounds/music_de_fond.wav");
-        // return;
-        // }
+        try {
+            URL url = getClass().getResource("/resources/sounds/music_de_fond.wav");
+            if (url == null) {
+                System.err.println("Fichier introuvable : " +
+                        "src/resources/sounds/music_de_fond.wav");
+                return;
+            }
 
-        // AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
-        // clip = AudioSystem.getClip();
-        // clip.open(audioIn);
-        // clip.loop(Clip.LOOP_CONTINUOUSLY); // musique infinie
-        // clip.start();
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
+            clip = AudioSystem.getClip();
+            clip.open(audioIn);
+            clip.loop(Clip.LOOP_CONTINUOUSLY); // musique infinie
+            clip.start();
 
-        // } catch (UnsupportedAudioFileException | IOException |
-        // LineUnavailableException e) {
-        // e.printStackTrace();
-        // }
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
 
         // Mettre à jour l'affichage toutes les 50ms
         (new Redessine(this)).start();
     }
 
-    private void resetAnimationKoopas() {
-        int n = 0;
-        for (AnimationKoopa anim : animationKoopa) {
-            anim.stopThread();
-            n++;
-            System.out.println("stop thread " + n);
-        }
-        animationKoopa.clear();
+    boolean needToResetKoopaAnimations = false; // Variable pour savoir si on doit réinitialiser les animations des
+                                                // koopas
 
-        for (Ennemi ennemi : listeEnnemis) {
-            if (ennemi instanceof Koopa) {
-                AnimationKoopa anim = new AnimationKoopa((Koopa) ennemi);
-                animationKoopa.add(anim);
-                anim.start();
+    void resetAnimationKoopas() {
+        synchronized (animationKoopa) {
+            for (AnimationKoopa anim : animationKoopa) {
+                anim.stopThread();
+            }
+            animationKoopa.clear();
+
+            for (Ennemi ennemi : listeEnnemis) {
+                if (ennemi instanceof Koopa) {
+                    AnimationKoopa anim = new AnimationKoopa((Koopa) ennemi);
+                    animationKoopa.add(anim);
+                    anim.start();
+                }
             }
         }
     }
@@ -331,14 +332,13 @@ public class Affichage extends JPanel {
 
             int goombaIndex = 0;
             int koopaIndex = 0;
-            synchronized (tilemanager.listeEnnemis) {
+            synchronized (animationKoopa) {
                 Iterator<Ennemi> iterator = tilemanager.getListeEnnemis().iterator();
                 while (iterator.hasNext()) {
                     Ennemi ennemi = iterator.next();
                     if (ennemi != null) {
                         BufferedImage imageEnnemi = null;
                         if (ennemi instanceof Koopa) {
-                            // the bug was here , hooly molyyy
                             if (koopaIndex < animationKoopa.size()) {
                                 imageEnnemi = animationKoopa.get(koopaIndex).getCurrentToDraw();
                                 koopaIndex++;
@@ -395,8 +395,7 @@ public class Affichage extends JPanel {
         } else {
 
             // reset les animations des koopas
-            resetAnimationKoopas();
-
+            needToResetKoopaAnimations = true;
             // mario meurt, on affiche le message de game over
             g2.setFont(marioFont);
             g2.setColor(Color.RED);

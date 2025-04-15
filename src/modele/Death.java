@@ -36,7 +36,7 @@ public class Death extends Thread {
                 }
 
                 if (!Mario.VIVANT) {
-                    sleep(2000);
+                    sleep(4000);
                     ScoreManager.resetScore(); // Réinitialiser le score
 
                     tileManager.decalage = 0; // Réinitialiser le décalage

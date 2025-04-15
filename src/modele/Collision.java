@@ -161,12 +161,12 @@ public class Collision extends Thread {
                             // nombre de pièces
                             // Et on demande à la matrice (locale) d'être modifiée.
                             if (point1 == CONSTANTS.COIN) {
-                                scoreManager.incrementCurrentCoins();
-                                scoreManager.incrementCurrentScore("coin");
+                                ScoreManager.incrementCurrentCoins();
+                                ScoreManager.incrementCurrentScore("coin");
                                 tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 0);
                             } else if (point2 == CONSTANTS.COIN) {
-                                scoreManager.incrementCurrentCoins();
-                                scoreManager.incrementCurrentScore("coin");
+                                ScoreManager.incrementCurrentCoins();
+                                ScoreManager.incrementCurrentScore("coin");
                                 tm.modifyMatrice(ligneTopdanslaMatrice, colonneRightdanslaMatrice, 0);
 
                             }
@@ -193,8 +193,8 @@ public class Collision extends Thread {
                                 jumpingThread.setThreadDecenteCoins(coinThread);
                                 jumpingThread.jumpLaCoin();
                                 coinThread.start();
-                                scoreManager.incrementCurrentCoins();
-                                scoreManager.incrementCurrentScore("coin");
+                                ScoreManager.incrementCurrentCoins();
+                                ScoreManager.incrementCurrentScore("coin");
 
                                 tm.modifyMatrice(ligneTopdanslaMatrice, colonneLeftdanslaMatrice, 1);
                             } else if (point2 == CONSTANTS.PRIZE_BRICK) {
@@ -212,8 +212,8 @@ public class Collision extends Thread {
                                 jumpingThread.setThreadDecenteCoins(coinThread);
                                 jumpingThread.jumpLaCoin();
                                 coinThread.start();
-                                scoreManager.incrementCurrentCoins();
-                                scoreManager.incrementCurrentScore("coin");
+                                ScoreManager.incrementCurrentCoins();
+                                ScoreManager.incrementCurrentScore("coin");
 
                                 tm.modifyMatrice(ligneTopdanslaMatrice, colonneRightdanslaMatrice, 1);
                             }
