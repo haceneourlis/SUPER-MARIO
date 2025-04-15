@@ -30,6 +30,10 @@ public class Main {
                 Descente descente_thread = new Descente(mario);
                 descente_thread.start();
 
+                // thread de collision avec les ennemis
+                Collision_Ennemi collision_ennemi_thread = new Collision_Ennemi(descente_thread);
+                collision_ennemi_thread.start();
+
                 // on crée un thread pour le saut
                 Jumping jumping_thread = new Jumping(descente_thread);
 
@@ -43,15 +47,18 @@ public class Main {
                 // on ajoute un thread pour la collision
                 Collision collision_thread = new Collision(jumping_thread, descente_thread);
                 collision_thread.start();
-                fenetre.addKeyListener(mouvement_key_listener);
 
                 // on ajoute un thread pour la mort
                 Death death = Death.getInstance(descente_thread, collision_thread);
                 death.start();
 
+                // on ajoute un thread pour le son
+                // BonusSoundEffect coinSoundEffect = new BonusSoundEffect(GamePanel);
+                // coinSoundEffect.start();
                 fenetre.pack();
                 fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+                fenetre.addKeyListener(mouvement_key_listener);
                 fenetre.setVisible(true);
         }
 

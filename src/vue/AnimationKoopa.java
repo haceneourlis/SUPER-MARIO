@@ -61,35 +61,35 @@ public class AnimationKoopa extends Thread {
         while (this.ok) {
             try {
                 Thread.sleep(DELAY);
+                /*
+                 * On va récupérer à chaque fois la position en x du joueur et la comparer à la
+                 * position en x du joueur à l'itération précédente.
+                 * Si cette différence est supérieure à 0, cela veut dire que le joueur se
+                 * déplace à droite, on incrémente donc l'index de l'animation,
+                 * et ce en précisant que le joueur se déplace à droite, avec le booléen mis en
+                 * paramètre d'incrementAnimationIndex (true).
+                 * Si cette différence est inférieure à 0, cela veut dire que le joueur se
+                 * déplace à gauche, on incrémente ainsi l'index de l'animation, avec un
+                 * paramètre false (pour dire qu'il va à gauche).
+                 * Si la différence est égale à 0, cela veut dire que le joueur est immobile, on
+                 * remet ainsi l'index de l'animation à 0. (reset_to_idl)
+                 */
+                if (koopa != null) {
+
+                    old_x = this.koopa.getPosition().x - old_x;
+                    if (old_x > 0) {
+                        this.animation.incrementAnimationIndex(true);
+                    } else if (old_x < 0) {
+                        this.animation.incrementAnimationIndex(false);
+                    } else {
+                        this.animation.setCurrentToDraw(koopa.getImage(0));
+                    }
+                    // Avant de relancer une itération, on sauvegarde la valeur de la position en x
+                    // du joueur pour la prochaine itération.
+                    old_x = this.koopa.getPosition().x;
+                }
             } catch (Exception e) {
                 e.printStackTrace();
-            }
-            /*
-             * On va récupérer à chaque fois la position en x du joueur et la comparer à la
-             * position en x du joueur à l'itération précédente.
-             * Si cette différence est supérieure à 0, cela veut dire que le joueur se
-             * déplace à droite, on incrémente donc l'index de l'animation,
-             * et ce en précisant que le joueur se déplace à droite, avec le booléen mis en
-             * paramètre d'incrementAnimationIndex (true).
-             * Si cette différence est inférieure à 0, cela veut dire que le joueur se
-             * déplace à gauche, on incrémente ainsi l'index de l'animation, avec un
-             * paramètre false (pour dire qu'il va à gauche).
-             * Si la différence est égale à 0, cela veut dire que le joueur est immobile, on
-             * remet ainsi l'index de l'animation à 0. (reset_to_idl)
-             */
-            if (koopa != null) {
-
-                old_x = this.koopa.getPosition().x - old_x;
-                if (old_x > 0) {
-                    this.animation.incrementAnimationIndex(true);
-                } else if (old_x < 0) {
-                    this.animation.incrementAnimationIndex(false);
-                } else {
-                    this.animation.setCurrentToDraw(koopa.getImage(0));
-                }
-                // Avant de relancer une itération, on sauvegarde la valeur de la position en x
-                // du joueur pour la prochaine itération.
-                old_x = this.koopa.getPosition().x;
             }
         }
     }

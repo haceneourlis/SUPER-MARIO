@@ -15,6 +15,18 @@ public class ScoreManager {
     // Nombre de pièces collectées
     private static int nb_coins = 0;
 
+    // Nombre de champignon collectés
+    private static int nb_mushrooms = 0;
+
+    // Nombre de goomba tués
+    private static int nb_goomba = 0;
+
+    // Nombre de koopa tués
+    private static int nb_koopa = 0;
+
+    // Nombre de koopa transformées en tortues
+    private static int shells = 0;
+
     private ScoreManager() {
         // Constructeur privé pour empêcher l'instanciation de la classe
         // car y a un seul score ...
@@ -33,6 +45,10 @@ public class ScoreManager {
     public static void resetScore() {
         score = 0;
         nb_coins = 0;
+        nb_mushrooms = 0;
+        nb_goomba = 0;
+        nb_koopa = 0;
+        shells = 0;
     }
     /**
      * Méthode pour obtenir le score actuel.
@@ -51,9 +67,72 @@ public class ScoreManager {
     /**
      * Méthode pour incrémenter le nombre de coins.
      */
-    public void incrementCurrentCoins() {
+    public static void incrementCurrentCoins() {
         nb_coins++;
     }
+
+    /**
+     * Méthode pour obtenir le nombre de champignons collectés.
+     * @return
+     */
+    public static int getMushrooms() {
+        return nb_mushrooms;
+    }
+
+
+
+    /**
+     * Méthode pour incrémenter le nombre de champignons.
+     */
+    public static void incrementCurrentMushrooms() {
+        nb_mushrooms++;
+    }
+
+    /**
+     * Méthode pour obtenir le nombre de goomba tués.
+     * @return nombre de goomba tués, un entier.
+     */
+    public static int getGoomba() {
+        return nb_goomba;
+    }
+
+    /**
+     * Méthode pour obtenir le nombre de koopa tués.
+     * @return nombre de koopa tués, un entier.
+     */
+    public static int getKoopa() {
+        return nb_koopa;
+    }
+
+    /**
+     * Méthode pour incrémenter le nombre de goomba tués.
+     */
+    public static void incrementCurrentGoomba() {
+        nb_goomba++;
+    }
+
+    /**
+     * Méthode pour obtenir le nombre de koopa tués.
+     */
+    public static void incrementCurrentKoopa() {
+        nb_koopa++;
+    }
+
+    /**
+     * Méthode qui retourne le nombre de koopa transformées en tortues.
+     * @return nombre de shells retoruné, un entier.
+     */
+    public static int getShells() {
+        return shells;
+    }
+
+    /**
+     * Méthode pour incrémenter le nombre de koopa transformées en tortues.
+     */
+    public static void incrementShells() {
+        shells++;
+    }
+
 
     /**
      * Méthode pour incrémenter le score actuel.
@@ -61,10 +140,13 @@ public class ScoreManager {
      * @param bonus_type string : "coin", "mushroom" 
      * @return no return
      */
-    public void incrementCurrentScore(String bonus_type) {
+    public static void incrementCurrentScore(String bonus_type) {
         switch (bonus_type){
             case "coin" -> score += CONSTANTS.INCREMENT_SCORE_COIN;
             case "mushroom" -> score += CONSTANTS.INCREMENT_SCORE_MUSHROOM;
+            case "koopa" -> score += CONSTANTS.INCREMENT_SCORE_KOOPA;
+            case "goomba" -> score += CONSTANTS.INCREMENT_SCORE_GOOMBA;
+            case "shell" -> score += CONSTANTS.INCREMENT_SCORE_SHELL;
         }
     }
 

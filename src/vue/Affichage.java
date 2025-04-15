@@ -4,10 +4,12 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.*;
 import javax.swing.*;
 import modele.*;
 import modele.Tile.TileManager;
@@ -52,6 +54,9 @@ public class Affichage extends JPanel {
     // attribut static pour savoir si le jeu est terminé ou pas
     public static boolean GAME_OVER = false;
 
+    // Pour la musique de fond
+    private Clip clip;
+
     /**
      * Constructeur de la classe Affichage.
      * On initialise la taille de la fenêtre et récupère les instances de mario et
@@ -84,20 +89,6 @@ public class Affichage extends JPanel {
 
         this.listeEnnemis = tilemanager.getListeEnnemis(); // Récupérer la liste des ennemis depuis le TileManager
 
-        // Initialiser la liste d'animation des ennemis
-        animationKoopa = new ArrayList<>();
-        animationGoomba = new ArrayList<>();
-        for (Ennemi ennemi : listeEnnemis) {
-            if (ennemi instanceof modele.Goomba) {
-                AnimationGoomba anim = new AnimationGoomba((modele.Goomba) ennemi);
-                anim.start();
-                animationGoomba.add(anim);
-            } else if (ennemi instanceof modele.Koopa) {
-                AnimationKoopa anim = new AnimationKoopa((modele.Koopa) ennemi);
-                anim.start();
-                animationKoopa.add(anim);
-            }
-        }
 
         // Lancer l'animation du joueur (Mario).
         animationJoueur = new AnimationJoueur(mario);
@@ -110,25 +101,203 @@ public class Affichage extends JPanel {
             e.printStackTrace();
         }
 
-//        for (int i = 0; i < listeEnnemis.size(); i++) {
-//            if (listeEnnemis.get(i) instanceof Koopa) {
-//                animationKoopa.add(new AnimationKoopa(listeEnnemis.get(i)));
-//            }
-//            if (listeEnnemis.get(i) instanceof Goomba) {
-//                animationGoomba.add(new AnimationGoomba(listeEnnemis.get(i)));
-//            }
-//        }
-//
-//        // Lancer les animations des ennemis
-//        for (AnimationKoopa Koopa : animationKoopa) {
-//            Koopa.start();
-//        }
-//        for (AnimationGoomba Goomba : animationGoomba) {
-//            Goomba.start();
-//        }
+
+        animationKoopa = new ArrayList<>();
+        animationGoomba = new ArrayList<>();
+        for (Ennemi ennemi : listeEnnemis) {
+            if (ennemi instanceof Goomba) {
+                AnimationGoomba anim = new AnimationGoomba((Goomba) ennemi);
+                animationGoomba.add(anim);
+                anim.start();
+            } else if (ennemi instanceof Koopa) {
+                AnimationKoopa anim = new AnimationKoopa((Koopa) ennemi);
+                animationKoopa.add(anim);
+                anim.start();
+            }
+        }
+
+        // try {
+        // URL url = getClass().getResource("/resources/sounds/music_de_fond.wav");
+        // if (url == null) {
+        // System.err.println("Fichier introuvable : " +
+        // "src/resources/sounds/music_de_fond.wav");
+        // return;
+        // }
+
+        // AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
+        // clip = AudioSystem.getClip();
+        // clip.open(audioIn);
+        // clip.loop(Clip.LOOP_CONTINUOUSLY); // musique infinie
+        // clip.start();
+
+        // } catch (UnsupportedAudioFileException | IOException |
+        // LineUnavailableException e) {
+        // e.printStackTrace();
+        // }
 
         // Mettre à jour l'affichage toutes les 50ms
         (new Redessine(this)).start();
+    }
+
+    private void resetAnimationKoopas() {
+        for (AnimationKoopa anim : animationKoopa) {
+            anim.stopThread();
+        }
+        animationKoopa.clear();
+
+        for (Ennemi ennemi : listeEnnemis) {
+            if (ennemi instanceof Koopa) {
+                AnimationKoopa anim = new AnimationKoopa((Koopa) ennemi);
+                animationKoopa.add(anim);
+                anim.start();
+            }
+        }
+    }
+
+    /**
+     * Méthode qui permet de jouer un son.
+     * Elle prend en paramètre le nom du son à jouer et le lance.
+     * 
+     * @param soundName
+     */
+    public void playSound(String soundName) {
+        // On va jouer le son de la pièce
+        if (soundName.equals("coin")) {
+            try {
+                URL soundURL = getClass().getResource("/resources/sounds/mario_coin.wav");
+                if (soundURL == null) {
+                    System.err.println("Fichier audio introuvable : " + "src/resources/sounds/mario_coin.wav");
+                    return;
+                }
+
+                AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundURL);
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioIn);
+                clip.start();// Ajout du clip à la liste des sons
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (soundName.equals("mushroom")) {
+            try {
+                URL soundURL = getClass().getResource("/resources/sounds/mario_ramasse_champignon.wav");
+                if (soundURL == null) {
+                    System.err.println(
+                            "Fichier audio introuvable : " + "src/resources/sounds/mario_ramasse_champignon.wav");
+                    return;
+                }
+
+                AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundURL);
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioIn);
+                clip.start();// Ajout du clip à la liste des sons
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (soundName.equals("gameover")) {
+            try {
+                URL soundURL = getClass().getResource("/resources/sounds/game_over.wav");
+                if (soundURL == null) {
+                    System.err.println("Fichier audio introuvable : " + "src/resources/sounds/game_over.wav");
+                    return;
+                }
+
+                AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundURL);
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioIn);
+                clip.start();// Ajout du clip à la liste des sons
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            clip.stop();
+        }
+        if (soundName.equals("jump")) {
+            try {
+                URL soundURL = getClass().getResource("/resources/sounds/mario_jump.wav");
+                if (soundURL == null) {
+                    System.err.println("Fichier audio introuvable : " + "src/resources/sounds/mario_jump.wav");
+                    return;
+                }
+
+                AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundURL);
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioIn);
+                // Réglage du volume
+                FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                float dB = (float) (20f * Math.log10(0.3)); // volume entre 0.0 et 1.0
+                gainControl.setValue(dB);
+                clip.start();// Ajout du clip à la liste des sons
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (soundName.equals("shell")) {
+            try {
+                URL soundURL = getClass().getResource("/resources/sounds/koopa_collision.wav");
+                if (soundURL == null) {
+                    System.err.println("Fichier audio introuvable : " + "src/resources/sounds/koopa_collision.wav");
+                    return;
+                }
+
+                AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundURL);
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioIn);
+                // Réglage du volume
+                FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                float dB = (float) (20f * Math.log10(0.3)); // volume entre 0.0 et 1.0
+                gainControl.setValue(dB);
+                clip.start();// Ajout du clip à la liste des sons
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (soundName.equals("goomba")) {
+            try {
+                URL soundURL = getClass().getResource("/resources/sounds/goomba_collision.wav");
+                if (soundURL == null) {
+                    System.err.println("Fichier audio introuvable : " + "/resources/sounds/goomba_collision.wav");
+                    return;
+                }
+
+                AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundURL);
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioIn);
+                // Réglage du volume
+                FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                float dB = (float) (20f * Math.log10(0.3)); // volume entre 0.0 et 1.0
+                gainControl.setValue(dB);
+                clip.start();// Ajout du clip à la liste des sons
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (soundName.equals("invincible")) {
+            try {
+                URL soundURL = getClass().getResource("/resources/sounds/mario_takes_damage.wav");
+                if (soundURL == null) {
+                    System.err.println("Fichier audio introuvable : " + "src/resources/sounds/mario_takes_damage.wav");
+                    return;
+                }
+
+                AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundURL);
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioIn);
+                // Réglage du volume
+                FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                float dB = (float) (20f * Math.log10(0.3)); // volume entre 0.0 et 1.0
+                gainControl.setValue(dB);
+                clip.start();// Ajout du clip à la liste des sons
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (soundName.equals("game")) {
+            clip.setFramePosition(0);
+            clip.start();
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        }
+
     }
 
     /**
@@ -159,51 +328,30 @@ public class Affichage extends JPanel {
             // affichons la matrice du jeu : (le terrain)
             this.drawTiles(g2);
 
-//            int goombaIndex = 0;
-//            synchronized (tilemanager.listeEnnemis) {
-//                Iterator<Ennemi> iterator = tilemanager.getListeEnnemis().iterator();
-//                while (iterator.hasNext()) {
-//                    Ennemi ennemi = iterator.next();
-//                    if (ennemi != null) {
-//                        BufferedImage imageEnnemi = null;
-//                        if (ennemi instanceof Koopa) {
-//                            if (!animationKoopa.isEmpty()) {
-//                                imageEnnemi = animationKoopa.get(0).getCurrentToDraw();
-//                            }
-//                        } else if (ennemi instanceof Goomba) {
-//                            if (goombaIndex < animationGoomba.size()) {
-//                                imageEnnemi = animationGoomba.get(goombaIndex).getCurrentToDraw();
-//                                goombaIndex++;
-//                            }
-//                        }
-//                        if (imageEnnemi != null) {
-//                            g2.drawImage(imageEnnemi, ennemi.getPosition().x, ennemi.getPosition().y, null);
-//                        }
-//                    }
-//                }
-//            }
-
-            // dessine les ennemis
-            // when painting the enemies, we directly call the animation inside the enemy
-            for (Ennemi ennemi : listeEnnemis) {
-                BufferedImage imageEnnemi = null;
-                if (ennemi instanceof modele.Koopa) {
-                    for (AnimationKoopa ak : animationKoopa) {
-                        if (ak.getKoopa() == ennemi) {
-                            imageEnnemi = ak.getCurrentToDraw();
-                            break;
+            int goombaIndex = 0;
+            int koopaIndex = 0;
+            synchronized (tilemanager.listeEnnemis) {
+                Iterator<Ennemi> iterator = tilemanager.getListeEnnemis().iterator();
+                while (iterator.hasNext()) {
+                    Ennemi ennemi = iterator.next();
+                    if (ennemi != null) {
+                        BufferedImage imageEnnemi = null;
+                        if (ennemi instanceof Koopa) {
+                            // the bug was here , hooly molyyy
+                            if (koopaIndex < animationKoopa.size()) {
+                                imageEnnemi = animationKoopa.get(koopaIndex).getCurrentToDraw();
+                                koopaIndex++;
+                            }
+                        } else if (ennemi instanceof Goomba) {
+                            if (goombaIndex < animationGoomba.size()) {
+                                imageEnnemi = animationGoomba.get(goombaIndex).getCurrentToDraw();
+                                goombaIndex++;
+                            }
+                        }
+                        if (imageEnnemi != null) {
+                            g2.drawImage(imageEnnemi, ennemi.position.x, ennemi.position.y, null);
                         }
                     }
-                } else if (ennemi instanceof modele.Goomba) {
-                    for (AnimationGoomba ag : animationGoomba) {
-                        if (ag.getGoomba() == ennemi) {
-                            imageEnnemi = ag.getCurrentToDraw();
-                            break;
-                        }
-                    }
-                }
-                if (imageEnnemi != null) {
-                    g2.drawImage(imageEnnemi, ennemi.position.x, ennemi.position.y, null);
                 }
             }
 
@@ -222,12 +370,12 @@ public class Affichage extends JPanel {
 
             // draw the hitboxes of the enemies
             g2.setColor(Color.RED);
-            for (Ennemi ennemi : listeEnnemis) {
+            for (Ennemi enemy : listeEnnemis) {
                 Rectangle ennemiHitbox = new Rectangle(
-                        ennemi.getPosition().x + ennemi.getSolidArea().x,
-                        ennemi.getPosition().y + ennemi.getSolidArea().y,
-                        ennemi.getSolidArea().width,
-                        ennemi.getSolidArea().height
+                        enemy.getPosition().x + enemy.getSolidArea().x,
+                        enemy.getPosition().y + enemy.getSolidArea().y,
+                        enemy.getSolidArea().width,
+                        enemy.getSolidArea().height
                 );
                 g2.draw(ennemiHitbox);
             }
@@ -270,6 +418,10 @@ public class Affichage extends JPanel {
             g2.drawString("Score : " + ScoreManager.getScore(), CONSTANTS.SCORE_X, CONSTANTS.SCORE_Y);
             g2.drawString("Coins : " + ScoreManager.getCoins(), CONSTANTS.COINS_X, CONSTANTS.COINS_Y);
         } else {
+
+            // reset les animations des koopas
+            resetAnimationKoopas();
+
             // mario meurt, on affiche le message de game over
             g2.setFont(marioFont);
             g2.setColor(Color.RED);

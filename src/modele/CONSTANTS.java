@@ -57,6 +57,9 @@ public class CONSTANTS {
     // Les facteurs d'incrémentation des scores:
     public static final int INCREMENT_SCORE_COIN = 10;
     public static final int INCREMENT_SCORE_MUSHROOM = 50;
+    public static final int INCREMENT_SCORE_KOOPA = 200;
+    public static final int INCREMENT_SCORE_GOOMBA = 100;
+    public static final int INCREMENT_SCORE_SHELL = 30;
 
     // les types de tuiles :
 
@@ -71,12 +74,14 @@ public class CONSTANTS {
     // Les différents DELAY pour les threads
     public static final int DELAY_COLLISION_ENTITE = 17;
     public static final int DELAY_COLLISION_MARIO = 5;
+    public static final int DELAY_COLLISION_ENNEMI = 5;
     public static final int DELAY_DEPLACEMENT_ENTITE = 17;
     public static final int DELAY_DESCENTE = 17;
     public static final int DELAY_DESCENTE_COINS = 55;
     public static final int DELAY_REDESSINE = 1;
     public static final int DELAY_DEPLACEMENT_LISTENER = 30;
     public static final int DELAY_ENNEMI = 32;
+    public static final int DELAY_SOUND_COIN = 40;
 
     // Constantes pour l'affichage du score
     public static final int SCORE_X = 10;
